@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Escale : des voyages planifiés au meilleur prix, sans perdre de temps sur place.">
+<meta name="description" content="Itinéo : des voyages planifiés au meilleur prix, sans perdre de temps sur place.">
 <style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
-<title>Escale Vacances</title>
+<title>Itinéo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -357,7 +357,7 @@ a.btn.primary{color:var(--sea-ink)}
 <body>
 
 <header class="nav"><div class="lp nav-in">
-  <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--sun)"/><path d="M7 19.5l17-7.5-3 9.5-4-2.5-2.5 4-1-5z" fill="var(--ink)"/></svg>Escale</a>
+  <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--sun)"/><path d="M7 19.5l17-7.5-3 9.5-4-2.5-2.5 4-1-5z" fill="var(--ink)"/></svg>Itinéo</a>
   <nav class="nav-links"><a href="#how">Comment ça marche</a><a href="#features">Fonctionnalités</a><a href="#dests">Destinations</a><a href="#faq">Questions</a></nav>
   <a class="btn primary" href="#planner">Planifier mon voyage</a>
 </div></header>
@@ -398,9 +398,9 @@ a.btn.primary{color:var(--sea-ink)}
 <section class="lp sect" id="faq">
   <div class="sect-h"><span class="eyebrow">Questions</span><h2>Bon à savoir</h2></div>
   <div class="faq">
-    <details><summary>Escale est-il gratuit ?</summary><p>Oui, sans inscription et sans publicité.</p></details>
+    <details><summary>Itinéo est-il gratuit ?</summary><p>Oui, sans inscription et sans publicité.</p></details>
     <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des moyennes 2026 pour comparer et planifier. Le prix final dépend du moment où vous réservez.</p></details>
-    <details><summary>Escale réserve-t-il à ma place ?</summary><p>Non. Escale vous dit quoi réserver et quand. Vous réservez où vous voulez.</p></details>
+    <details><summary>Itinéo réserve-t-il à ma place ?</summary><p>Non. Itinéo vous dit quoi réserver et quand. Vous réservez où vous voulez.</p></details>
     <details><summary>Mes réglages sont-ils gardés ?</summary><p>Oui, dans votre navigateur uniquement. Rien n'est envoyé ailleurs.</p></details>
   </div>
 </section>
@@ -602,7 +602,7 @@ function cover(k,dst,tag){
 /* ---------- Formulaire ---------- */
 $("#fields").innerHTML=`
 <label class="fld">${ic("plane")}<small>Départ</small><select id="origin">${ORIGINS.map((o,i)=>`<option value="${i}">${o[1]}</option>`).join("")}</select></label>
-<label class="fld">${ic("pin")}<small>Destination</small><select id="dest"><option value="auto">Au choix d'Escale</option>${Object.entries(D).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")}</select></label>
+<label class="fld">${ic("pin")}<small>Destination</small><select id="dest"><option value="auto">Au choix d'Itinéo</option>${Object.entries(D).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")}</select></label>
 <label class="fld">${ic("cal")}<small>Mois</small><select id="month">${MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("")}</select></label>
 <label class="fld">${ic("clock")}<small>Jours</small><input id="days" type="number" min="2" max="21" value="5"></label>
 <label class="fld">${ic("users")}<small>Voyageurs</small><input id="pax" type="number" min="1" max="10" value="2"></label>
@@ -793,7 +793,7 @@ function render(){
       <div class="cats">${Object.keys(c.opt).map(k=>`<div class="cat"><span class="bub" style="background:${CATS[k][2]}">${ic(CATS[k][1])}</span><div><span class="lbl">${CATS[k][0]}</span><div class="track"><i style="width:${c.opt[k]/maxCat*100}%;background:${CATS[k][2]}"></i></div></div><b class="num">${eur(c.opt[k])}</b></div>`).join("")}</div>
     </div>
     <div class="vs"><div class="vs-row"><span>Sans plan</span><div class="vs-bar" style="width:100%"></div><span class="num">${eur(c.naiveTotal)}</span></div>
-      <div class="vs-row"><span>Avec Escale</span><div class="vs-bar opt" style="width:${c.total/c.naiveTotal*100}%"></div><span class="num">${eur(c.total)}</span></div></div>
+      <div class="vs-row"><span>Avec Itinéo</span><div class="vs-bar opt" style="width:${c.total/c.naiveTotal*100}%"></div><span class="num">${eur(c.total)}</span></div></div>
     ${fits?`<div class="okmsg">${ic("check")}Marge restante : ${eur(p.budget-c.total)}</div>`:`<div class="fixes">${fixes.map(([attr,i,l,t])=>`<button type="button" class="fix" ${attr}>${ic(i)}${esc(l)} <b class="num">${eur(t)}</b></button>`).join("")}</div>`}
     </div></section>
 
@@ -935,7 +935,7 @@ function landing(){
   $("#band").innerHTML=`<div><h2>Le même voyage, deux prix.</h2><p>Lisbonne, 5 jours, 2 personnes, en ${MOIS[m0].toLowerCase()}.</p><div class="big num">-${eur(Ls)}</div></div>
     <div class="bb">
       <div class="bb-row"><div class="lb"><span>Réservé au dernier moment</span><span class="num">${eur(L.naiveTotal)}</span></div><div class="bb-track">${seg(naiveO,L.naiveTotal)}</div></div>
-      <div class="bb-row"><div class="lb"><span>Avec Escale</span><span class="num">${eur(L.total)}</span></div><div class="bb-track"><div style="display:flex;width:${L.total/L.naiveTotal*100}%">${seg(L.opt,L.total)}</div></div></div>
+      <div class="bb-row"><div class="lb"><span>Avec Itinéo</span><span class="num">${eur(L.total)}</span></div><div class="bb-track"><div style="display:flex;width:${L.total/L.naiveTotal*100}%">${seg(L.opt,L.total)}</div></div></div>
       <div class="bb-legend">${Object.keys(CATS).map(k=>`<span><i style="background:${CATS[k][2]}"></i>${CATS[k][0]}</span>`).join("")}</div>
     </div>`;
 }
