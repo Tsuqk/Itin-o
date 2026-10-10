@@ -225,9 +225,9 @@ a.tag:hover{color:var(--sea)}
 .opt small{font-weight:600;color:var(--muted);font-size:13px}
 .opt .ic{color:var(--green);width:24px;height:24px}
 .opt .t{font-family:var(--f-display);font-size:19px;font-weight:800}
-.opts.months{grid-template-columns:repeat(4,minmax(0,1fr))}
-@media (max-width:520px){.opts.months{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.opts.months .opt{justify-items:center;text-align:center;padding:12px 6px}
+.opts.mgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:520px){.opts.mgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.opts.mgrid .opt{justify-items:center;text-align:center;padding:12px 6px}
 .ideas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .idea{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 14px 5px 5px;cursor:pointer;font-weight:700;font-size:14px;color:var(--ink)}
 .idea:hover{border-color:var(--green)}
@@ -1337,7 +1337,7 @@ function stepHTML(){
     <div class="opts">${ORIGINS.map((o,i)=>`<button type="button" class="opt${W.o===i?" on":""}" data-worig="${i}">${ic(i===ORIGINS.length-1?"plane":"plane")}<span class="t">${o[1]}</span></button>`).join("")}</div>${navHTML(false)}</div>`;
   if(s==="dates")return `<div class="wz-step">${qn(3)}<h2>Quand partez-vous ?</h2>
     <p class="lead">${cl?`Températures maximales moyennes à ${esc(W.dest.name)} (mesures réelles 2024-2025).`:W.dest?"Chargement de la météo réelle…":"Choisissez le mois de départ."}</p>
-    <div class="opts months">${MS.map((m,i)=>`<button type="button" class="opt${W.m===i?" on":""}" data-wm="${i}"><span class="t">${m}</span><small>${cl&&cl.tmax[i]!=null?`${good.includes(i)?"☀ ":""}${cl.tmax[i]}°`:"&nbsp;"}</small></button>`).join("")}</div>
+    <div class="opts mgrid">${MS.map((m,i)=>`<button type="button" class="opt${W.m===i?" on":""}" data-wm="${i}"><span class="t">${m}</span><small>${cl&&cl.tmax[i]!=null?`${good.includes(i)?"☀ ":""}${cl.tmax[i]}°`:"&nbsp;"}</small></button>`).join("")}</div>
     <p style="font-weight:800;margin:8px 0 0">Combien de jours sur place ?</p>
     <div class="stepper"><button type="button" data-wd="-1" aria-label="Un jour de moins">−</button><output>${W.days} jours</output><button type="button" data-wd="1" aria-label="Un jour de plus">+</button></div>${navHTML(false)}</div>`;
   if(s==="pax")return `<div class="wz-step">${qn(4)}<h2>Combien de voyageurs ?</h2>
