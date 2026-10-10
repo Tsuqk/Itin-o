@@ -352,6 +352,32 @@ a.btn.primary{color:var(--sea-ink)}
 .planner-h{padding-block:72px 6px;display:grid;gap:10px}
 .planner-h h2{font-size:clamp(30px,4.2vw,46px);letter-spacing:-.028em}
 .planner-h p{margin:0;color:var(--muted);font-size:17px}
+
+/* ---------- Compte et voyages enregistrés ---------- */
+.nav-act{display:flex;align-items:center;gap:8px}
+#authSlot{display:flex;gap:8px}
+.avatar{width:38px;height:38px;padding:0;justify-content:center;border-radius:50%;background:var(--sun);border-color:var(--sun);color:var(--sun-ink);font-family:var(--f-display);font-size:16px}
+@media (max-width:560px){.nav-act>a.btn{display:none}#authSlot .btn span.hide-sm{display:none}}
+.modal{position:fixed;inset:0;z-index:50;background:color-mix(in srgb,#0B1620 55%,transparent);display:grid;place-items:center;padding:16px}
+.modal-card{position:relative;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);color:var(--ink);border-radius:22px;padding:24px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);display:grid;gap:14px}
+.modal-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:var(--paper);cursor:pointer;font-size:20px;line-height:1}
+.modal-card h3{font-size:24px;letter-spacing:-.02em;padding-right:30px}
+.modal-card p{margin:0;color:var(--muted)}
+.modal-card .inp{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--paper);font-weight:600}
+.modal-card .btn{justify-content:center;padding:12px 16px}
+.msg{font-size:14px;font-weight:600;padding:10px 12px;border-radius:12px}
+.msg.ok{background:var(--good-soft);color:var(--good)}
+.msg.err{background:var(--warn-soft);color:var(--warn)}
+.trips{display:grid;gap:10px}
+.trip{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px}
+.trip .th{width:56px;height:56px;border-radius:12px;overflow:hidden;position:relative;background:var(--ink)}
+.trip .th svg{position:absolute;inset:0;width:100%;height:100%}
+.trip b{display:block;font-size:15px}
+.trip small{color:var(--muted);font-size:12px;font-weight:600}
+.trip .ta{grid-column:1/-1;display:flex;gap:6px}
+.trip .ta button{flex:1;padding:8px;font-size:13px}
+.btn.danger{border-color:var(--warn);color:var(--warn)}
+.btn.danger.sure{background:var(--warn);color:#fff}
 </style>
 </head>
 <body>
@@ -359,7 +385,7 @@ a.btn.primary{color:var(--sea-ink)}
 <header class="nav"><div class="lp nav-in">
   <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--sun)"/><path d="M7 19.5l17-7.5-3 9.5-4-2.5-2.5 4-1-5z" fill="var(--ink)"/></svg>Itinéo</a>
   <nav class="nav-links"><a href="#how">Comment ça marche</a><a href="#features">Fonctionnalités</a><a href="#dests">Destinations</a><a href="#faq">Questions</a></nav>
-  <a class="btn primary" href="#planner">Planifier mon voyage</a>
+  <div class="nav-act"><span id="authSlot"></span><a class="btn primary" href="#planner">Planifier mon voyage</a></div>
 </div></header>
 
 <section class="lp hero" id="top">
@@ -389,7 +415,7 @@ a.btn.primary{color:var(--sea-ink)}
 </section>
 
 <section class="lp sect" id="dests">
-  <div class="sect-h"><span class="eyebrow">Destinations</span><h2>14 villes prêtes à partir.</h2><p>Prix pour 5 jours, par personne, vols compris.</p></div>
+  <div class="sect-h"><span class="eyebrow">Destinations</span><h2 id="destCount">14 villes prêtes à partir.</h2><p>Prix pour 5 jours, par personne, vols compris.</p></div>
   <div class="drow" id="drow"></div>
 </section>
 
@@ -413,7 +439,7 @@ a.btn.primary{color:var(--sea-ink)}
   <div class="left">
     <div class="brandbar">
       <h2 style="font-size:20px">Votre plan</h2>
-      <div style="display:flex;gap:8px;align-items:center"><span class="toast" id="toast" hidden></span><button class="btn primary" id="copy" type="button"></button></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="toast" id="toast" hidden></span><button class="btn" id="save" type="button"></button><button class="btn primary" id="copy" type="button"></button></div>
     </div>
 
     <div id="cover"></div>
@@ -433,7 +459,13 @@ a.btn.primary{color:var(--sea-ink)}
   <aside class="mapcol"><div class="map" id="mapA"></div></aside>
 </div>
 
+<div class="modal" id="modal" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button type="button" class="modal-x" data-close aria-label="Fermer">×</button><div id="modalBody" style="display:grid;gap:14px"></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.0/dist/umd/supabase.js"></script>
 <script>
+/* ---------- Supabase : collez ici l'URL et la clé « anon public » de votre projet (Settings > API) ---------- */
+const SUPABASE_URL = "https://evrhuolamwdynouvixwu.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_UVRJr4OvqGfxF9pGGrH5Iw_oeI2fEhO";
 /* ---------- Icônes ---------- */
 const P={
 plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
@@ -602,13 +634,22 @@ function cover(k,dst,tag){
 /* ---------- Formulaire ---------- */
 $("#fields").innerHTML=`
 <label class="fld">${ic("plane")}<small>Départ</small><select id="origin">${ORIGINS.map((o,i)=>`<option value="${i}">${o[1]}</option>`).join("")}</select></label>
-<label class="fld">${ic("pin")}<small>Destination</small><select id="dest"><option value="auto">Au choix d'Itinéo</option>${Object.entries(D).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")}</select></label>
+<label class="fld">${ic("pin")}<small>Destination</small><select id="dest"></select></label>
 <label class="fld">${ic("cal")}<small>Mois</small><select id="month">${MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("")}</select></label>
 <label class="fld">${ic("clock")}<small>Jours</small><input id="days" type="number" min="2" max="21" value="5"></label>
 <label class="fld">${ic("users")}<small>Voyageurs</small><input id="pax" type="number" min="1" max="10" value="2"></label>
 <div class="fld">${ic("bed")}<small>Style</small><div class="seg" role="radiogroup" aria-label="Style">
   <label><input type="radio" name="style" id="st0" value="0"><span>Éco</span></label><label><input type="radio" name="style" id="st1" value="1" checked><span>Confort</span></label><label><input type="radio" name="style" id="st2" value="2"><span>Luxe</span></label></div></div>
 <label class="fld wide" style="grid-column:1/-1">${ic("wallet")}<span class="rv"><small>Budget total</small><b class="num" id="budgetOut"></b></span><input id="budget" type="range" min="300" max="10000" step="50" value="1400"></label>`;
+function buildDestOptions(){
+  const opts=Object.entries(D).map(([k,v])=>`<option value="${k}">${esc(v.n)}</option>`).join("");
+  const d=$("#dest"),h=$("#h-dest"),dv=d.value,hv=h.value;
+  d.innerHTML=`<option value="auto">Au choix d'Itinéo</option>`+opts;
+  h.innerHTML=`<option value="auto">Surprenez-moi</option>`+opts;
+  if(dv==="auto"||D[dv])d.value=dv;
+  if(hv==="auto"||D[hv])h.value=hv;
+}
+buildDestOptions();
 $("#interests").innerHTML=INTERESTS.map(([k,l])=>`<label style="--chip:var(--c-${k})"><input type="checkbox" id="in-${k}" value="${k}"${["culture","gastronomie"].includes(k)?" checked":""}><span>${ic(ICAT[k])}${l}</span></label>`).join("");
 $("#copy").innerHTML=ic("copy")+"Copier le plan";
 $("#tabs").innerHTML=[["itin","route","Itinéraire"],["budget","wallet","Budget"],["quand","cal","Quand partir"],["astuces","spark","Astuces"],["explorer","globe","Explorer"]].map(([id,i,l])=>`<a href="#${id}">${ic(i)}${l}</a>`).join("");
@@ -713,7 +754,7 @@ function render(){
   $("#budgetOut").textContent=eur(p.budget);
   try{localStorage.setItem(KEY,JSON.stringify(p))}catch(e){}
   const auto=p.dest==="auto";
-  const key=auto?(()=>{const r=rank(p),fit=r.filter(x=>x.total<=p.budget);return(fit.length?fit:r).sort((a,b)=>b.score-a.score)[0].k})():p.dest;
+  const key=auto?(()=>{const r=rank(p),fit=r.filter(x=>x.total<=p.budget);return(fit.length?fit:r).sort((a,b)=>b.score-a.score)[0].k})():(D[p.dest]?p.dest:Object.keys(D)[0]);
   const dst=D[key],o=ORIGINS[p.o],c=cost(dst,p),fits=c.total<=p.budget,saved=c.naiveTotal-c.total,hours=Math.round(p.days*1.25+dst.skip);
   if(state.key!==key||!state.plan||state.plan.days.length!==c.days.length)state.dayF=null;
   state.key=key;state.plan=c;
@@ -873,8 +914,10 @@ function miniMap(key,plan,id){
 function goPlanner(){document.getElementById("planner").scrollIntoView({behavior:"smooth"})}
 function landing(){
   const m0=(now.getMonth()+2)%12;
-  const P0={o:0,m:m0,dest:"lisbonne",days:5,pax:2,budget:1400,style:1,ints:["culture","gastronomie"]};
-  const L=cost(D.lisbonne,P0),Ls=L.naiveTotal-L.total,dl=D.lisbonne;
+  const hk=D.lisbonne?"lisbonne":Object.keys(D)[0];
+  const P0={o:0,m:m0,dest:hk,days:5,pax:2,budget:1400,style:1,ints:["culture","gastronomie"]};
+  const dl=D[hk],L=cost(dl,P0),Ls=L.naiveTotal-L.total,nD=Object.keys(D).length;
+  $("#destCount").textContent=`${nD} villes prêtes à partir.`;
   const all=Object.entries(D).map(([k,d])=>{const c=cost(d,P0);return{k,d,c,pct:(c.naiveTotal-c.total)/c.naiveTotal}});
   const avgPct=Math.round(all.reduce((s,x)=>s+x.pct,0)/all.length*100);
   const avgH=Math.round(all.reduce((s,x)=>s+5*1.25+x.d.skip,0)/all.length);
@@ -882,23 +925,26 @@ function landing(){
   $("#eb").innerHTML=ic("spark")+"Planificateur de vacances gratuit";
   $("#hs-l1").innerHTML=ic("pin")+"Où ?";$("#hs-l2").innerHTML=ic("cal")+"Quand ?";$("#hs-l3").innerHTML=ic("clock")+"Jours";
   $("#hs-btn").innerHTML="Planifier "+ic("route");
-  $("#h-dest").innerHTML=`<option value="auto">Surprenez-moi</option>`+Object.entries(D).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("");
-  $("#h-month").innerHTML=MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("");
-  $("#h-dest").value=$("#dest").value;$("#h-month").value=$("#month").value;$("#h-days").value=$("#days").value;
-  $("#hs").addEventListener("submit",e=>{e.preventDefault();
-    $("#dest").value=$("#h-dest").value;$("#month").value=$("#h-month").value;$("#days").value=Math.min(21,Math.max(2,+$("#h-days").value||5));
-    render();goPlanner()});
-  $("#proof").innerHTML=[[`-${avgPct} %`,"en moyenne sur la note"],[`~${avgH} h`,"gagnées sur place"],["14","destinations"]].map(([b,s])=>`<div><b class="num">${b}</b><small>${s}</small></div>`).join("");
+  if(!landing.bound){
+    landing.bound=true;
+    $("#h-month").innerHTML=MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("");
+    $("#h-dest").value=$("#dest").value;$("#h-month").value=$("#month").value;$("#h-days").value=$("#days").value;
+    $("#hs").addEventListener("submit",e=>{e.preventDefault();
+      $("#dest").value=$("#h-dest").value;$("#month").value=$("#h-month").value;$("#days").value=Math.min(21,Math.max(2,+$("#h-days").value||5));
+      render();goPlanner()});
+    $("#drow").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;$("#dest").value=b.dataset.go;render();goPlanner()});
+  }
+  $("#proof").innerHTML=[[`-${avgPct} %`,"en moyenne sur la note"],[`~${avgH} h`,"gagnées sur place"],[String(nD),"destinations"]].map(([b,s])=>`<div><b class="num">${b}</b><small>${s}</small></div>`).join("");
 
   /* Visuel du hero */
   const d2=L.days.find((d,i)=>i>0&&d.acts.length>1)||L.days[0],d2i=L.days.indexOf(d2);
   const goodM=dl.w.slice().sort((a,b)=>dl.s[a]-dl.s[b])[0];
   $("#heroVis").innerHTML=`
-    <div class="hv-post">${cover("lisbonne",dl,"h")}<div class="t"><span class="ctag">${ic("pin")}Portugal · CDG → LIS</span><h3>Lisbonne</h3><div class="ctags"><span class="ctag">${ic("clock")}5 jours</span><span class="ctag">${ic("users")}2</span></div></div></div>
+    <div class="hv-post">${cover(hk,dl,"h")}<div class="t"><span class="ctag">${ic("pin")}${esc(dl.c)} · CDG → ${dl.i}</span><h3>${esc(dl.n)}</h3><div class="ctags"><span class="ctag">${ic("clock")}5 jours</span><span class="ctag">${ic("users")}2</span></div></div></div>
     <div class="float f-sun">${ic("sun")}${MOIS[goodM]} : meilleur compromis</div>
     <div class="float f-save"><span class="bub">${ic("piggy")}</span><div><b class="num">-${eur(Ls)}</b><small>par rapport à sans plan</small></div></div>
     <div class="float f-day"><small>Jour ${d2i+1} · ${esc(d2.acts[0].q)}</small>${d2.acts.slice(0,3).map((a,i)=>`<div class="r"><span style="background:${DAYC[d2i%8]}">${i+1}</span>${esc(a.n)}</div>`).join("")}</div>
-    <div class="float f-map">${miniMap("lisbonne",L,"mm1")}</div>`;
+    <div class="float f-map">${miniMap(hk,L,"mm1")}</div>`;
 
   /* Étapes */
   $("#steps").innerHTML=[
@@ -913,7 +959,7 @@ function landing(){
   const mn=Math.min(...dl.s),mx=Math.max(...dl.s);
   const top3=rank(P0).sort((a,b)=>b.score-a.score).slice(0,3);
   $("#bento").innerHTML=`
-   <div class="tile t-map"><div class="tl-head"><span class="bub" style="background:var(--c-act)">${ic("route")}</span><h3>Itinéraire sur la carte</h3></div><p>Une couleur par jour, les visites regroupées par quartier.</p>${miniMap("lisbonne",L,"mm2")}</div>
+   <div class="tile t-map"><div class="tl-head"><span class="bub" style="background:var(--c-act)">${ic("route")}</span><h3>Itinéraire sur la carte</h3></div><p>Une couleur par jour, les visites regroupées par quartier.</p>${miniMap(hk,L,"mm2")}</div>
    <div class="tile t-bud"><div class="tl-head"><span class="bub" style="background:var(--c-log)">${ic("wallet")}</span><h3>Budget clair</h3></div>
      <div class="mdonut"><svg viewBox="0 0 96 96"><circle r="36" cx="48" cy="48" fill="none" stroke="var(--paper)" stroke-width="14"/>${arcs}</svg><ul>${Object.keys(L.opt).map(k=>`<li><i style="background:${CATS[k][2]}"></i>${CATS[k][0]}</li>`).join("")}</ul></div></div>
    <div class="tile t-mon"><div class="tl-head"><span class="bub" style="background:var(--good)">${ic("sun")}</span><h3>Le bon mois</h3></div>
@@ -927,12 +973,11 @@ function landing(){
   $("#drow").innerHTML=all.sort((a,b)=>a.c.total-b.c.total).map(x=>`<button type="button" class="post" data-go="${x.k}">${cover(x.k,x.d,"d")}
     <span class="badge">${x.d.w.includes(m0)?`<span>${ic("sun")}</span>`:""}${x.d.t.slice(0,2).map(t=>`<span>${ic(ICAT[t])}</span>`).join("")}</span>
     <span class="pi"><h4>${esc(x.d.n)}</h4><span class="pp"><span>${esc(x.d.c)}</span><span class="num">dès ${eur(x.c.total/2)}</span></span></span></button>`).join("");
-  $("#drow").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;$("#dest").value=b.dataset.go;render();goPlanner()});
 
   /* Bandeau comparatif */
   const seg=(o,tot)=>Object.keys(o).map(k=>`<span style="width:${o[k]/tot*100}%;background:${CATS[k][2]}"></span>`).join("");
   const naiveO={vol:L.opt.vol*1.32,log:L.opt.log*1.22,rep:L.opt.rep*1.28,tra:L.opt.tra*1.25+60,act:L.opt.act*1.18};
-  $("#band").innerHTML=`<div><h2>Le même voyage, deux prix.</h2><p>Lisbonne, 5 jours, 2 personnes, en ${MOIS[m0].toLowerCase()}.</p><div class="big num">-${eur(Ls)}</div></div>
+  $("#band").innerHTML=`<div><h2>Le même voyage, deux prix.</h2><p>${esc(dl.n)}, 5 jours, 2 personnes, en ${MOIS[m0].toLowerCase()}.</p><div class="big num">-${eur(Ls)}</div></div>
     <div class="bb">
       <div class="bb-row"><div class="lb"><span>Réservé au dernier moment</span><span class="num">${eur(L.naiveTotal)}</span></div><div class="bb-track">${seg(naiveO,L.naiveTotal)}</div></div>
       <div class="bb-row"><div class="lb"><span>Avec Itinéo</span><span class="num">${eur(L.total)}</span></div><div class="bb-track"><div style="display:flex;width:${L.total/L.naiveTotal*100}%">${seg(L.opt,L.total)}</div></div></div>
@@ -940,6 +985,137 @@ function landing(){
     </div>`;
 }
 landing();
+
+/* ---------- Supabase : comptes, voyages enregistrés, destinations ---------- */
+P.bookmark='<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>';
+P.mail='<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>';
+P.logout='<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>';
+P.trash='<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>';
+$("#save").innerHTML=ic("bookmark")+"Enregistrer";
+
+let sb=null,user=null,pendingSave=false;
+try{if(SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase)sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(e){sb=null}
+
+function showToast(msg,ok=true){const t=$("#toast");t.textContent=msg;t.style.color=ok?"var(--good)":"var(--warn)";t.hidden=false;clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.hidden=true,3000)}
+function openModal(html){$("#modalBody").innerHTML=html;$("#modal").hidden=false;const f=$("#modalBody input,#modalBody button");if(f)f.focus()}
+function closeModal(){$("#modal").hidden=true;$("#modalBody").innerHTML=""}
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal"||e.target.closest("[data-close]"))closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#modal").hidden)closeModal()});
+
+function renderAuth(){
+  const el=$("#authSlot");
+  if(!sb){el.innerHTML="";return}
+  el.innerHTML=user
+    ?`<button type="button" class="btn" data-act="trips">${ic("route")}<span class="hide-sm">Mes voyages</span></button><button type="button" class="btn avatar" data-act="account" title="${esc(user.email||"")}" aria-label="Mon compte">${esc((user.email||"?")[0].toUpperCase())}</button>`
+    :`<button type="button" class="btn" data-act="login">Se connecter</button>`;
+}
+
+function loginModal(reason){
+  openModal(`<h3 id="modalTitle">Connexion</h3>
+    <p>${reason?esc(reason)+" ":""}Recevez un lien de connexion par e-mail, sans mot de passe.</p>
+    <form id="loginForm" style="display:grid;gap:10px">
+      <label for="loginEmail" class="fld" style="background:none;padding:0;display:grid"><small>Adresse e-mail</small></label>
+      <input class="inp" id="loginEmail" type="email" required autocomplete="email" placeholder="vous@exemple.fr">
+      <button class="btn primary" type="submit">${ic("mail")}Recevoir mon lien</button>
+      <div id="loginMsg"></div>
+    </form>`);
+  $("#loginForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const email=$("#loginEmail").value.trim(),btn=e.target.querySelector("button");
+    btn.disabled=true;
+    const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
+    btn.disabled=false;
+    $("#loginMsg").innerHTML=error
+      ?`<div class="msg err">Envoi impossible : ${esc(error.message)}. Réessayez dans quelques minutes.</div>`
+      :`<div class="msg ok">Lien envoyé à ${esc(email)}. Ouvrez-le depuis votre boîte mail pour vous connecter.</div>`;
+  });
+}
+
+function accountModal(){
+  openModal(`<h3 id="modalTitle">Mon compte</h3><p>Connecté avec ${esc(user.email||"")}</p>
+    <button type="button" class="btn" data-act="trips">${ic("route")}Mes voyages</button>
+    <button type="button" class="btn danger" data-act="logout">${ic("logout")}Se déconnecter</button>`);
+}
+
+async function saveTrip(){
+  if(!sb){showToast("Sauvegarde disponible sur le site en ligne",false);return}
+  if(!user){pendingSave=true;loginModal("Connectez-vous pour enregistrer ce voyage.");return}
+  const p=readForm(),dst=D[state.key];
+  const params={...p,dest:state.key};
+  const {error}=await sb.from("trips").insert({title:`${dst.n} · ${MOIS[p.m]} · ${p.days} jours`,params,total:Math.round(state.plan.total)});
+  if(error)showToast("Enregistrement impossible : "+error.message,false);
+  else showToast("Voyage enregistré");
+}
+$("#save").addEventListener("click",saveTrip);
+
+async function tripsModal(){
+  openModal(`<h3 id="modalTitle">Mes voyages</h3><div class="trips" id="tripList"><p>Chargement…</p></div>`);
+  const {data,error}=await sb.from("trips").select("id,title,params,total,created_at").order("created_at",{ascending:false});
+  const box=$("#tripList");if(!box)return;
+  if(error){box.innerHTML=`<div class="msg err">Chargement impossible : ${esc(error.message)}</div>`;return}
+  if(!data.length){box.innerHTML=`<p>Aucun voyage pour l'instant. Préparez un plan puis cliquez sur « Enregistrer ».</p>`;return}
+  tripsCache=data;
+  box.innerHTML=data.map(t=>{const k=t.params&&t.params.dest,d=D[k];
+    return `<div class="trip" data-trip="${t.id}"><span class="th">${d?cover(k,d,"m"+t.id.slice(0,6)):""}</span>
+      <div style="min-width:0"><b>${esc(t.title)}</b><small>${t.total?eur(t.total)+" · ":""}enregistré le ${new Date(t.created_at).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"})}</small></div>
+      <div class="ta"><button type="button" class="btn primary" data-open="${t.id}">Ouvrir</button><button type="button" class="btn danger" data-del="${t.id}">${ic("trash")}Supprimer</button></div></div>`}).join("");
+}
+let tripsCache=[];
+
+function applyParams(p){
+  if(!p)return;
+  if(p.o!=null)$("#origin").value=p.o;
+  if(p.m!=null)$("#month").value=p.m;
+  if(p.dest&&D[p.dest])$("#dest").value=p.dest;
+  if(p.days)$("#days").value=p.days;
+  if(p.pax)$("#pax").value=p.pax;
+  if(p.budget)$("#budget").value=p.budget;
+  if(p.style!=null&&$("#st"+p.style))$("#st"+p.style).checked=true;
+  if(Array.isArray(p.ints))INTERESTS.forEach(([k])=>$("#in-"+k).checked=p.ints.includes(k));
+  render();
+}
+
+$("#modal").addEventListener("click",async e=>{
+  const op=e.target.closest("[data-open]");
+  if(op){const t=tripsCache.find(x=>x.id===op.dataset.open);closeModal();if(t){applyParams(t.params);goPlanner()}return}
+  const del=e.target.closest("[data-del]");
+  if(del){
+    if(!del.classList.contains("sure")){del.classList.add("sure");del.innerHTML=ic("trash")+"Confirmer";return}
+    del.disabled=true;
+    const {error}=await sb.from("trips").delete().eq("id",del.dataset.del);
+    if(error){del.disabled=false;showToast("Suppression impossible",false);return}
+    const row=del.closest(".trip");if(row)row.remove();
+    tripsCache=tripsCache.filter(x=>x.id!==del.dataset.del);
+    if(!tripsCache.length)$("#tripList").innerHTML=`<p>Aucun voyage pour l'instant.</p>`;
+  }
+});
+
+document.addEventListener("click",async e=>{
+  const a=e.target.closest("[data-act]");if(!a||!sb)return;
+  const act=a.dataset.act;
+  if(act==="login")loginModal();
+  else if(act==="account")accountModal();
+  else if(act==="trips")tripsModal();
+  else if(act==="logout"){await sb.auth.signOut();closeModal();showToast("Déconnecté")}
+});
+
+async function loadDestinations(){
+  const {data,error}=await sb.from("destinations").select("id,name,country,iata,flight_price,data").eq("active",true).order("position");
+  if(error||!data||!data.length)return; // on garde les destinations intégrées au site
+  Object.keys(D).forEach(k=>delete D[k]);
+  data.forEach(r=>{D[r.id]={...r.data,n:r.name,c:r.country,i:r.iata,f:Number(r.flight_price)}});
+  buildDestOptions();render();landing();
+}
+
+if(sb){
+  sb.auth.onAuthStateChange((event,session)=>{
+    user=session?session.user:null;renderAuth();
+    if(user&&pendingSave){pendingSave=false;closeModal();saveTrip()}
+    if(event==="SIGNED_IN"&&location.hash.includes("access_token"))history.replaceState(null,"",location.pathname);
+  });
+  loadDestinations().catch(()=>{});
+}
+renderAuth();
 </script>
 
 </body>
