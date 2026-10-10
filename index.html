@@ -52,7 +52,8 @@ button,input,select{font:inherit;color:inherit}
 }
 
 /* Barre de marque */
-.brandbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brandbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brandbar>div{flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--f-display);font-weight:800;font-size:21px}
 .brand svg{width:28px;height:28px}
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:14px;cursor:pointer}
@@ -378,13 +379,31 @@ a.btn.primary{color:var(--sea-ink)}
 .trip .ta button{flex:1;padding:8px;font-size:13px}
 .btn.danger{border-color:var(--warn);color:var(--warn)}
 .btn.danger.sure{background:var(--warn);color:#fff}
+
+/* ---------- Tarifs / Premium ---------- */
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:880px}
+@media (max-width:720px){.plans{grid-template-columns:minmax(0,1fr)}}
+.plan{position:relative;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;display:grid;gap:18px;align-content:start}
+.plan.pro{border:2px solid var(--sun)}
+.plan .ribbon{position:absolute;top:-13px;right:22px;background:var(--sun);color:var(--sun-ink);font-size:12px;font-weight:800;padding:4px 11px;border-radius:999px}
+.plan h3{font-size:22px}
+.plan .price{font-family:var(--f-display);font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.plan .price small{font-size:15px;font-weight:600;color:var(--muted);font-family:var(--f-body);letter-spacing:0}
+.plan ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.plan li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;font-size:15px}
+.plan li .ic{color:var(--good);margin-top:2px}
+.plan .btn{justify-content:center;padding:13px 16px;font-size:15px}
+.plan .btn.sun{background:var(--sun);border-color:var(--sun);color:var(--sun-ink)}
+.plan .btn[disabled]{opacity:.65;cursor:default}
+.badge-pro{display:inline-flex;align-items:center;gap:4px;background:var(--sun);color:var(--sun-ink);font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;justify-self:start}
+.avatar.pro{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--sun)}
 </style>
 </head>
 <body>
 
 <header class="nav"><div class="lp nav-in">
   <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--sun)"/><path d="M7 19.5l17-7.5-3 9.5-4-2.5-2.5 4-1-5z" fill="var(--ink)"/></svg>Itinéo</a>
-  <nav class="nav-links"><a href="#how">Comment ça marche</a><a href="#features">Fonctionnalités</a><a href="#dests">Destinations</a><a href="#faq">Questions</a></nav>
+  <nav class="nav-links"><a href="#how">Comment ça marche</a><a href="#features">Fonctionnalités</a><a href="#dests">Destinations</a><a href="#premium">Tarifs</a><a href="#faq">Questions</a></nav>
   <div class="nav-act"><span id="authSlot"></span><a class="btn primary" href="#planner">Planifier mon voyage</a></div>
 </div></header>
 
@@ -421,10 +440,15 @@ a.btn.primary{color:var(--sea-ink)}
 
 <section class="lp sect"><div class="band" id="band"></div></section>
 
+<section class="lp sect" id="premium">
+  <div class="sect-h"><span class="eyebrow">Tarifs</span><h2>Gratuit pour planifier. Premium pour aller plus loin.</h2></div>
+  <div class="plans" id="plans"></div>
+</section>
+
 <section class="lp sect" id="faq">
   <div class="sect-h"><span class="eyebrow">Questions</span><h2>Bon à savoir</h2></div>
   <div class="faq">
-    <details><summary>Itinéo est-il gratuit ?</summary><p>Oui, sans inscription et sans publicité.</p></details>
+    <details><summary>Itinéo est-il gratuit ?</summary><p>Oui, la planification est gratuite et sans publicité. L'abonnement Premium est facultatif et résiliable à tout moment depuis votre compte.</p></details>
     <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des moyennes 2026 pour comparer et planifier. Le prix final dépend du moment où vous réservez.</p></details>
     <details><summary>Itinéo réserve-t-il à ma place ?</summary><p>Non. Itinéo vous dit quoi réserver et quand. Vous réservez où vous voulez.</p></details>
     <details><summary>Mes réglages sont-ils gardés ?</summary><p>Oui, dans votre navigateur uniquement. Rien n'est envoyé ailleurs.</p></details>
@@ -466,6 +490,9 @@ a.btn.primary{color:var(--sea-ink)}
 /* ---------- Supabase : collez ici l'URL et la clé « anon public » de votre projet (Settings > API) ---------- */
 const SUPABASE_URL = "https://evrhuolamwdynouvixwu.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_UVRJr4OvqGfxF9pGGrH5Iw_oeI2fEhO";
+/* ---------- Premium : le prix réel se règle dans Stripe, gardez ce texte identique ---------- */
+const PREMIUM_PRICE = "4,99 €";
+const PREMIUM_PERKS = ["Tout ce qui est inclus dans l'offre gratuite","Accès en avant-première aux nouvelles fonctionnalités","Badge Premium sur votre compte","Soutien direct au développement d'Itinéo"];
 /* ---------- Icônes ---------- */
 const P={
 plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
@@ -993,7 +1020,7 @@ P.logout='<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9
 P.trash='<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>';
 $("#save").innerHTML=ic("bookmark")+"Enregistrer";
 
-let sb=null,user=null,pendingSave=false;
+let sb=null,user=null,pendingSave=false,profile=null;
 try{if(SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase)sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(e){sb=null}
 
 function showToast(msg,ok=true){const t=$("#toast");t.textContent=msg;t.style.color=ok?"var(--good)":"var(--warn)";t.hidden=false;clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.hidden=true,3000)}
@@ -1006,7 +1033,7 @@ function renderAuth(){
   const el=$("#authSlot");
   if(!sb){el.innerHTML="";return}
   el.innerHTML=user
-    ?`<button type="button" class="btn" data-act="trips">${ic("route")}<span class="hide-sm">Mes voyages</span></button><button type="button" class="btn avatar" data-act="account" title="${esc(user.email||"")}" aria-label="Mon compte">${esc((user.email||"?")[0].toUpperCase())}</button>`
+    ?`<button type="button" class="btn" data-act="trips">${ic("route")}<span class="hide-sm">Mes voyages</span></button><button type="button" class="btn avatar${profile&&profile.is_premium?" pro":""}" data-act="account" title="${esc(user.email||"")}" aria-label="Mon compte">${esc((user.email||"?")[0].toUpperCase())}</button>`
     :`<button type="button" class="btn" data-act="login">Se connecter</button>`;
 }
 
@@ -1032,7 +1059,11 @@ function loginModal(reason){
 }
 
 function accountModal(){
+  const pro=profile&&profile.is_premium,end=profile&&profile.current_period_end?new Date(profile.current_period_end).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):"";
   openModal(`<h3 id="modalTitle">Mon compte</h3><p>Connecté avec ${esc(user.email||"")}</p>
+    ${pro?`<span class="badge-pro">${ic("spark")}Premium</span>${end?`<p>Prochain renouvellement le ${end}</p>`:""}
+      <button type="button" class="btn" data-act="portal">${ic("wallet")}Gérer mon abonnement</button>`
+      :`<button type="button" class="btn primary" data-act="upgrade">${ic("spark")}Passer Premium · ${PREMIUM_PRICE}/mois</button>`}
     <button type="button" class="btn" data-act="trips">${ic("route")}Mes voyages</button>
     <button type="button" class="btn danger" data-act="logout">${ic("logout")}Se déconnecter</button>`);
 }
@@ -1097,7 +1128,53 @@ document.addEventListener("click",async e=>{
   else if(act==="account")accountModal();
   else if(act==="trips")tripsModal();
   else if(act==="logout"){await sb.auth.signOut();closeModal();showToast("Déconnecté")}
+  else if(act==="upgrade")goPremium(a,"/api/checkout");
+  else if(act==="portal")goPremium(a,"/api/portal");
 });
+
+/* ---------- Premium (Stripe) ---------- */
+function renderPlans(){
+  const pro=profile&&profile.is_premium;
+  const free=["Itinéraire jour par jour sur la carte","Budget détaillé et meilleur mois pour partir","Comparateur des destinations","Voyages enregistrés avec un compte gratuit"];
+  const li=t=>`<li>${ic("check")}<span>${esc(t)}</span></li>`;
+  $("#plans").innerHTML=`
+    <div class="plan"><h3>Gratuit</h3><div class="price">0 €<small> pour toujours</small></div><ul>${free.map(li).join("")}</ul><a class="btn" href="#planner">Commencer</a></div>
+    <div class="plan pro"><span class="ribbon">Premium</span><h3>Premium</h3><div class="price">${esc(PREMIUM_PRICE)}<small> / mois</small></div><ul>${PREMIUM_PERKS.map(li).join("")}</ul>
+      ${pro?`<button type="button" class="btn sun" data-act="portal">${ic("check")}Vous êtes Premium · gérer</button>`:`<button type="button" class="btn sun" data-act="upgrade">${ic("spark")}Passer Premium</button>`}
+      <small style="color:var(--muted);font-size:12px">Paiement sécurisé par Stripe. Résiliable à tout moment.</small></div>`;
+}
+
+async function loadProfile(){
+  profile=null;
+  if(sb&&user){const {data}=await sb.from("profiles").select("is_premium,subscription_status,current_period_end").maybeSingle();profile=data||null}
+  renderAuth();renderPlans();
+}
+
+async function goPremium(btn,path){
+  if(!sb)return;
+  if(!user){loginModal(path==="/api/checkout"?"Connectez-vous pour passer Premium.":"");return}
+  const label=btn.innerHTML;btn.disabled=true;btn.textContent="Redirection vers Stripe…";
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    const r=await fetch(path,{method:"POST",headers:{Authorization:"Bearer "+(session?session.access_token:"")}});
+    let body=null;try{body=await r.json()}catch(e){}
+    if(!r.ok||!body||!body.url)throw new Error(body&&body.error?body.error:"Le paiement est disponible uniquement sur le site Vercel (itineo-beryl.vercel.app).");
+    location.href=body.url;
+  }catch(e){
+    btn.disabled=false;btn.innerHTML=label;
+    openModal(`<h3 id="modalTitle">Paiement indisponible</h3><div class="msg err">${esc(e.message)}</div>`);
+  }
+}
+
+renderPlans();
+const premiumParam=new URLSearchParams(location.search).get("premium");
+if(premiumParam){
+  history.replaceState(null,"",location.pathname+location.hash);
+  if(premiumParam==="ok"){
+    openModal(`<h3 id="modalTitle">Paiement réussi</h3><p>Merci ! Votre compte passe en Premium dans quelques secondes.</p><button type="button" class="btn primary" data-close>Continuer</button>`);
+    let tries=0;const poll=setInterval(async()=>{tries++;if(user)await loadProfile();if((profile&&profile.is_premium)||tries>8)clearInterval(poll)},2500);
+  }else openModal(`<h3 id="modalTitle">Paiement annulé</h3><p>Aucun montant n'a été débité. Vous pouvez passer Premium quand vous voulez.</p><button type="button" class="btn" data-close>Fermer</button>`);
+}
 
 async function loadDestinations(){
   const {data,error}=await sb.from("destinations").select("id,name,country,iata,flight_price,data").eq("active",true).order("position");
@@ -1109,7 +1186,7 @@ async function loadDestinations(){
 
 if(sb){
   sb.auth.onAuthStateChange((event,session)=>{
-    user=session?session.user:null;renderAuth();
+    user=session?session.user:null;renderAuth();setTimeout(loadProfile,0);
     if(user&&pendingSave){pendingSave=false;closeModal();saveTrip()}
     if(event==="SIGNED_IN"&&location.hash.includes("access_token"))history.replaceState(null,"",location.pathname);
   });
