@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Escale : des voyages planifiés au meilleur prix, sans perdre de temps sur place.">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Escale Vacances</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout : carnet de voyage à gauche (couverture, réglages, itinéraire), grande carte collante à droite ; sur mobile la carte s'insère sous la couverture. */
+:root{
+  --paper:#F2F5F7; --card:#FFFFFF; --ink:#13283B; --muted:#5F7183; --line:#DCE4EA;
+  --sea:#0E6E8E; --sea-ink:#FFFFFF; --sun:#F4B400; --sun-ink:#13283B; --sun-soft:#FFF4D1;
+  --good:#1C8556; --good-soft:#E2F4EA; --warn:#B9470F; --warn-soft:#FBE9DE; --bar:#C7D7E2;
+  --land:#E8EEE4; --grid:#D6DFD2; --park:#D3E5C8;
+  --c-vol:#2E86DE; --c-log:#6C5CE7; --c-rep:#F29E38; --c-tra:#14A3A3; --c-act:#E8505B;
+  --c-culture:#6C5CE7; --c-gastronomie:#F08A24; --c-plage:#1E9BD7; --c-nature:#2FA36B; --c-fete:#D9488F;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0B1620; --card:#12212F; --ink:#E6EDF3; --muted:#93A5B5; --line:#22374A;
+  --sea:#4DB2D3; --sea-ink:#06202B; --sun:#F6C445; --sun-ink:#13283B; --sun-soft:#2C2810;
+  --good:#4CC38A; --good-soft:#0F2C20; --warn:#F08A4B; --warn-soft:#33200F; --bar:#2A4A60;
+  --land:#142636; --grid:#1D3346; --park:#173426; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0B1620; --card:#12212F; --ink:#E6EDF3; --muted:#93A5B5; --line:#22374A;
+  --sea:#4DB2D3; --sea-ink:#06202B; --sun:#F6C445; --sun-ink:#13283B; --sun-soft:#2C2810;
+  --good:#4CC38A; --good-soft:#0F2C20; --warn:#F08A4B; --warn-soft:#33200F; --bar:#2A4A60;
+  --land:#142636; --grid:#1D3346; --park:#173426; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;line-height:1.1;text-wrap:balance}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:8px}
+.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.app{display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);min-height:100vh}
+.left{padding-inline:20px;padding-block:18px 60px;display:grid;gap:18px;align-content:start;min-width:0}
+.mapcol{position:sticky;top:env(safe-area-inset-top,0px);height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border-left:1px solid var(--line)}
+.mapinline{display:none}
+@media (max-width:980px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .mapcol{display:none}
+  .mapinline{display:block;height:340px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+}
+
+/* Barre de marque */
+.brandbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--f-display);font-weight:800;font-size:21px}
+.brand svg{width:28px;height:28px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:14px;cursor:pointer}
+.btn.primary{background:var(--sea);border-color:var(--sea);color:var(--sea-ink)}
+.toast{font-size:13px;color:var(--good)}
+
+/* Couverture */
+.cover{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/8.5;max-width:100%;background:var(--ink);color:#fff}
+.cover svg.art{position:absolute;inset:0;width:100%;height:100%}
+.cover-in{position:absolute;inset:auto 0 0 0;padding:20px;display:grid;gap:10px}
+.cover h1{font-size:clamp(34px,7vw,56px);font-weight:800;letter-spacing:-.03em;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.cover .ctry{font-size:14px;font-weight:600;opacity:.9;display:flex;align-items:center;gap:6px}
+.ctags{display:flex;gap:6px;flex-wrap:wrap}
+.ctag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28);padding:5px 10px;border-radius:999px;font-size:13px;font-weight:600}
+.ctag .ic{width:15px;height:15px}
+.cover .auto{position:absolute;top:14px;left:14px}
+.cover .price{position:absolute;top:14px;right:14px;background:#fff;color:#13283B;border-radius:16px;padding:8px 12px;text-align:right;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.cover .price b{display:block;font-family:var(--f-display);font-size:24px;line-height:1}
+.cover .price span{font-size:11px;font-weight:700;color:#5F7183}
+
+/* Réglages */
+.settings{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;display:grid;gap:10px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fld{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 8px;align-items:center;background:var(--paper);border-radius:12px;padding:8px 10px}
+.fld .ic{grid-row:span 2;color:var(--sea)}
+.fld small{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.fld select,.fld input[type=number]{border:0;background:transparent;padding:0;font-weight:700;width:100%;min-width:0}
+.fld.wide{grid-column:span 2}
+.fld input[type=range]{width:100%;accent-color:var(--sea);margin:2px 0 0}
+.fld .rv{display:flex;justify-content:space-between;align-items:center}
+.fld .rv b{font-size:14px}
+.seg{display:flex;gap:4px}
+.seg label{flex:1;cursor:pointer}
+.seg input,.chips input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;text-align:center;padding:5px 2px;border-radius:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.seg input:checked+span{background:var(--ink);color:var(--paper)}
+.seg input:focus-visible+span,.chips input:focus-visible+span{outline:3px solid var(--sun);outline-offset:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips label{cursor:pointer}
+.chips span{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)}
+.chips span .ic{width:15px;height:15px}
+.chips input:checked+span{background:var(--chip);border-color:var(--chip);color:#fff}
+
+/* Statistiques */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:6px}
+.stat .bub{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff}
+.stat b{font-family:var(--f-display);font-size:22px;line-height:1}
+.stat small{font-size:12px;color:var(--muted);font-weight:600}
+
+/* Onglets */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);display:flex;gap:4px;padding-block:8px;overflow-x:auto;scrollbar-width:none}
+.tabs a{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;font-weight:700;font-size:14px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.tabs a:hover{background:var(--card);color:var(--ink)}
+.tabs a .ic{width:16px;height:16px}
+
+section.sec{display:grid;gap:12px;scroll-margin-top:60px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sec-h h2{font-size:24px;letter-spacing:-.015em}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;min-width:0}
+
+/* Itinéraire */
+.day{display:grid;gap:8px}
+.day-h{display:flex;align-items:center;gap:10px;cursor:pointer;background:none;border:0;padding:0;text-align:left}
+.day-dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-family:var(--f-display)}
+.day-h h3{font-size:18px}
+.day-h small{display:block;color:var(--muted);font-size:12px;font-weight:600;font-family:var(--f-body)}
+.places{display:grid;gap:0;padding-left:16px;border-left:3px solid var(--dc);margin-left:16px}
+.place{display:grid;grid-template-columns:28px minmax(0,1fr) 64px;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.place:hover,.place.hl{border-color:var(--dc);box-shadow:0 4px 18px color-mix(in srgb,var(--dc) 25%,transparent)}
+.place .n{width:28px;height:28px;border-radius:50%;background:var(--dc);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.place h4{font-family:var(--f-body);font-size:15px;font-weight:700;line-height:1.25}
+.pmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--muted);background:var(--paper);border-radius:999px;padding:2px 8px}
+.tag .ic{width:13px;height:13px}
+.tag.free{color:var(--good);background:var(--good-soft)}
+.thumb{width:64px;height:64px;border-radius:12px;display:grid;place-items:center;color:#fff}
+.thumb .ic{width:28px;height:28px;stroke-width:1.8}
+.hop{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);padding:7px 0 7px 4px}
+.hop .ic{width:14px;height:14px}
+.empty{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px;background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:12px}
+
+/* Budget */
+.budget{display:grid;grid-template-columns:170px minmax(0,1fr);gap:20px;align-items:center}
+@media (max-width:520px){.budget{grid-template-columns:minmax(0,1fr);justify-items:center}}
+.donut{position:relative;width:170px;height:170px}
+.donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.donut .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.donut .mid b{font-family:var(--f-display);font-size:24px}
+.donut .mid small{font-size:11px;color:var(--muted);font-weight:700}
+.cats{display:grid;gap:8px;width:100%}
+.cat{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center}
+.cat .bub{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff}
+.cat .bub .ic{width:16px;height:16px}
+.cat .lbl{font-size:14px;font-weight:600}
+.cat .track{height:5px;border-radius:3px;background:var(--paper);margin-top:4px}
+.cat .track i{display:block;height:100%;border-radius:3px}
+.cat b{font-size:14px}
+.vs{display:grid;gap:8px;margin-top:16px}
+.vs-row{display:grid;grid-template-columns:90px minmax(0,1fr) 72px;gap:10px;align-items:center;font-size:13px;font-weight:700}
+.vs-bar{height:22px;border-radius:7px;background:var(--bar)}
+.vs-bar.opt{background:var(--good)}
+.vs-row .num{text-align:right}
+.fixes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.fix{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:12px;border:1px solid var(--warn);background:var(--warn-soft);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer}
+.fix b{color:var(--warn)}
+.okmsg{display:flex;align-items:center;gap:8px;margin-top:14px;padding:10px 12px;border-radius:12px;background:var(--good-soft);font-size:14px;font-weight:600}
+.okmsg .ic{color:var(--good)}
+
+/* Mois et réservation */
+.months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px;height:140px}
+.mcol{display:grid;grid-template-rows:auto 1fr auto;gap:5px;cursor:pointer;background:none;border:0;padding:0;height:100%}
+.mcol .w{display:grid;place-items:center;height:16px;color:var(--sun)}
+.mcol .w .ic{width:15px;height:15px}
+.mcol .w.off{color:var(--muted);opacity:.5}
+.mwrap{display:flex;align-items:flex-end}
+.mbar{width:100%;border-radius:7px 7px 3px 3px;background:var(--bar)}
+.mcol.cheap .mbar{background:var(--good)}
+.mcol.sel .mbar{background:var(--sun)}
+.mcol span.l{font-size:11px;font-weight:700;color:var(--muted);text-align:center}
+.mcol.sel span.l{color:var(--ink)}
+.timeline{position:relative;height:74px;margin:22px 8px 4px}
+.tl-line{position:absolute;left:0;right:0;top:30px;height:4px;border-radius:2px;background:var(--line)}
+.tl-win{position:absolute;top:26px;height:12px;border-radius:6px;background:var(--good)}
+.tl-pt{position:absolute;top:0;transform:translateX(-50%);display:grid;justify-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--muted);text-align:center;white-space:nowrap}
+.tl-pt .dot{width:16px;height:16px;border-radius:50%;border:3px solid var(--card);background:var(--ink);margin-top:22px;box-shadow:0 0 0 1px var(--line)}
+.tl-pt.top{top:-26px}
+.tl-pt.top .dot{margin-top:22px}
+.tl-pt b{color:var(--ink);font-size:12px}
+.chipsrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ichip{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:12px;background:var(--paper);font-size:13px;font-weight:600}
+.ichip .ic{color:var(--sea);width:16px;height:16px}
+
+/* Astuces */
+.tips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.tips{grid-template-columns:minmax(0,1fr)}}
+.tip{display:grid;grid-template-columns:34px minmax(0,1fr) 20px;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;cursor:pointer;font-size:14px}
+.tip .bub{width:34px;height:34px;border-radius:10px;display:grid;place-items:center}
+.tip.money .bub{background:var(--good-soft);color:var(--good)}
+.tip.time .bub{background:var(--sun-soft);color:var(--ink)}
+.tip input{accent-color:var(--good);width:18px;height:18px}
+.tip:has(input:checked){opacity:.55}
+.tip:has(input:checked) span{text-decoration:line-through}
+
+/* Explorer */
+.explore{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.post{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/5;max-width:100%;cursor:pointer;border:0;padding:0;color:#fff;text-align:left;background:var(--ink)}
+.post svg.art{position:absolute;inset:0;width:100%;height:100%}
+.post .pi{position:absolute;inset:auto 0 0 0;padding:12px;display:grid;gap:4px}
+.post h4{font-size:19px;text-shadow:0 1px 10px rgba(0,0,0,.4)}
+.post .pp{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700}
+.post .badge{position:absolute;top:10px;left:10px;display:flex;gap:4px}
+.post .badge span{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.92);color:#13283B}
+.post .badge .ic{width:15px;height:15px}
+.post .ok{position:absolute;top:10px;right:10px;font-size:11px;font-weight:800;padding:4px 8px;border-radius:999px}
+.post .ok.y{background:var(--good);color:#fff}
+.post .ok.n{background:rgba(0,0,0,.45);color:#fff}
+.post.cur{outline:3px solid var(--sun);outline-offset:2px}
+
+/* Carte */
+.map{position:relative;width:100%;height:100%;background:var(--land);overflow:hidden}
+.map svg{width:100%;height:100%;display:block}
+.map-top{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:2}
+.map-top button{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--card);color:var(--ink);padding:6px 11px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.map-top button i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.map-top button.on{background:var(--ink);color:var(--paper)}
+.map-note{position:absolute;bottom:12px;right:12px;z-index:2;background:var(--card);border-radius:12px;padding:7px 11px;font-size:12px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.12);display:flex;align-items:center;gap:6px}
+.pin{cursor:pointer}
+.pin.hl .body{stroke:var(--ink);stroke-width:3}
+.qlabel{font-family:var(--f-body);font-weight:800;letter-spacing:.12em;text-transform:uppercase;fill:var(--muted);opacity:.85}
+footer{font-size:12px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.place,.post{transition:transform .15s,box-shadow .15s,border-color .15s}.post:hover{transform:translateY(-3px)}}
+
+/* ---------- Landing page ---------- */
+.lp{max-width:1200px;margin:0 auto;padding-inline:20px}
+a.btn{text-decoration:none;color:inherit}
+a.btn.primary{color:var(--sea-ink)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:16px}
+.nav .brand{text-decoration:none;color:var(--ink)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--muted);font-weight:600;text-decoration:none;font-size:14px}
+.nav-links a:hover{color:var(--ink)}
+@media (max-width:820px){.nav-links{display:none}}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--sea);background:color-mix(in srgb,var(--sea) 12%,transparent);padding:6px 12px;border-radius:999px;justify-self:start}
+.eyebrow .ic{width:15px;height:15px}
+
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center;padding-block:32px 72px}
+@media (max-width:920px){.hero{grid-template-columns:minmax(0,1fr);gap:36px}}
+.hero h1{font-size:clamp(40px,6vw,74px);font-weight:800;letter-spacing:-.037em;line-height:1.02;margin:18px 0 18px}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--sun) 62%);padding-inline:4px}
+.lead{font-size:19px;color:var(--muted);max-width:44ch;margin:0 0 26px}
+.search{display:grid;grid-template-columns:1.4fr 1fr .7fr auto;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:7px;box-shadow:0 14px 40px -14px color-mix(in srgb,var(--ink) 30%,transparent)}
+.search label{display:grid;gap:1px;padding:7px 12px;border-radius:14px;cursor:pointer;min-width:0}
+.search label:hover{background:var(--paper)}
+.search small{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:5px}
+.search small .ic{width:13px;height:13px;color:var(--sea)}
+.search select,.search input{border:0;background:transparent;font-weight:700;padding:0;width:100%;min-width:0}
+.search button{border:0;border-radius:14px;background:var(--sea);color:var(--sea-ink);font-weight:800;padding:0 22px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+@media (max-width:560px){.search{grid-template-columns:1fr 1fr}.search label:first-child{grid-column:1/-1}.search button{grid-column:1/-1;padding:14px}}
+.proof{display:flex;gap:30px;flex-wrap:wrap;margin-top:28px}
+.proof div{display:grid;gap:2px}
+.proof b{font-family:var(--f-display);font-size:30px;line-height:1;letter-spacing:-.02em}
+.proof small{color:var(--muted);font-size:13px;font-weight:600}
+
+.hv{position:relative;width:100%;max-width:560px;aspect-ratio:1/1.02;justify-self:center}
+.hv-post{position:absolute;inset:5% 6% 17% 8%;border-radius:28px;overflow:hidden;color:#fff;box-shadow:0 30px 60px -22px rgba(16,38,58,.5);transform:rotate(-2.5deg);background:#13283B}
+.hv-post svg.art{position:absolute;inset:0;width:100%;height:100%}
+.hv-post .t{position:absolute;left:24px;bottom:22px;display:grid;gap:6px}
+.hv-post h3{font-size:clamp(34px,5vw,48px);font-weight:800;letter-spacing:-.03em;text-shadow:0 2px 16px rgba(0,0,0,.35)}
+.float{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 40px -14px rgba(16,38,58,.35);padding:12px}
+.f-map{right:0;bottom:3%;width:52%;padding:6px}
+.f-map svg{display:block;width:100%;height:auto;border-radius:13px}
+.f-save{left:0;top:12%;display:flex;gap:10px;align-items:center}
+.f-save .bub{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--good);color:#fff}
+.f-save b{font-family:var(--f-display);font-size:22px;display:block;line-height:1;color:var(--good)}
+.f-save small,.f-day small{font-size:12px;color:var(--muted);font-weight:600}
+.f-day{left:1%;bottom:0;width:45%;display:grid;gap:7px}
+.f-day .r{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:center;font-size:13px;font-weight:700;line-height:1.2}
+.f-day .r span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800}
+.f-sun{right:3%;top:0;display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700}
+.f-sun .ic{color:var(--sun)}
+@media (max-width:560px){.float{padding:9px;border-radius:14px}.f-save b{font-size:18px}.f-day .r{font-size:12px}.f-sun{font-size:12px}}
+@media (prefers-reduced-motion:no-preference){.float{animation:bob 6s ease-in-out infinite}.f-day{animation-delay:-2s}.f-map{animation-delay:-4s}.f-sun{animation-delay:-1s}
+  @keyframes bob{0%,100%{translate:0 0}50%{translate:0 -7px}}}
+
+.sect{padding-block:64px}
+.sect-h{display:grid;gap:12px;margin-bottom:30px;max-width:660px}
+.sect-h h2{font-size:clamp(30px,4.2vw,46px);letter-spacing:-.028em}
+.sect-h p{color:var(--muted);font-size:17px;margin:0}
+
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:s}
+@media (max-width:820px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:12px;align-content:start}
+.step-top{display:flex;justify-content:space-between;align-items:center}
+.step .bub{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;color:#fff}
+.step .bub .ic{width:24px;height:24px}
+.step .no{font-family:var(--f-display);font-size:40px;font-weight:800;color:var(--line);line-height:1}
+.step h3{font-size:21px}
+.step p{margin:0;color:var(--muted)}
+.step .mini{display:flex;gap:6px;flex-wrap:wrap}
+
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:20px;display:grid;gap:14px;align-content:start;min-width:0;overflow:hidden}
+.tile h3{font-size:21px}
+.tile p{margin:0;color:var(--muted);font-size:14px}
+.tile .tl-head{display:flex;align-items:center;gap:10px}
+.tile .tl-head .bub{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff}
+.t-map{grid-column:span 4;grid-row:span 2}
+.t-map svg{width:100%;height:auto;border-radius:16px;display:block}
+.t-bud,.t-mon{grid-column:span 2}
+.t-tip,.t-cmp{grid-column:span 3}
+@media (max-width:900px){.bento{grid-template-columns:minmax(0,1fr)}.bento .tile{grid-column:auto;grid-row:auto}}
+.mdonut{display:flex;align-items:center;gap:14px}
+.mdonut svg{width:96px;height:96px;transform:rotate(-90deg);flex:none}
+.mdonut ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:13px;font-weight:600}
+.mdonut li{display:flex;align-items:center;gap:6px}
+.mdonut li i{width:9px;height:9px;border-radius:3px}
+.mmonths{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;align-items:end;height:90px}
+.mmonths span{border-radius:5px 5px 2px 2px;background:var(--bar)}
+.mmonths span.g{background:var(--good)}
+.mmonths span.s{background:var(--sun)}
+.cmp-l{display:grid;gap:8px}
+.cmp-l div{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;font-weight:700;font-size:14px}
+.cmp-l .th{width:40px;height:40px;border-radius:10px;overflow:hidden;position:relative}
+.cmp-l .th svg{position:absolute;inset:0;width:100%;height:100%}
+
+.drow{display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.drow .post{flex:0 0 210px;scroll-snap-align:start}
+
+.band{background:var(--ink);color:var(--paper);border-radius:30px;padding:clamp(24px,4vw,44px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:36px;align-items:center}
+@media (max-width:820px){.band{grid-template-columns:minmax(0,1fr)}}
+.band h2{font-size:clamp(28px,4vw,42px);letter-spacing:-.025em}
+.band p{opacity:.75;margin:12px 0 0}
+.band .big{font-family:var(--f-display);font-size:clamp(44px,7vw,72px);font-weight:800;color:var(--sun);line-height:1;letter-spacing:-.03em;margin-top:18px}
+.bb{display:grid;gap:14px}
+.bb-row{display:grid;gap:6px}
+.bb-row .lb{display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.bb-track{height:30px;border-radius:9px;background:color-mix(in srgb,var(--paper) 14%,transparent);overflow:hidden;display:flex}
+.bb-track span{display:block;height:100%}
+.bb-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;font-weight:600;opacity:.85}
+.bb-legend span{display:inline-flex;align-items:center;gap:5px}
+.bb-legend i{width:9px;height:9px;border-radius:3px}
+
+.faq{display:grid;gap:10px;max-width:780px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.faq summary{font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:20px;line-height:1;color:var(--sea)}
+.faq details[open] summary::after{content:"–"}
+.faq p{color:var(--muted);margin:10px 0 0}
+
+.cta{background:var(--sea);color:var(--sea-ink);border-radius:30px;padding:clamp(28px,5vw,56px);display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cta h2{font-size:clamp(28px,4.4vw,48px);letter-spacing:-.03em;max-width:18ch}
+.cta a{background:var(--sun);color:var(--sun-ink);border-color:var(--sun);padding:14px 22px;font-size:16px}
+.planner-h{padding-block:72px 6px;display:grid;gap:10px}
+.planner-h h2{font-size:clamp(30px,4.2vw,46px);letter-spacing:-.028em}
+.planner-h p{margin:0;color:var(--muted);font-size:17px}
+</style>
+</head>
+<body>
+
+<header class="nav"><div class="lp nav-in">
+  <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--sun)"/><path d="M7 19.5l17-7.5-3 9.5-4-2.5-2.5 4-1-5z" fill="var(--ink)"/></svg>Escale</a>
+  <nav class="nav-links"><a href="#how">Comment ça marche</a><a href="#features">Fonctionnalités</a><a href="#dests">Destinations</a><a href="#faq">Questions</a></nav>
+  <a class="btn primary" href="#planner">Planifier mon voyage</a>
+</div></header>
+
+<section class="lp hero" id="top">
+  <div>
+    <span class="eyebrow" id="eb"></span>
+    <h1>Des voyages planifiés <em>au meilleur prix</em>, sans perdre de temps sur place.</h1>
+    <p class="lead">Itinéraire jour par jour, carte, budget et meilleur moment pour réserver. En 30 secondes, gratuitement.</p>
+    <form class="search" id="hs" autocomplete="off">
+      <label><small id="hs-l1"></small><select id="h-dest"></select></label>
+      <label><small id="hs-l2"></small><select id="h-month"></select></label>
+      <label><small id="hs-l3"></small><input id="h-days" type="number" min="2" max="21" value="5"></label>
+      <button type="submit" id="hs-btn"></button>
+    </form>
+    <div class="proof" id="proof"></div>
+  </div>
+  <div class="hv" id="heroVis"></div>
+</section>
+
+<section class="lp sect" id="how">
+  <div class="sect-h"><span class="eyebrow">Comment ça marche</span><h2>Trois étapes, zéro tableur.</h2></div>
+  <div class="steps" id="steps"></div>
+</section>
+
+<section class="lp sect" id="features">
+  <div class="sect-h"><span class="eyebrow">Fonctionnalités</span><h2>Tout votre voyage sur un seul écran.</h2></div>
+  <div class="bento" id="bento"></div>
+</section>
+
+<section class="lp sect" id="dests">
+  <div class="sect-h"><span class="eyebrow">Destinations</span><h2>14 villes prêtes à partir.</h2><p>Prix pour 5 jours, par personne, vols compris.</p></div>
+  <div class="drow" id="drow"></div>
+</section>
+
+<section class="lp sect"><div class="band" id="band"></div></section>
+
+<section class="lp sect" id="faq">
+  <div class="sect-h"><span class="eyebrow">Questions</span><h2>Bon à savoir</h2></div>
+  <div class="faq">
+    <details><summary>Escale est-il gratuit ?</summary><p>Oui, sans inscription et sans publicité.</p></details>
+    <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des moyennes 2026 pour comparer et planifier. Le prix final dépend du moment où vous réservez.</p></details>
+    <details><summary>Escale réserve-t-il à ma place ?</summary><p>Non. Escale vous dit quoi réserver et quand. Vous réservez où vous voulez.</p></details>
+    <details><summary>Mes réglages sont-ils gardés ?</summary><p>Oui, dans votre navigateur uniquement. Rien n'est envoyé ailleurs.</p></details>
+  </div>
+</section>
+
+<section class="lp sect"><div class="cta"><h2>Votre prochain voyage commence ici.</h2><a class="btn" href="#planner" id="cta-btn">Planifier mon voyage</a></div></section>
+
+<div class="lp planner-h" id="planner"><span class="eyebrow">Planificateur</span><h2>Construisez votre voyage</h2><p>Changez un réglage, tout se recalcule.</p></div>
+
+<div class="app">
+  <div class="left">
+    <div class="brandbar">
+      <h2 style="font-size:20px">Votre plan</h2>
+      <div style="display:flex;gap:8px;align-items:center"><span class="toast" id="toast" hidden></span><button class="btn primary" id="copy" type="button"></button></div>
+    </div>
+
+    <div id="cover"></div>
+
+    <form class="settings" id="f" autocomplete="off">
+      <div class="fields" id="fields"></div>
+      <div class="chips" id="interests"></div>
+    </form>
+
+    <div class="mapinline" id="mapB"></div>
+    <div id="stats"></div>
+
+    <nav class="tabs" id="tabs"></nav>
+    <div id="body" style="display:grid;gap:28px"></div>
+    <footer>Estimations 2026 en euros, à comparer et planifier. Vérifiez le tarif final avant de réserver.</footer>
+  </div>
+  <aside class="mapcol"><div class="map" id="mapA"></div></aside>
+</div>
+
+<script>
+/* ---------- Icônes ---------- */
+const P={
+plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+bed:'<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>',
+food:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
+bus:'<path d="M8 6v6M16 6v6M2 12h20M7 18h10M5 18a2 2 0 0 1-2-2V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2M7 18v2M17 18v2"/>',
+ticket:'<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zM13 5v2M13 17v2M13 11v2"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/>',
+users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+piggy:'<path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5zM2 9v1c0 1.1.9 2 2 2h1M16 11h.01"/>',
+walk:'<circle cx="13" cy="4" r="1.5"/><path d="M7 21l3-4M16 21l-2-4-3-3 1-6M6 12l2-3 4-1 3 3 3 1"/>',
+train:'<rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16M12 3v8M8 19l-2 3M18 22l-2-3M8 15h.01M16 15h.01"/>',
+culture:'<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/>',
+plage:'<path d="M22 12a10 10 0 0 0-20 0zM12 12v8a2 2 0 0 0 4 0M12 2v1"/>',
+nature:'<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>',
+fete:'<path d="M8 22h8M7 10h10M12 15v7M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5z"/>',
+pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+spark:'<path d="M12 3l1.9 5.8L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.2z"/>',
+check:'<path d="M20 6 9 17l-5-5"/>',
+copy:'<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+route:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+compass:'<circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3z"/>',
+globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>'
+};
+const ic=(n,cls="ic")=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
+
+/* ---------- Données ---------- */
+const MOIS=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const MC=["J","F","M","A","M","J","J","A","S","O","N","D"];
+const ORIGINS=[["CDG","Paris",1],["LYS","Lyon",1.1],["MRS","Marseille",1.05],["TLS","Toulouse",1.1],["NTE","Nantes",1.15],["BOD","Bordeaux",1.12],["NCE","Nice",1.08],["BRU","Bruxelles",1],["GVA","Genève",1.15]];
+const INTERESTS=[["culture","Culture"],["gastronomie","Gastronomie"],["plage","Plage"],["nature","Nature"],["fete","Sorties"]];
+const ICAT={culture:"culture",gastronomie:"food",plage:"plage",nature:"nature",fete:"fete"};
+const DAYC=["#E8505B","#2E86DE","#2FA36B","#F29E38","#8E5CD9","#D9488F","#14A3A3","#7A8B2C"];
+
+// a : [nom, quartier, envies, heures, prix/pers, [lat,lng]] · d : [hébergement, repas, transport, extras] × [éco, confort, premium] · p : couleurs de couverture
+const D={
+lisbonne:{n:"Lisbonne",c:"Portugal",i:"LIS",f:120,p:["#F7B267","#F4845F","#2B4162"],sea:1,s:[.8,.8,.9,1,1.05,1.2,1.35,1.4,1.1,.95,.8,.95],w:[3,4,5,6,7,8,9],t:["culture","gastronomie","plage","fete"],
+ d:[[28,60,130],[22,40,80],[6,10,25],[6,12,30]],skip:2,
+ a:[["Alfama et château São Jorge","Alfama",["culture"],3,15,[38.7139,-9.1335]],["Tram 28 avant 9h","Alfama",["culture"],1,3,[38.7163,-9.1360]],["Belém, Hiéronymites et pastéis","Belém",["culture","gastronomie"],4,18,[38.6979,-9.2068]],["LX Factory et Time Out Market","Cais do Sodré",["gastronomie"],3,20,[38.7037,-9.1785]],["Miradouros puis Bairro Alto","Bairro Alto",["fete"],3,10,[38.7126,-9.1446]],["Plage de Carcavelos","Carcavelos",["plage"],5,5,[38.6783,-9.3375]],["Fado à Mouraria","Mouraria",["culture","fete"],2,15,[38.7155,-9.1354]]],
+ x:[["Sintra et palais de Pena",25,["culture","nature"]],["Cascais et cap Roca",10,["plage","nature"]]],
+ m:["Lisboa Card 48h : transports et monuments inclus","« Prato do dia » : plat et boisson pour 10 €","Métro aéroport (1,85 €) au lieu du taxi"],
+ h:["Tram 28 avant 9h, ou le 12E","Palais de Pena : créneau réservé en ligne"]},
+porto:{n:"Porto",c:"Portugal",i:"OPO",f:100,p:["#9AD1D4","#F2C57C","#7A4E3B"],sea:1,s:[.8,.8,.9,1,1.1,1.25,1.35,1.4,1.1,.95,.8,.95],w:[4,5,6,7,8,9],t:["culture","gastronomie","plage"],
+ d:[[24,55,120],[20,35,75],[5,8,20],[6,12,30]],skip:1.5,
+ a:[["Ribeira et pont Dom-Luís","Ribeira",["culture"],2,0,[41.1406,-8.6131]],["Croisière des six ponts","Ribeira",["culture","nature"],1,18,[41.1398,-8.6152]],["Caves de porto à Gaia","Gaia",["gastronomie"],2,18,[41.1370,-8.6125]],["Librairie Lello","Baixa",["culture"],1,10,[41.1468,-8.6149]],["Tour des Clérigos","Baixa",["culture"],1,10,[41.1457,-8.6140]],["Plage de Matosinhos","Matosinhos",["plage","gastronomie"],4,25,[41.1800,-8.6900]],["Jardins du Palácio de Cristal","Massarelos",["nature"],1.5,0,[41.1480,-8.6260]]],
+ x:[["Vallée du Douro",40,["nature","gastronomie"]],["Guimarães et Braga",20,["culture"]]],
+ m:["Andante Tour 24h : 7 €","Francesinha ou prato do dia : 10 €","Métro aéroport (2,60 €) au lieu du taxi"],
+ h:["Lello : billet en ligne, déduit d'un livre","Gaia et Ribeira le même jour, à pied"]},
+barcelone:{n:"Barcelone",c:"Espagne",i:"BCN",f:90,p:["#FFD166","#EF476F","#26547C"],sea:1,s:[.75,.75,.9,1.05,1.1,1.3,1.4,1.45,1.15,1,.8,.9],w:[4,5,6,7,8,9],t:["culture","plage","fete","gastronomie"],
+ d:[[32,70,150],[25,45,90],[6,10,25],[8,15,35]],skip:2.5,
+ a:[["Sagrada Família","Eixample",["culture"],2,26,[41.4036,2.1744]],["Passeig de Gràcia et Gaudí","Eixample",["culture"],2,0,[41.3917,2.1649]],["Barri Gòtic et El Born","Ciutat Vella",["culture"],3,0,[41.3839,2.1763]],["Boqueria et tapas","Raval",["gastronomie"],2,20,[41.3817,2.1716]],["Park Güell","Gràcia",["culture","nature"],2,10,[41.4145,2.1527]],["Soirée à Gràcia","Gràcia",["fete"],3,15,[41.4036,2.1565]],["Plage de la Barceloneta","Barceloneta",["plage"],4,0,[41.3784,2.1925]],["Bunkers del Carmel","El Carmel",["nature"],2,0,[41.4189,2.1617]]],
+ x:[["Montserrat",30,["nature","culture"]],["Sitges",10,["plage"]]],
+ m:["Carte T-casual 10 trajets : 12 €","Menú del día : 3 plats pour 14 €","Musées gratuits le 1er dimanche du mois"],
+ h:["Sagrada Família et Park Güell : créneau réservé","Aerobús ou train R2 Nord depuis l'aéroport"]},
+rome:{n:"Rome",c:"Italie",i:"FCO",f:110,p:["#F9C784","#E07A5F","#5C4033"],s:[.8,.8,.95,1.15,1.2,1.25,1.3,1.25,1.15,1.05,.8,1],w:[3,4,5,8,9],t:["culture","gastronomie"],
+ d:[[35,75,160],[25,45,90],[5,8,20],[8,15,35]],skip:3,
+ a:[["Colisée, Forum et Palatin","Monti",["culture"],4,18,[41.8902,12.4922]],["Musées du Vatican","Vatican",["culture"],4,20,[41.9065,12.4536]],["Basilique Saint-Pierre","Vatican",["culture"],2,10,[41.9022,12.4539]],["Trevi, Panthéon, Navona","Centro Storico",["culture"],3,5,[41.9009,12.4833]],["Dîner au Trastevere","Trastevere",["gastronomie","fete"],3,25,[41.8897,12.4700]],["Marché de Testaccio","Testaccio",["gastronomie"],2,15,[41.8766,12.4757]],["Villa et galerie Borghese","Borghese",["culture","nature"],3,17,[41.9142,12.4922]]],
+ x:[["Tivoli, Villa d'Este",20,["culture","nature"]],["Ostia Antica",15,["culture","plage"]]],
+ m:["Eau gratuite aux fontaines nasoni","Café au comptoir : 1,20 € au lieu de 4 €","Vatican gratuit le dernier dimanche du mois"],
+ h:["Colisée : créneau réservé","Trevi avant 8h"]},
+athenes:{n:"Athènes",c:"Grèce",i:"ATH",f:160,p:["#A2D2FF","#E9F1F7","#33658A"],sea:1,s:[.75,.75,.85,1,1.1,1.3,1.4,1.45,1.15,.95,.75,.85],w:[4,5,6,7,8,9],t:["culture","plage","gastronomie"],
+ d:[[28,60,140],[20,38,80],[5,8,20],[6,12,30]],skip:2,
+ a:[["Acropole dès 8h","Plaka",["culture"],3,20,[37.9715,23.7257]],["Musée de l'Acropole","Plaka",["culture"],2,15,[37.9685,23.7285]],["Plaka et Anafiotika","Plaka",["culture"],2,0,[37.9729,23.7290]],["Agora antique","Monastiraki",["culture"],2,10,[37.9747,23.7224]],["Marché de Monastiraki","Monastiraki",["gastronomie"],2,10,[37.9761,23.7255]],["Soirée à Psyrri","Psyrri",["fete"],3,20,[37.9785,23.7235]],["Lycabette au coucher","Kolonaki",["nature"],2,0,[37.9819,23.7437]],["Lac de Vouliagmeni","Riviera",["plage"],5,12,[37.8075,23.7860]]],
+ x:[["Cap Sounion",20,["culture","nature"]],["Île d'Égine",25,["plage"]]],
+ m:["Billet combiné 30 € : Acropole et 6 sites","Souvlaki pita : 4 €","Métro aéroport (9 €) au lieu du taxi (40 €)"],
+ h:["Acropole dès l'ouverture","Ferry Égine : billets la veille"]},
+marrakech:{n:"Marrakech",c:"Maroc",i:"RAK",f:140,p:["#FFB997","#F67E7D","#843B62"],s:[.9,.95,1.1,1.15,1,.85,.9,.95,1,1.1,.95,1.2],w:[2,3,4,9,10],t:["culture","gastronomie","nature"],
+ d:[[20,50,140],[12,25,60],[4,8,20],[5,12,30]],skip:1.5,
+ a:[["Jemaa el-Fna et souks","Médina",["culture","gastronomie"],3,10,[31.6258,-7.9891]],["Médersa Ben Youssef","Médina",["culture"],1.5,5,[31.6318,-7.9864]],["Hammam traditionnel","Médina",["culture"],2,10,[31.6290,-7.9880]],["Cours de cuisine","Médina",["gastronomie"],4,35,[31.6275,-7.9915]],["Palais Bahia","Mellah",["culture"],1.5,7,[31.6216,-7.9831]],["Tombeaux saadiens","Kasbah",["culture"],1,7,[31.6173,-7.9887]],["Jardin Majorelle","Guéliz",["culture","nature"],2.5,25,[31.6417,-8.0033]]],
+ x:[["Vallée de l'Ourika",25,["nature"]],["Désert d'Agafay",35,["nature"]]],
+ m:["Négociez : partez de 30-40 % du prix","Riad avec petit-déjeuner inclus","Bus 19 depuis l'aéroport"],
+ h:["Majorelle à l'ouverture (8h)","Guide officiel une demi-journée dans les souks"]},
+budapest:{n:"Budapest",c:"Hongrie",i:"BUD",f:120,p:["#B8C0FF","#FFD6A5","#3A3361"],s:[.75,.75,.85,.95,1.05,1.15,1.25,1.25,1.05,.95,.85,1.15],w:[4,5,6,7,8],t:["culture","fete","gastronomie"],
+ d:[[22,50,120],[18,32,70],[4,7,18],[5,12,30]],skip:1.5,
+ a:[["Bains Széchenyi","Városliget",["culture"],3,28,[47.5186,19.0823]],["Parlement","Lipótváros",["culture"],1.5,13,[47.5070,19.0456]],["Château de Buda","Buda",["culture"],3,5,[47.4962,19.0396]],["Halle centrale et lángos","Belváros",["gastronomie"],2,10,[47.4870,19.0583]],["Croisière sur le Danube","Belváros",["culture"],1,15,[47.4925,19.0510]],["Ruin bars","Quartier juif",["fete"],3,15,[47.4970,19.0633]],["Île Marguerite à vélo","Île Marguerite",["nature"],2,8,[47.5270,19.0470]]],
+ x:[["Szentendre",8,["culture"]],["Lac Balaton",25,["plage","nature"]]],
+ m:["Payez en forints, refusez la conversion","Menu du midi : 9 €","Pass transports 72h : 16 €"],
+ h:["Parlement : réservation en ligne","Széchenyi en semaine avant 10h"]},
+prague:{n:"Prague",c:"Tchéquie",i:"PRG",f:110,p:["#CDB4DB","#FFC8DD","#4A3F55"],s:[.75,.75,.85,1,1.1,1.15,1.25,1.25,1.1,1,.85,1.2],w:[4,5,6,7,8],t:["culture","fete","gastronomie"],
+ d:[[24,55,130],[18,32,70],[4,6,18],[5,12,30]],skip:1.5,
+ a:[["Pont Charles à l'aube","Malá Strana",["culture"],1,0,[50.0865,14.4114]],["Colline de Petřín","Malá Strana",["nature"],2,5,[50.0835,14.3950]],["Château de Prague","Hradčany",["culture"],3,18,[50.0911,14.4016]],["Horloge astronomique","Staré Město",["culture"],2,10,[50.0870,14.4208]],["Quartier juif","Josefov",["culture"],2,20,[50.0900,14.4180]],["Brasserie tchèque","Nové Město",["gastronomie","fete"],2,15,[50.0786,14.4170]],["Vyšehrad","Vyšehrad",["culture","nature"],2,0,[50.0645,14.4180]]],
+ x:[["Kutná Hora",15,["culture"]],["Český Krumlov",30,["culture","nature"]]],
+ m:["Pass transports 72h : 14 €","Évitez les bureaux de change du centre","Pinte hors centre : 2,50 €"],
+ h:["Château à l'ouverture (9h)","Bus 119 puis métro : 35 min"]},
+cracovie:{n:"Cracovie",c:"Pologne",i:"KRK",f:100,p:["#D8E2DC","#FFCAD4","#5E4B56"],s:[.8,.8,.85,.95,1.05,1.15,1.25,1.25,1.05,.95,.85,1.15],w:[4,5,6,7,8],t:["culture","fete","gastronomie"],
+ d:[[20,45,110],[15,28,60],[3,6,15],[5,10,25]],skip:2,
+ a:[["Rynek Główny","Vieille Ville",["culture"],2,0,[50.0617,19.9373]],["Château du Wawel","Wawel",["culture"],3,15,[50.0540,19.9354]],["Kazimierz","Kazimierz",["culture","gastronomie"],3,0,[50.0510,19.9450]],["Zapiekanka place Nowy","Kazimierz",["gastronomie"],1,3,[50.0518,19.9425]],["Bars de Kazimierz","Kazimierz",["fete"],3,15,[50.0530,19.9470]],["Usine de Schindler","Podgórze",["culture"],2,12,[50.0475,19.9617]],["Tertre de Krakus","Podgórze",["nature"],1,0,[50.0380,19.9580]]],
+ x:[["Auschwitz-Birkenau",25,["culture"]],["Mine de sel de Wieliczka",30,["culture"]]],
+ m:["Bar mleczny : repas à 5 €","Payez en złotys","Train aéroport : 4 €"],
+ h:["Auschwitz : réservez des semaines avant","Schindler : créneau horaire en ligne"]},
+istanbul:{n:"Istanbul",c:"Turquie",i:"IST",f:190,p:["#FEC89A","#F9844A","#264653"],sea:1,s:[.8,.8,.9,1.1,1.15,1.2,1.3,1.3,1.15,1.05,.85,.95],w:[3,4,5,8,9],t:["culture","gastronomie","fete"],
+ d:[[25,55,140],[15,30,70],[4,7,18],[6,12,30]],skip:3,
+ a:[["Sainte-Sophie et Mosquée bleue","Sultanahmet",["culture"],3,25,[41.0086,28.9802]],["Palais de Topkapı","Sultanahmet",["culture"],3,40,[41.0115,28.9834]],["Citerne Basilique","Sultanahmet",["culture"],1,25,[41.0084,28.9779]],["Grand Bazar et Bazar aux épices","Eminönü",["gastronomie","culture"],3,0,[41.0107,28.9681]],["Ferry sur le Bosphore","Eminönü",["nature"],2,3,[41.0170,28.9740]],["Galata et İstiklal","Beyoğlu",["fete"],3,10,[41.0256,28.9742]],["Street food à Kadıköy","Kadıköy",["gastronomie"],3,15,[40.9910,29.0270]]],
+ x:[["Îles des Princes",5,["nature","plage"]],["Croisière Bosphore",15,["nature"]]],
+ m:["Istanbulkart : trajets 60 % moins chers","Ferry public (3 €) au lieu des croisières","Lokanta : repas complet à 7 €"],
+ h:["Sainte-Sophie dès l'ouverture","Métro M11 depuis l'aéroport"]},
+tenerife:{n:"Tenerife",c:"Espagne",i:"TFS",f:210,p:["#8ECAE6","#FFB703","#5A3E2B"],sea:1,peak:1,s:[1.1,1.1,1.05,.95,.85,.95,1.2,1.3,.95,.95,1,1.25],w:[0,1,2,3,4,5,6,7,8,9,10,11],t:["plage","nature"],
+ d:[[28,60,140],[20,38,80],[10,15,35],[5,12,30]],skip:1,
+ a:[["Teide et téléphérique","Teide",["nature"],6,40,[28.2724,-16.6425]],["Los Gigantes et cétacés","Ouest",["nature"],4,30,[28.2440,-16.8410]],["Village de Masca","Ouest",["nature"],4,0,[28.3060,-16.8410]],["La Laguna","Nord-Est",["culture"],3,0,[28.4874,-16.3159]],["Plage de Las Teresitas","Nord-Est",["plage"],4,0,[28.5085,-16.1880]],["Forêt d'Anaga","Anaga",["nature"],5,0,[28.5300,-16.2700]],["Puerto de la Cruz","Nord",["plage"],4,7,[28.4140,-16.5490]]],
+ x:[["La Gomera en ferry",45,["nature"]],["Étoiles au Teide",30,["nature"]]],
+ m:["Voiture réservée tôt : 20 €/jour","Bus avec carte Ten+ : -50 %","Pique-niques au supermarché"],
+ h:["Teide : premier créneau du téléphérique","Logez au sud, groupez le nord"]},
+newyork:{n:"New York",c:"États-Unis",i:"JFK",f:480,p:["#FFAFCC","#A2D2FF","#22223B"],sea:1,s:[.8,.8,.9,1,1.1,1.2,1.25,1.2,1.1,1.05,1,1.35],w:[4,5,8,9],t:["culture","gastronomie","fete"],
+ d:[[60,120,250],[35,60,120],[6,10,30],[10,20,45]],skip:3,
+ a:[["Staten Island Ferry","Lower Manhattan",["culture"],1.5,0,[40.7013,-74.0132]],["Pont de Brooklyn et DUMBO","Brooklyn",["culture"],3,0,[40.7061,-73.9969]],["High Line et Chelsea Market","Chelsea",["gastronomie"],3,15,[40.7480,-74.0048]],["Broadway (billets TKTS)","Midtown",["fete","culture"],4,90,[40.7580,-73.9855]],["Top of the Rock","Midtown",["culture"],1.5,45,[40.7593,-73.9794]],["Central Park à vélo","Central Park",["nature"],3,15,[40.7829,-73.9654]],["Metropolitan Museum","Upper East Side",["culture"],3,30,[40.7794,-73.9632]]],
+ x:[["Harlem et gospel",0,["culture"]],["Coney Island",6,["plage"]]],
+ m:["OMNY plafonné à 34 $/semaine","Broadway au TKTS : -30 à -50 %","Hôtel à Brooklyn : -40 %"],
+ h:["CityPASS dès 3 attractions","Downtown groupé sur une journée"]},
+bangkok:{n:"Bangkok",c:"Thaïlande",i:"BKK",f:620,p:["#FFD670","#FF9770","#3D2C8D"],s:[1.2,1.1,1,1,.85,.85,.95,1,.8,.85,1,1.3],w:[0,1,2,10,11],t:["culture","gastronomie","fete"],
+ d:[[15,40,120],[8,20,55],[4,8,20],[5,12,30]],skip:1.5,
+ a:[["Grand Palais","Rattanakosin",["culture"],3,14,[13.7500,100.4913]],["Wat Pho","Rattanakosin",["culture"],1.5,8,[13.7465,100.4930]],["Wat Arun en bateau","Thonburi",["culture"],1.5,5,[13.7437,100.4889]],["Khlongs en long-tail","Thonburi",["nature"],2,15,[13.7480,100.4800]],["Street food Yaowarat","Chinatown",["gastronomie"],3,12,[13.7400,100.5100]],["Marché de Chatuchak","Chatuchak",["gastronomie"],3,10,[13.7999,100.5500]],["Rooftop à Silom","Silom",["fete"],2,20,[13.7240,100.5290]]],
+ x:[["Ayutthaya",15,["culture"]],["Marché flottant",25,["gastronomie"]]],
+ m:["Bateau express : 0,50 €","Grab plutôt que tuk-tuk","Street food : 1,50 à 3 €"],
+ h:["Grand Palais dès 8h30","Airport Rail Link : 30 min"]},
+bali:{n:"Bali",c:"Indonésie",i:"DPS",f:780,p:["#B9FBC0","#FBF8CC","#2D6A4F"],sea:1,peak:1,s:[.95,.9,.9,.95,1,1.1,1.3,1.35,1.05,.95,.9,1.25],w:[4,5,6,7,8,9],t:["plage","nature","culture"],
+ d:[[15,45,140],[10,22,60],[6,12,30],[5,12,30]],skip:1,
+ a:[["Rizières de Tegallalang","Ubud",["nature"],3,5,[-8.4318,115.2789]],["Forêt des singes","Ubud",["nature"],2,5,[-8.5188,115.2585]],["Temple Tirta Empul","Ubud",["culture"],2,4,[-8.4152,115.3153]],["Lever de soleil au Batur","Kintamani",["nature"],7,40,[-8.2422,115.3750]],["Uluwatu et danse Kecak","Uluwatu",["culture"],4,12,[-8.8291,115.0849]],["Plage de Padang Padang","Uluwatu",["plage"],4,1,[-8.8110,115.1030]],["Surf à Canggu","Canggu",["plage","fete"],4,15,[-8.6478,115.1385]]],
+ x:[["Nusa Penida",45,["plage","nature"]],["Cascades de Sekumpul",30,["nature"]]],
+ m:["Chauffeur à la journée : 35 €","Warungs : nasi campur à 2 €","Distributeurs de banques uniquement"],
+ h:["Deux bases max : Ubud puis le sud","Batur et rizières avant 7h"]}
+};
+
+/* ---------- Outils ---------- */
+const $=s=>document.querySelector(s);
+const eur=n=>new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.round(n));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtH=h=>(h%1?Math.floor(h)+"h30":h+"h");
+const hash=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))%2147483647,7);
+const rng=seed=>()=>(seed=(seed*16807)%2147483647)/2147483647;
+const km=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r;const x=Math.sin(dl/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(x))};
+const now=new Date();
+
+/* Couverture générée : ciel, soleil, collines, mer et silhouette de ville */
+function cover(k,dst,tag){
+  const r=rng(hash(k)+(tag?3:0)),[a,b,land]=dst.p,id="c"+k+tag;
+  let s=`<svg class="art" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+  <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>
+  <linearGradient id="${id}h" x1="0" y1="0" x2="0" y2="1"><stop offset=".35" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".62"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#${id}s)"/>
+  <circle cx="${70+r()*260}" cy="${55+r()*35}" r="${24+r()*10}" fill="#fff" opacity=".6"/>`;
+  if(dst.peak){const px=120+r()*160;s+=`<path d="M${px-170} 190 L${px-18} 70 Q${px} 58 ${px+18} 70 L${px+190} 190Z" fill="${land}" opacity=".5"/>`}
+  const levels=[[150,14,.38],[168,10,.65]];
+  levels.forEach(([base,amp,op],L)=>{
+    const ph=r()*6,per=30+r()*40;let d=`M0 220 L0 ${base}`;
+    for(let x=0;x<=400;x+=10)d+=` L${x} ${(base-amp*Math.sin(x/per+ph)-amp*.5*Math.sin(x/(per*.4)+ph*2)).toFixed(1)}`;
+    s+=`<path d="${d} L400 220Z" fill="${land}" opacity="${op}"/>`;
+  });
+  if(!dst.peak){ // silhouette urbaine
+    let x=10+r()*40;const end=250+r()*130;let sky="";
+    while(x<end){const w=8+r()*16,h=12+r()*42,y=180-h;sky+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h+40}" rx="1.5"/>`;
+      if(r()<.18)sky+=`<circle cx="${(x+w/2).toFixed(1)}" cy="${y.toFixed(1)}" r="${(w/2).toFixed(1)}"/>`;
+      if(r()<.12)sky+=`<rect x="${(x+w/2-1.2).toFixed(1)}" y="${(y-16).toFixed(1)}" width="2.4" height="16"/>`;
+      x+=w+1+r()*4}
+    s+=`<g fill="${land}" opacity=".9">${sky}</g>`;
+  }
+  if(dst.sea){s+=`<rect y="186" width="400" height="34" fill="${land}"/><g stroke="#fff" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round">`;
+    for(let i=0;i<9;i++){const y=192+r()*24,x=r()*360;s+=`<path d="M${x.toFixed(0)} ${y.toFixed(0)}h${(14+r()*26).toFixed(0)}"/>`}s+="</g>"}
+  else s+=`<rect y="182" width="400" height="38" fill="${land}"/>`;
+  return s+`<rect width="400" height="220" fill="url(#${id}h)"/></svg>`;
+}
+
+/* ---------- Formulaire ---------- */
+$("#fields").innerHTML=`
+<label class="fld">${ic("plane")}<small>Départ</small><select id="origin">${ORIGINS.map((o,i)=>`<option value="${i}">${o[1]}</option>`).join("")}</select></label>
+<label class="fld">${ic("pin")}<small>Destination</small><select id="dest"><option value="auto">Au choix d'Escale</option>${Object.entries(D).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")}</select></label>
+<label class="fld">${ic("cal")}<small>Mois</small><select id="month">${MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("")}</select></label>
+<label class="fld">${ic("clock")}<small>Jours</small><input id="days" type="number" min="2" max="21" value="5"></label>
+<label class="fld">${ic("users")}<small>Voyageurs</small><input id="pax" type="number" min="1" max="10" value="2"></label>
+<div class="fld">${ic("bed")}<small>Style</small><div class="seg" role="radiogroup" aria-label="Style">
+  <label><input type="radio" name="style" id="st0" value="0"><span>Éco</span></label><label><input type="radio" name="style" id="st1" value="1" checked><span>Confort</span></label><label><input type="radio" name="style" id="st2" value="2"><span>Luxe</span></label></div></div>
+<label class="fld wide" style="grid-column:1/-1">${ic("wallet")}<span class="rv"><small>Budget total</small><b class="num" id="budgetOut"></b></span><input id="budget" type="range" min="300" max="10000" step="50" value="1400"></label>`;
+$("#interests").innerHTML=INTERESTS.map(([k,l])=>`<label style="--chip:var(--c-${k})"><input type="checkbox" id="in-${k}" value="${k}"${["culture","gastronomie"].includes(k)?" checked":""}><span>${ic(ICAT[k])}${l}</span></label>`).join("");
+$("#copy").innerHTML=ic("copy")+"Copier le plan";
+$("#tabs").innerHTML=[["itin","route","Itinéraire"],["budget","wallet","Budget"],["quand","cal","Quand partir"],["astuces","spark","Astuces"],["explorer","globe","Explorer"]].map(([id,i,l])=>`<a href="#${id}">${ic(i)}${l}</a>`).join("");
+$("#month").value=(now.getMonth()+2)%12;
+$("#dest").value="lisbonne";
+
+const KEY="escale-form-v1";
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s){
+  const map={origin:s.o,month:s.m,dest:s.dest,days:s.days,pax:s.pax,budget:s.budget};
+  Object.entries(map).forEach(([k,v])=>{if(v!=null)$("#"+k).value=v});
+  if(s.style!=null)$("#st"+s.style).checked=true;
+  if(s.ints)INTERESTS.forEach(([k])=>$("#in-"+k).checked=s.ints.includes(k));
+}}catch(e){}
+
+function readForm(){
+  return{o:+$("#origin").value,m:+$("#month").value,dest:$("#dest").value,
+    days:Math.min(21,Math.max(2,+$("#days").value||5)),pax:Math.min(10,Math.max(1,+$("#pax").value||1)),
+    budget:+$("#budget").value,style:+document.querySelector("input[name=style]:checked").value,
+    ints:INTERESTS.map(i=>i[0]).filter(k=>$("#in-"+k).checked)};
+}
+
+/* ---------- Calculs ---------- */
+function itinerary(dst,p){
+  const n=p.days,caps=[];
+  for(let i=0;i<n;i++)caps.push(i===0?4:(i===n-1?3:8));
+  const score=t=>t.filter(x=>p.ints.includes(x)).length;
+  const capTotal=caps.reduce((a,b)=>a+b,0)-(n>=6?8:0);
+  const acts=dst.a.map((a,idx)=>({n:a[0],q:a[1],t:a[2],h:a[3],c:a[4],ll:a[5],s:score(a[2]),idx})).sort((a,b)=>b.s-a.s||a.idx-b.idx);
+  let used=0;const chosen=[];
+  for(const a of acts){if(used+a.h<=capTotal*.95){chosen.push(a);used+=a.h}}
+  const qOrder=[...new Set(chosen.map(a=>a.q))];
+  chosen.sort((a,b)=>qOrder.indexOf(a.q)-qOrder.indexOf(b.q)||b.s-a.s);
+  const f=chosen.findIndex(a=>a.h<=4);if(f>0)chosen.unshift(...chosen.splice(f,1));
+  const days=caps.map((cap,i)=>({left:cap,acts:[],kind:i===0?"Arrivée":(i===n-1?"Départ":"")}));
+  let d=0;
+  for(const a of chosen){
+    let j=days.findIndex((x,ix)=>ix>=d&&x.left>=a.h);
+    if(j<0)j=days.findIndex(x=>x.left>=a.h);
+    if(j>=0){days[j].acts.push(a);days[j].left-=a.h;d=j}
+  }
+  const trips=[...dst.x].sort((a,b)=>score(b[2])-score(a[2]));let ti=0;
+  for(let j=1;j<days.length-1;j++)if(!days[j].acts.length&&ti<trips.length){const t=trips[ti++];days[j].trip=true;days[j].acts.push({n:t[0],q:"Excursion",h:8,c:t[1],t:t[2]})}
+  return days;
+}
+function cost(dst,p){
+  const o=ORIGINS[p.o],s=dst.s[p.m],ls=1+(s-1)*.8,st=p.style,days=itinerary(dst,p);
+  const actPP=days.reduce((t,d)=>t+d.acts.reduce((a,x)=>a+x.c,0),0);
+  const opt={vol:dst.f*o[2]*s*p.pax,log:dst.d[0][st]*ls*(p.days-1)*p.pax,rep:dst.d[1][st]*p.days*p.pax,tra:dst.d[2][st]*p.days*p.pax,act:(actPP+dst.d[3][st]*p.days)*p.pax};
+  const naive={vol:opt.vol*1.32,log:opt.log*1.22,rep:opt.rep*1.28,tra:opt.tra*1.25+30*p.pax,act:opt.act*1.18};
+  const sum=x=>Object.values(x).reduce((a,b)=>a+b,0);
+  return{opt,total:sum(opt),naiveTotal:sum(naive),days};
+}
+function rank(p){
+  return Object.entries(D).map(([k,dst])=>{const t=cost(dst,p).total,match=dst.t.filter(x=>p.ints.includes(x)).length,good=dst.w.includes(p.m);
+    return{k,dst,total:t,match,good,score:match*2+(good?3:0)+Math.max(-3,(p.budget-t)/p.budget*3)}});
+}
+const nextDate=m=>new Date(now.getMonth()>m||(now.getMonth()===m&&now.getDate()>10)?now.getFullYear()+1:now.getFullYear(),m,1);
+const CATS={vol:["Vols","plane","var(--c-vol)"],log:["Hébergement","bed","var(--c-log)"],rep:["Repas","food","var(--c-rep)"],tra:["Transports","bus","var(--c-tra)"],act:["Activités","ticket","var(--c-act)"]};
+
+/* ---------- Carte ---------- */
+let state={key:null,plan:null,dayF:null};
+function mapHTML(){
+  const {plan,key,dayF}=state,dst=D[key];
+  const pts=[];
+  plan.days.forEach((d,di)=>d.acts.forEach((a,ai)=>{if(a.ll)pts.push({a,di,ai,ll:a.ll})}));
+  const lat0=pts.reduce((s,p)=>s+p.ll[0],0)/pts.length,lng0=pts.reduce((s,p)=>s+p.ll[1],0)/pts.length,cs=Math.cos(lat0*Math.PI/180),K=1000;
+  pts.forEach(p=>{p.x=(p.ll[1]-lng0)*cs*K;p.y=-(p.ll[0]-lat0)*K});
+  let x0=Math.min(...pts.map(p=>p.x)),x1=Math.max(...pts.map(p=>p.x)),y0=Math.min(...pts.map(p=>p.y)),y1=Math.max(...pts.map(p=>p.y));
+  const minS=16;if(x1-x0<minS){const c=(x0+x1)/2;x0=c-minS/2;x1=c+minS/2}if(y1-y0<minS){const c=(y0+y1)/2;y0=c-minS/2;y1=c+minS/2}
+  const pad=Math.max(x1-x0,y1-y0)*.22;x0-=pad;x1+=pad;y0-=pad*1.4;y1+=pad*.8;
+  const W=x1-x0,H=y1-y0,u=Math.max(W,H)/560;
+  // éviter les épingles superposées
+  for(let i=0;i<pts.length;i++)for(let j=0;j<i;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;if(Math.hypot(dx,dy)<22*u){pts[i].x+=20*u*Math.cos(i*1.7);pts[i].y+=20*u*Math.sin(i*1.7)}}
+  const vis=p=>dayF==null||p.di===dayF;
+  const r=rng(hash(key));
+  let parks="";for(let i=0;i<7;i++){parks+=`<ellipse cx="${(x0+r()*W).toFixed(2)}" cy="${(y0+r()*H).toFixed(2)}" rx="${(W*(.04+r()*.07)).toFixed(2)}" ry="${(H*(.03+r()*.05)).toFixed(2)}" fill="var(--park)"/>`}
+  let roads="";for(let i=0;i<6;i++){const ya=y0+r()*H,yb=y0+r()*H;roads+=`<path d="M${x0-W} ${ya.toFixed(2)} Q${(x0+W/2).toFixed(2)} ${((ya+yb)/2+(r()-.5)*H*.4).toFixed(2)} ${x1+W} ${yb.toFixed(2)}" stroke="var(--card)" stroke-width="${(5*u).toFixed(2)}" fill="none" opacity=".9"/>`}
+  let routes="";plan.days.forEach((d,di)=>{const dp=pts.filter(p=>p.di===di);if(dp.length>1&&(dayF==null||dayF===di))routes+=`<polyline points="${dp.map(p=>p.x.toFixed(2)+","+p.y.toFixed(2)).join(" ")}" fill="none" stroke="${DAYC[di%8]}" stroke-width="${(3.2*u).toFixed(2)}" stroke-dasharray="${(7*u).toFixed(2)} ${(6*u).toFixed(2)}" stroke-linecap="round"/>`});
+  const qs={};pts.filter(vis).forEach(p=>{(qs[p.a.q]=qs[p.a.q]||[]).push(p)});
+  const labels=Object.entries(qs).map(([q,ps])=>`<text class="qlabel" x="${(ps.reduce((s,p)=>s+p.x,0)/ps.length).toFixed(2)}" y="${(ps.reduce((s,p)=>s+p.y,0)/ps.length+16*u).toFixed(2)}" font-size="${(10*u).toFixed(2)}" text-anchor="middle">${esc(q)}</text>`).join("");
+  const pins=pts.filter(vis).map(p=>`<g class="pin" data-pin="${p.di}-${p.ai}" transform="translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) scale(${u.toFixed(4)})"><title>${esc(p.a.n)}</title>
+    <path class="body" d="M0 0C-4-8-12-12-12-21a12 12 0 1 1 24 0C12-12 4-8 0 0z" fill="${DAYC[p.di%8]}" stroke="#fff" stroke-width="2.2"/><text y="-17" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Figtree,sans-serif">${p.ai+1}</text></g>`).join("");
+  // échelle
+  const unitKm=.111,target=W*.22*unitKm,nice=[.2,.5,1,2,5,10,20,50].find(v=>v>=target*.6)||50,len=nice/unitKm;
+  const sx=x0+18*u,sy=y1-18*u;
+  const scale=`<g font-family="Figtree,sans-serif" font-weight="700" font-size="${(10*u).toFixed(2)}" fill="var(--ink)"><rect x="${sx}" y="${sy-4*u}" width="${len}" height="${4*u}" rx="${2*u}" fill="var(--ink)"/><text x="${sx}" y="${sy-9*u}">${nice<1?nice*1000+" m":nice+" km"}</text></g>`;
+  const comp=`<g transform="translate(${x1-26*u} ${y1-30*u}) scale(${u})"><circle r="15" fill="var(--card)"/><path d="M0-10 4 2H-4z" fill="#E8505B"/><path d="M0 10 4-2H-4z" fill="var(--muted)"/><text y="-17" text-anchor="middle" font-size="9" font-weight="800" fill="var(--ink)" font-family="Figtree,sans-serif">N</text></g>`;
+  const trips=plan.days.map((d,i)=>d.trip?i:null).filter(v=>v!=null);
+  const btns=`<button type="button" data-dayf="all" class="${dayF==null?"on":""}">Tout</button>`+plan.days.map((d,i)=>`<button type="button" data-dayf="${i}" class="${dayF===i?"on":""}"><i style="background:${DAYC[i%8]}"></i>J${i+1}</button>`).join("");
+  return `<div class="map"><div class="map-top">${btns}</div>
+  <svg viewBox="${x0.toFixed(2)} ${y0.toFixed(2)} ${W.toFixed(2)} ${H.toFixed(2)}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Carte de l'itinéraire à ${esc(dst.n)}">
+    <defs><pattern id="grid" width="${(24*u).toFixed(2)}" height="${(24*u).toFixed(2)}" patternUnits="userSpaceOnUse" patternTransform="rotate(14)"><path d="M0 0H${(24*u).toFixed(2)}M0 0V${(24*u).toFixed(2)}" stroke="var(--grid)" stroke-width="${(1.2*u).toFixed(2)}"/></pattern></defs>
+    <rect x="${x0-W}" y="${y0-H}" width="${W*3}" height="${H*3}" fill="var(--land)"/><rect x="${x0-W}" y="${y0-H}" width="${W*3}" height="${H*3}" fill="url(#grid)"/>
+    ${parks}${roads}${routes}${labels}${pins}${scale}${comp}
+  </svg>${trips.length?`<div class="map-note">${ic("route")}${trips.map(i=>"J"+(i+1)).join(", ")} : excursion hors carte</div>`:""}</div>`;
+}
+function drawMap(){const h=mapHTML();$("#mapA").innerHTML=h;$("#mapB").innerHTML=h}
+
+/* ---------- Rendu ---------- */
+function render(){
+  const p=readForm();
+  $("#budgetOut").textContent=eur(p.budget);
+  try{localStorage.setItem(KEY,JSON.stringify(p))}catch(e){}
+  const auto=p.dest==="auto";
+  const key=auto?(()=>{const r=rank(p),fit=r.filter(x=>x.total<=p.budget);return(fit.length?fit:r).sort((a,b)=>b.score-a.score)[0].k})():p.dest;
+  const dst=D[key],o=ORIGINS[p.o],c=cost(dst,p),fits=c.total<=p.budget,saved=c.naiveTotal-c.total,hours=Math.round(p.days*1.25+dst.skip);
+  if(state.key!==key||!state.plan||state.plan.days.length!==c.days.length)state.dayF=null;
+  state.key=key;state.plan=c;
+  const dep=nextDate(p.m),shortHaul=dst.f<300;
+  const bookBy=new Date(dep);bookBy.setDate(bookBy.getDate()-(shortHaul?49:105));
+  const bookFrom=new Date(dep);bookFrom.setDate(bookFrom.getDate()-(shortHaul?84:150));
+  const tooLate=bookBy<now;
+  const good=dst.w.includes(p.m);
+
+  /* Couverture */
+  $("#cover").innerHTML=`<div class="cover">${cover(key,dst,"")}
+    ${auto?`<span class="ctag auto">${ic("spark")}Choisi pour vous</span>`:""}
+    <div class="price"><span>TOTAL ${p.pax} PERS.</span><b class="num">${eur(c.total)}</b><span style="color:${fits?"#1C8556":"#B9470F"}">${fits?"Dans le budget":"+"+eur(c.total-p.budget)}</span></div>
+    <div class="cover-in">
+      <span class="ctry">${ic("pin")}${esc(dst.c)} · ${o[0]} → ${dst.i}</span>
+      <h1>${esc(dst.n)}</h1>
+      <div class="ctags"><span class="ctag">${ic("cal")}${MOIS[p.m]} ${dep.getFullYear()}</span><span class="ctag">${ic("clock")}${p.days} j</span><span class="ctag">${ic("users")}${p.pax}</span><span class="ctag">${ic(good?"sun":"cloud")}${good?"Beau temps":"Météo mitigée"}</span></div>
+    </div></div>`;
+
+  /* Stats */
+  const st=[["piggy","var(--good)",eur(saved),"économisés"],["clock","var(--c-plage)","~"+hours+" h","gagnées"],["wallet","var(--c-log)",eur(c.total/p.pax),"par personne"],["plane","var(--c-vol)",tooLate?"Maintenant":bookBy.toLocaleDateString("fr-FR",{day:"numeric",month:"short"}),"réserver avant"]];
+  $("#stats").innerHTML=`<div class="stats">${st.map(([i,col,v,l])=>`<div class="stat"><span class="bub" style="background:${col}">${ic(i)}</span><b class="num">${v}</b><small>${l}</small></div>`).join("")}</div>`;
+
+  /* Itinéraire */
+  const itin=c.days.map((d,di)=>{
+    const col=DAYC[di%8],zones=[...new Set(d.acts.map(a=>a.q))];
+    const title=d.kind||(d.trip?"Excursion":"Jour "+(di+1));
+    let items="";
+    d.acts.forEach((a,ai)=>{
+      if(ai>0&&a.ll&&d.acts[ai-1].ll){const k=km(d.acts[ai-1].ll,a.ll),walk=k<1.6,min=walk?Math.round(k*13)+2:Math.round(k*2.5+10);
+        items+=`<div class="hop">${ic(walk?"walk":"train")}${min} min · ${k<1?Math.round(k*1000)+" m":k.toFixed(1)+" km"}</div>`}
+      else if(ai>0)items+=`<div class="hop">${ic("clock")}</div>`;
+      const cat=a.t[0];
+      items+=`<div class="place" data-card="${di}-${ai}"><span class="n">${ai+1}</span><div style="min-width:0"><h4>${esc(a.n)}</h4><div class="pmeta">
+        <span class="tag">${ic("pin")}${esc(a.q)}</span><span class="tag">${ic("clock")}${fmtH(a.h)}</span><span class="tag${a.c?"":" free"}">${a.c?eur(a.c):"Gratuit"}</span></div></div>
+        <span class="thumb" style="background:linear-gradient(135deg,var(--c-${cat}),color-mix(in srgb,var(--c-${cat}) 55%,${dst.p[2]}))">${ic(ICAT[cat])}</span></div>`;
+    });
+    if(!d.acts.length)items=`<div class="empty">${ic(di===0?"bed":di===p.days-1?"plane":"sun")}${di===0?"Installation et dîner dans le quartier":di===p.days-1?"Dernière balade, puis aéroport":"Journée libre"}</div>`;
+    return `<div class="day" style="--dc:${col}"><button type="button" class="day-h" data-dayf="${di}"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${title}</h3><small>${zones.length?zones.map(esc).join(" · "):"Temps libre"}</small></div></button><div class="places">${items}</div></div>`;
+  }).join("");
+
+  /* Budget */
+  const C=2*Math.PI*62;let off=0;
+  const arcs=Object.keys(c.opt).map(k=>{const v=c.opt[k]/c.total*C;const s=`<circle r="62" cx="85" cy="85" fill="none" stroke="${CATS[k][2]}" stroke-width="22" stroke-dasharray="${Math.max(0,v-2).toFixed(2)} ${(C-v+2).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"/>`;off+=v;return s}).join("");
+  const maxCat=Math.max(...Object.values(c.opt));
+  let fixes=[];
+  if(!fits){
+    const cheapM=dst.s.indexOf(Math.min(...dst.s));
+    if(p.style>0)fixes.push([`data-style="${p.style-1}"`,"bed",["Éco","Confort"][p.style-1],cost(dst,{...p,style:p.style-1}).total]);
+    if(cheapM!==p.m)fixes.push([`data-month="${cheapM}"`,"cal",MOIS[cheapM],cost(dst,{...p,m:cheapM}).total]);
+    if(p.days>3)fixes.push([`data-days="${p.days-1}"`,"clock",(p.days-1)+" jours",cost(dst,{...p,days:p.days-1}).total]);
+    const alt=rank(p).filter(x=>x.k!==key&&x.total<=p.budget).sort((a,b)=>b.score-a.score)[0];
+    if(alt)fixes.push([`data-dest="${alt.k}"`,"pin",alt.dst.n,alt.total]);
+  }
+
+  /* Mois & réservation */
+  const minS=Math.min(...dst.s),maxS=Math.max(...dst.s);
+  const months=dst.s.map((v,i)=>`<button type="button" class="mcol${i===p.m?" sel":""}${v===minS?" cheap":""}" data-month="${i}" aria-label="${MOIS[i]}">
+    <span class="w${dst.w.includes(i)?"":" off"}">${ic(dst.w.includes(i)?"sun":"cloud")}</span><span class="mwrap"><span class="mbar" style="height:${15+(v-minS)/(maxS-minS||1)*85}%"></span></span><span class="l">${MC[i]}</span></button>`).join("");
+  const t0=Math.min(now,bookFrom),span=dep-t0,pos=d=>Math.max(0,Math.min(100,(d-t0)/span*100));
+  const fd=d=>d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+  const timeline=`<div class="timeline"><div class="tl-line"></div>
+    <div class="tl-win" style="left:${pos(bookFrom)}%;width:${Math.max(2,pos(bookBy)-pos(bookFrom))}%"></div>
+    <div class="tl-pt top" style="left:${pos(now)}%"><span>Aujourd'hui</span></div>
+    <div class="tl-pt" style="left:${(pos(bookFrom)+pos(bookBy))/2}%;top:44px"><b>${tooLate?"Réservez vite":fd(bookFrom)+" → "+fd(bookBy)}</b>${ic("plane")}</div>
+    <div class="tl-pt top" style="left:100%"><span>${ic("plane")}</span></div></div>`;
+
+  /* Explorer */
+  const rows=rank(p).sort((a,b)=>b.score-a.score);
+
+  $("#body").innerHTML=`
+  <section class="sec" id="itin"><div class="sec-h"><h2>Itinéraire</h2><span class="tag">${ic("route")}${p.days} jours</span></div>${itin}</section>
+
+  <section class="sec" id="budget"><div class="sec-h"><h2>Budget</h2><span class="tag">${ic("wallet")}${eur(p.budget)}</span></div>
+    <div class="panel"><div class="budget">
+      <div class="donut"><svg viewBox="0 0 170 170"><circle r="62" cx="85" cy="85" fill="none" stroke="var(--paper)" stroke-width="22"/>${arcs}</svg><div class="mid"><b class="num">${eur(c.total)}</b><small>${fits?"DANS LE BUDGET":"HORS BUDGET"}</small></div></div>
+      <div class="cats">${Object.keys(c.opt).map(k=>`<div class="cat"><span class="bub" style="background:${CATS[k][2]}">${ic(CATS[k][1])}</span><div><span class="lbl">${CATS[k][0]}</span><div class="track"><i style="width:${c.opt[k]/maxCat*100}%;background:${CATS[k][2]}"></i></div></div><b class="num">${eur(c.opt[k])}</b></div>`).join("")}</div>
+    </div>
+    <div class="vs"><div class="vs-row"><span>Sans plan</span><div class="vs-bar" style="width:100%"></div><span class="num">${eur(c.naiveTotal)}</span></div>
+      <div class="vs-row"><span>Avec Escale</span><div class="vs-bar opt" style="width:${c.total/c.naiveTotal*100}%"></div><span class="num">${eur(c.total)}</span></div></div>
+    ${fits?`<div class="okmsg">${ic("check")}Marge restante : ${eur(p.budget-c.total)}</div>`:`<div class="fixes">${fixes.map(([attr,i,l,t])=>`<button type="button" class="fix" ${attr}>${ic(i)}${esc(l)} <b class="num">${eur(t)}</b></button>`).join("")}</div>`}
+    </div></section>
+
+  <section class="sec" id="quand"><div class="sec-h"><h2>Quand partir</h2><span class="tag">${ic("sun")}Prix par mois</span></div>
+    <div class="panel"><div class="months">${months}</div>
+      ${timeline}
+      <div class="chipsrow"><span class="ichip">${ic("cal")}Mardi ou mercredi : -15 %</span><span class="ichip">${ic("bed")}Annulation gratuite</span><span class="ichip">${ic("ticket")}Visites : J-15</span></div>
+    </div></section>
+
+  <section class="sec" id="astuces"><div class="sec-h"><h2>Astuces</h2></div>
+    <div class="tips">${dst.m.map((t,i)=>`<label class="tip money"><span class="bub">${ic("piggy")}</span><span>${esc(t)}</span><input type="checkbox" id="tm-${key}-${i}"></label>`).join("")}
+    ${[...dst.h,"Bagage cabine seul : pas d'attente au tapis"].map((t,i)=>`<label class="tip time"><span class="bub">${ic("clock")}</span><span>${esc(t)}</span><input type="checkbox" id="th-${key}-${i}"></label>`).join("")}</div></section>
+
+  <section class="sec" id="explorer"><div class="sec-h"><h2>Explorer</h2><span class="tag">${ic("cal")}${MOIS[p.m]}</span></div>
+    <div class="explore">${rows.map(r=>`<button type="button" class="post${r.k===key?" cur":""}" data-dest="${r.k}">${cover(r.k,r.dst,"s")}
+      <span class="badge">${r.good?`<span title="Beau temps">${ic("sun")}</span>`:""}${r.dst.t.filter(t=>p.ints.includes(t)).slice(0,2).map(t=>`<span title="${t}">${ic(ICAT[t])}</span>`).join("")}</span>
+      <span class="ok ${r.total<=p.budget?"y":"n"}">${r.total<=p.budget?"OK":"+"+eur(r.total-p.budget)}</span>
+      <span class="pi"><h4>${esc(r.dst.n)}</h4><span class="pp"><span>${esc(r.dst.c)}</span><span class="num">${eur(r.total)}</span></span></span></button>`).join("")}</div></section>`;
+
+  drawMap();
+}
+
+/* ---------- Interactions ---------- */
+$("#f").addEventListener("input",render);
+$("#f").addEventListener("submit",e=>e.preventDefault());
+document.addEventListener("click",e=>{
+  const pin=e.target.closest(".pin");
+  if(pin){const card=document.querySelector(`[data-card="${pin.dataset.pin}"]`);if(card){card.scrollIntoView({behavior:"smooth",block:"center"});hl(pin.dataset.pin)}return}
+  const df=e.target.closest("[data-dayf]");
+  if(df){state.dayF=df.dataset.dayf==="all"||state.dayF===+df.dataset.dayf&&df.classList.contains("day-h")?null:+df.dataset.dayf;drawMap();return}
+  const card=e.target.closest(".place");
+  if(card){hl(card.dataset.card);return}
+  const el=e.target.closest("[data-month],[data-dest],[data-style],[data-days]");
+  if(el){
+    if(el.dataset.month!=null)$("#month").value=el.dataset.month;
+    if(el.dataset.dest)$("#dest").value=el.dataset.dest;
+    if(el.dataset.style!=null)$("#st"+el.dataset.style).checked=true;
+    if(el.dataset.days)$("#days").value=el.dataset.days;
+    render();
+    if(el.dataset.dest)goPlanner();
+  }
+});
+function hl(id){
+  document.querySelectorAll(".pin.hl,.place.hl").forEach(x=>x.classList.remove("hl"));
+  document.querySelectorAll(`.pin[data-pin="${id}"]`).forEach(x=>{x.classList.add("hl");x.parentNode.appendChild(x)});
+  document.querySelectorAll(`[data-card="${id}"]`).forEach(x=>x.classList.add("hl"));
+}
+document.addEventListener("mouseover",e=>{const c=e.target.closest(".place");if(c)hl(c.dataset.card)});
+$("#copy").onclick=()=>{
+  const p=readForm(),dst=D[state.key],c=state.plan;
+  const txt=[`${ORIGINS[p.o][1]} → ${dst.n} · ${MOIS[p.m]} · ${p.days} jours · ${p.pax} pers. · ${eur(c.total)}`,"",
+    ...c.days.map((d,i)=>`Jour ${i+1} : `+(d.acts.length?d.acts.map(a=>a.n).join(" ; "):"temps libre")),"",...dst.m.map(t=>"- "+t),...dst.h.map(t=>"- "+t)].join("\n");
+  const t=$("#toast");
+  navigator.clipboard.writeText(txt).then(()=>{t.textContent="Copié";t.hidden=false;setTimeout(()=>t.hidden=true,2000)}).catch(()=>{t.textContent="Copie impossible ici";t.hidden=false});
+};
+render();
+
+/* ---------- Landing page ---------- */
+function miniMap(key,plan,id){
+  const pts=[];plan.days.forEach((d,di)=>d.acts.forEach((a,ai)=>{if(a.ll)pts.push({di,ai,ll:a.ll})}));
+  const lat0=pts.reduce((s,p)=>s+p.ll[0],0)/pts.length,cs=Math.cos(lat0*Math.PI/180);
+  pts.forEach(p=>{p.x=p.ll[1]*cs;p.y=-p.ll[0]});
+  const x0=Math.min(...pts.map(p=>p.x)),x1=Math.max(...pts.map(p=>p.x)),y0=Math.min(...pts.map(p=>p.y)),y1=Math.max(...pts.map(p=>p.y));
+  const W=320,H=210,sc=Math.min((W-70)/((x1-x0)||1),(H-80)/((y1-y0)||1));
+  const ox=(W-(x1-x0)*sc)/2,oy=(H-(y1-y0)*sc)/2+12;
+  pts.forEach(p=>{p.X=ox+(p.x-x0)*sc;p.Y=oy+(p.y-y0)*sc});
+  for(let i=0;i<pts.length;i++)for(let j=0;j<i;j++)if(Math.hypot(pts[i].X-pts[j].X,pts[i].Y-pts[j].Y)<16){pts[i].X+=14*Math.cos(i*1.7);pts[i].Y+=14*Math.sin(i*1.7)}
+  const r=rng(hash(key+id));
+  let s=`<svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><defs><pattern id="${id}" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(14)"><path d="M0 0H16M0 0V16" stroke="var(--grid)" stroke-width="1"/></pattern></defs>
+  <rect width="${W}" height="${H}" fill="var(--land)"/><rect width="${W}" height="${H}" fill="url(#${id})"/>`;
+  for(let i=0;i<5;i++)s+=`<ellipse cx="${(r()*W).toFixed(0)}" cy="${(r()*H).toFixed(0)}" rx="${(14+r()*24).toFixed(0)}" ry="${(10+r()*14).toFixed(0)}" fill="var(--park)"/>`;
+  for(let i=0;i<3;i++){const a=r()*H,b=r()*H;s+=`<path d="M-10 ${a.toFixed(0)} Q${W/2} ${((a+b)/2+(r()-.5)*80).toFixed(0)} ${W+10} ${b.toFixed(0)}" stroke="var(--card)" stroke-width="4" fill="none"/>`}
+  plan.days.forEach((d,di)=>{const dp=pts.filter(p=>p.di===di);if(dp.length>1)s+=`<polyline points="${dp.map(p=>p.X.toFixed(1)+","+p.Y.toFixed(1)).join(" ")}" fill="none" stroke="${DAYC[di%8]}" stroke-width="2.6" stroke-dasharray="6 5" stroke-linecap="round"/>`});
+  pts.forEach(p=>{s+=`<g transform="translate(${p.X.toFixed(1)} ${p.Y.toFixed(1)}) scale(.8)"><path d="M0 0C-4-8-12-12-12-21a12 12 0 1 1 24 0C12-12 4-8 0 0z" fill="${DAYC[p.di%8]}" stroke="#fff" stroke-width="2.2"/><text y="-17" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Figtree,sans-serif">${p.ai+1}</text></g>`});
+  return s+"</svg>";
+}
+function goPlanner(){document.getElementById("planner").scrollIntoView({behavior:"smooth"})}
+function landing(){
+  const m0=(now.getMonth()+2)%12;
+  const P0={o:0,m:m0,dest:"lisbonne",days:5,pax:2,budget:1400,style:1,ints:["culture","gastronomie"]};
+  const L=cost(D.lisbonne,P0),Ls=L.naiveTotal-L.total,dl=D.lisbonne;
+  const all=Object.entries(D).map(([k,d])=>{const c=cost(d,P0);return{k,d,c,pct:(c.naiveTotal-c.total)/c.naiveTotal}});
+  const avgPct=Math.round(all.reduce((s,x)=>s+x.pct,0)/all.length*100);
+  const avgH=Math.round(all.reduce((s,x)=>s+5*1.25+x.d.skip,0)/all.length);
+
+  $("#eb").innerHTML=ic("spark")+"Planificateur de vacances gratuit";
+  $("#hs-l1").innerHTML=ic("pin")+"Où ?";$("#hs-l2").innerHTML=ic("cal")+"Quand ?";$("#hs-l3").innerHTML=ic("clock")+"Jours";
+  $("#hs-btn").innerHTML="Planifier "+ic("route");
+  $("#h-dest").innerHTML=`<option value="auto">Surprenez-moi</option>`+Object.entries(D).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("");
+  $("#h-month").innerHTML=MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("");
+  $("#h-dest").value=$("#dest").value;$("#h-month").value=$("#month").value;$("#h-days").value=$("#days").value;
+  $("#hs").addEventListener("submit",e=>{e.preventDefault();
+    $("#dest").value=$("#h-dest").value;$("#month").value=$("#h-month").value;$("#days").value=Math.min(21,Math.max(2,+$("#h-days").value||5));
+    render();goPlanner()});
+  $("#proof").innerHTML=[[`-${avgPct} %`,"en moyenne sur la note"],[`~${avgH} h`,"gagnées sur place"],["14","destinations"]].map(([b,s])=>`<div><b class="num">${b}</b><small>${s}</small></div>`).join("");
+
+  /* Visuel du hero */
+  const d2=L.days.find((d,i)=>i>0&&d.acts.length>1)||L.days[0],d2i=L.days.indexOf(d2);
+  const goodM=dl.w.slice().sort((a,b)=>dl.s[a]-dl.s[b])[0];
+  $("#heroVis").innerHTML=`
+    <div class="hv-post">${cover("lisbonne",dl,"h")}<div class="t"><span class="ctag">${ic("pin")}Portugal · CDG → LIS</span><h3>Lisbonne</h3><div class="ctags"><span class="ctag">${ic("clock")}5 jours</span><span class="ctag">${ic("users")}2</span></div></div></div>
+    <div class="float f-sun">${ic("sun")}${MOIS[goodM]} : meilleur compromis</div>
+    <div class="float f-save"><span class="bub">${ic("piggy")}</span><div><b class="num">-${eur(Ls)}</b><small>par rapport à sans plan</small></div></div>
+    <div class="float f-day"><small>Jour ${d2i+1} · ${esc(d2.acts[0].q)}</small>${d2.acts.slice(0,3).map((a,i)=>`<div class="r"><span style="background:${DAYC[d2i%8]}">${i+1}</span>${esc(a.n)}</div>`).join("")}</div>
+    <div class="float f-map">${miniMap("lisbonne",L,"mm1")}</div>`;
+
+  /* Étapes */
+  $("#steps").innerHTML=[
+    ["users","var(--c-log)","Vos envies","Départ, budget, dates, style.",`${INTERESTS.slice(0,3).map(([k,l])=>`<span class="tag" style="color:var(--c-${k})">${ic(ICAT[k])}${l}</span>`).join("")}`],
+    ["route","var(--c-act)","Votre plan","Itinéraire par quartier, carte et budget.",`<span class="tag">${ic("walk")}12 min</span><span class="tag">${ic("ticket")}${eur(L.opt.act/2)}</span>`],
+    ["cal","var(--c-vol)","Au bon moment","Le mois le moins cher et la date pour réserver.",`<span class="tag free">${ic("check")}Mardi : -15 %</span>`]
+  ].map(([i,col,t,p,mini],n)=>`<div class="step"><div class="step-top"><span class="bub" style="background:${col}">${ic(i)}</span><span class="no">${n+1}</span></div><h3>${t}</h3><p>${p}</p><div class="mini">${mini}</div></div>`).join("");
+
+  /* Bento */
+  const C=2*Math.PI*36;let off=0;
+  const arcs=Object.keys(L.opt).map(k=>{const v=L.opt[k]/L.total*C;const s=`<circle r="36" cx="48" cy="48" fill="none" stroke="${CATS[k][2]}" stroke-width="14" stroke-dasharray="${Math.max(0,v-1.5).toFixed(2)} ${(C-v+1.5).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"/>`;off+=v;return s}).join("");
+  const mn=Math.min(...dl.s),mx=Math.max(...dl.s);
+  const top3=rank(P0).sort((a,b)=>b.score-a.score).slice(0,3);
+  $("#bento").innerHTML=`
+   <div class="tile t-map"><div class="tl-head"><span class="bub" style="background:var(--c-act)">${ic("route")}</span><h3>Itinéraire sur la carte</h3></div><p>Une couleur par jour, les visites regroupées par quartier.</p>${miniMap("lisbonne",L,"mm2")}</div>
+   <div class="tile t-bud"><div class="tl-head"><span class="bub" style="background:var(--c-log)">${ic("wallet")}</span><h3>Budget clair</h3></div>
+     <div class="mdonut"><svg viewBox="0 0 96 96"><circle r="36" cx="48" cy="48" fill="none" stroke="var(--paper)" stroke-width="14"/>${arcs}</svg><ul>${Object.keys(L.opt).map(k=>`<li><i style="background:${CATS[k][2]}"></i>${CATS[k][0]}</li>`).join("")}</ul></div></div>
+   <div class="tile t-mon"><div class="tl-head"><span class="bub" style="background:var(--good)">${ic("sun")}</span><h3>Le bon mois</h3></div>
+     <div class="mmonths">${dl.s.map((v,i)=>`<span class="${v===mn?"g":i===goodM?"s":""}" style="height:${18+(v-mn)/(mx-mn)*82}%"></span>`).join("")}</div></div>
+   <div class="tile t-tip"><div class="tl-head"><span class="bub" style="background:var(--c-rep)">${ic("spark")}</span><h3>Astuces locales</h3></div>
+     <div class="tips" style="grid-template-columns:minmax(0,1fr)"><div class="tip money" style="cursor:default"><span class="bub">${ic("piggy")}</span><span>${esc(dl.m[2])}</span></div><div class="tip time" style="cursor:default"><span class="bub">${ic("clock")}</span><span>${esc(dl.h[0])}</span></div></div></div>
+   <div class="tile t-cmp"><div class="tl-head"><span class="bub" style="background:var(--c-vol)">${ic("globe")}</span><h3>Comparateur</h3></div>
+     <div class="cmp-l">${top3.map(r=>`<div><span class="th">${cover(r.k,r.dst,"t")}</span><span>${esc(r.dst.n)}</span><span class="num">${eur(r.total)}</span></div>`).join("")}</div></div>`;
+
+  /* Destinations */
+  $("#drow").innerHTML=all.sort((a,b)=>a.c.total-b.c.total).map(x=>`<button type="button" class="post" data-go="${x.k}">${cover(x.k,x.d,"d")}
+    <span class="badge">${x.d.w.includes(m0)?`<span>${ic("sun")}</span>`:""}${x.d.t.slice(0,2).map(t=>`<span>${ic(ICAT[t])}</span>`).join("")}</span>
+    <span class="pi"><h4>${esc(x.d.n)}</h4><span class="pp"><span>${esc(x.d.c)}</span><span class="num">dès ${eur(x.c.total/2)}</span></span></span></button>`).join("");
+  $("#drow").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;$("#dest").value=b.dataset.go;render();goPlanner()});
+
+  /* Bandeau comparatif */
+  const seg=(o,tot)=>Object.keys(o).map(k=>`<span style="width:${o[k]/tot*100}%;background:${CATS[k][2]}"></span>`).join("");
+  const naiveO={vol:L.opt.vol*1.32,log:L.opt.log*1.22,rep:L.opt.rep*1.28,tra:L.opt.tra*1.25+60,act:L.opt.act*1.18};
+  $("#band").innerHTML=`<div><h2>Le même voyage, deux prix.</h2><p>Lisbonne, 5 jours, 2 personnes, en ${MOIS[m0].toLowerCase()}.</p><div class="big num">-${eur(Ls)}</div></div>
+    <div class="bb">
+      <div class="bb-row"><div class="lb"><span>Réservé au dernier moment</span><span class="num">${eur(L.naiveTotal)}</span></div><div class="bb-track">${seg(naiveO,L.naiveTotal)}</div></div>
+      <div class="bb-row"><div class="lb"><span>Avec Escale</span><span class="num">${eur(L.total)}</span></div><div class="bb-track"><div style="display:flex;width:${L.total/L.naiveTotal*100}%">${seg(L.opt,L.total)}</div></div></div>
+      <div class="bb-legend">${Object.keys(CATS).map(k=>`<span><i style="background:${CATS[k][2]}"></i>${CATS[k][0]}</span>`).join("")}</div>
+    </div>`;
+}
+landing();
+</script>
+
+</body>
+</html>
