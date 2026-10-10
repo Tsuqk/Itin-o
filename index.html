@@ -583,7 +583,7 @@ const km=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r;co
 const now=new Date();
 const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 const enc=encodeURIComponent;
-const CV="itineo-v5:";
+const CV="itineo-v7:";
 function cget(k){try{const v=JSON.parse(localStorage.getItem(CV+k));if(v&&v.t>Date.now()-7*864e5)return v.d}catch(e){}return null}
 function cset(k,d){try{localStorage.setItem(CV+k,JSON.stringify({t:Date.now(),d}))}catch(e){}}
 async function getJSON(url){const r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
@@ -624,8 +624,8 @@ function goodMonths(cl){
 }
 
 const KEEP={
- fr:/(musée|château|palais|temple|sanctuaire|jinja|pagode|monastère|abbaye|cathédrale|basilique|église|mosquée|synagogue|chapelle|monument|mémorial|opéra|théâtre|galerie|jardin|parc |plage|baie |île |lac |cascade|chute|mont |montagne|colline|volcan|grotte|forêt|réserve naturelle|marché|halle|bazar|souk|tour |phare|pont |place |fontaine|arc |forteresse|citadelle|fort |rempart|ruines|site archéologique|vestiges|mausolée|tombeau|nécropole|aquarium|zoo |belvédère|miradouro|panorama|vieille ville|médina|villa |promenade|quai |-ji |-dera |wat |stupa)/i,
- en:/(museum|castle|palace|temple|shrine|monastery|abbey|cathedral|basilica|church|mosque|synagogue|chapel|monument|memorial|opera|theatre|theater|gallery|garden|park |beach|bay |island|lake |waterfall|falls|mount |mountain|hill |volcano|cave|forest|nature reserve|market|bazaar|souk|tower|lighthouse|bridge|square|fountain|fortress|citadel|fort |ruins|archaeological|mausoleum|tomb|aquarium|zoo |viewpoint|old town|medina|villa |promenade|wat |stupa|pagoda)/i};
+ fr:/(musée|château|palais|temple|sanctuaire|jinja|pagode|monastère|abbaye|cathédrale|basilique|église|mosquée|synagogue|chapelle|monument|mémorial|opéra|théâtre|galerie|jardin|parc |plage|baie |île |lac |cascade|chute|mont |montagne|colline|volcan|grotte|forêt|réserve naturelle|marché|halle|bazar|souk|tour |phare|pont |place |fontaine|arc |forteresse|citadelle|fort |rempart|ruines|site archéologique|vestiges|mausolée|tombeau|nécropole|aquarium|zoo |belvédère|miradouro|panorama|vieille ville|médina|villa |promenade|quai |-ji |-dera |wat |stupa|kasbah|ksar|médersa|oasis|désert|dune|canyon|gorges|vallée)/i,
+ en:/(museum|castle|palace|temple|shrine|monastery|abbey|cathedral|basilica|church|mosque|synagogue|chapel|monument|memorial|opera|theatre|theater|gallery|garden|park |beach|bay |island|lake |waterfall|falls|mount |mountain|hill |volcano|cave|forest|nature reserve|market|bazaar|souk|tower|lighthouse|bridge|square|fountain|fortress|citadel|fort |ruins|archaeological|mausoleum|tomb|aquarium|zoo |viewpoint|old town|medina|villa |promenade|wat |stupa|pagoda|kasbah|ksar|madrasa|oasis|desert|dune|canyon|gorge|valley)/i};
 const DROP={
  fr:/(gare |station |métro|arrêt|école|lycée|collège|université|hôpital|clinique| rue | avenue|boulevard|autoroute|route |ligne |aéroport|entreprise|société|club |stade|arrondissement|commune |préfecture|district|ambassade|consulat|immeuble|bureau|siège|hôtel de luxe|conseil |banque|centre commercial|parking|incident|bataille|siège de|massacre|attentat|incendie|épidémie)/i,
  en:/(railway station|train station|metro station|bus station|school|college|university|hospital| street | avenue|boulevard|highway|road |airport|company|football| club |stadium|district|embassy|consulate|building|office|headquarters|hotel|bank|shopping centre|shopping mall|council|parking|incident|battle|siege of|massacre|attack|fire of)/i};
@@ -652,7 +652,7 @@ async function placesFrom(lang,lat,lon){
   return res.filter(Boolean).flatMap(r=>(r.query&&r.query.pages)||[])
     .filter(p=>{const s=` ${p.title} ${p.description||""} `;return KEEP[lang].test(s)&&!DROP[lang].test(s)})
     .map(p=>{const s=` ${p.title} ${p.description||""} `,cat=catOf(s),g=pos[p.pageid];
-      return{id:lang+p.pageid,title:p.title,desc:p.description||"",lat:g.lat,lon:g.lon,len:p.length||0,thumb:p.thumbnail&&!/\.svg/i.test(p.thumbnail.source)?p.thumbnail.source:"",url:p.fullurl,cat,h:durOf(cat,s),museum:/musée|museum|palais|palace|château|castle/i.test(s)}})
+      return{id:lang+p.pageid,title:p.title,desc:p.description||"",lat:g.lat,lon:g.lon,len:p.length||0,thumb:p.thumbnail&&goodPhoto(p.thumbnail.source)?p.thumbnail.source:"",url:p.fullurl,cat,h:durOf(cat,s),museum:/musée|museum|palais|palace|château|castle/i.test(s)}})
     .sort((a,b)=>b.len-a.len).slice(0,80);
 }
 async function fetchPlaces(lat,lon){
@@ -665,18 +665,59 @@ async function fetchPlaces(lat,lon){
   }
   cset(k,out);return out;
 }
+/* ---------- Photos : vraies vues de la destination, sans drapeaux, blasons, logos ni cartes ---------- */
+const BADNAME=/(flag|drapeau|bandera|bandeira|flagge|coat[_ ]of|arms|blason|escudo|wappen|logo|locator|location|map|carte|mapa|karte|plan[_ ]|seal|emblem|sceau|diagram|montage|collage|signature|icon|pictogram)/i;
+const fileOf=u=>{try{return decodeURIComponent(u.split("?")[0].split("/").pop())}catch(e){return u}};
+const goodPhoto=u=>!!u&&!BADNAME.test(fileOf(u))&&!/\.(svg|png|gif)/i.test(fileOf(u));
+const filePath=(f,w)=>`https://commons.wikimedia.org/wiki/Special:FilePath/${enc(f.replace(/ /g,"_"))}?width=${w}`;
+const pickFile=files=>(files||[]).find(f=>!BADNAME.test(f)&&!/\.(svg|gif)$/i.test(f));
+// Photo principale choisie par les contributeurs Wikidata (propriété P18) : panorama, monument, rue typique…
+async function wikidataImages(ids){
+  const out={};
+  for(let i=0;i<ids.length;i+=50){
+    const d=await getJSON(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${ids.slice(i,i+50).join("|")}&props=claims&format=json&origin=*`);
+    Object.entries(d.entities||{}).forEach(([q,e])=>{out[q]=((e.claims&&e.claims.P18)||[]).map(c=>c.mainsnak&&c.mainsnak.datavalue&&c.mainsnak.datavalue.value).filter(Boolean)});
+  }
+  return out;
+}
+// Dernier recours : une grande photo de paysage trouvée sur Wikimedia Commons
+async function commonsPhoto(q){
+  const d=await getJSON(`https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&generator=search&gsrnamespace=6&gsrlimit=20&gsrsearch=${enc(q+" panorama filetype:bitmap")}&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600`);
+  const c=((d.query&&d.query.pages)||[]).map(p=>({t:p.title,i:p.imageinfo&&p.imageinfo[0]}))
+    .filter(x=>x.i&&/jpeg/.test(x.i.mime)&&x.i.width>=1200&&x.i.width>x.i.height*1.2&&!BADNAME.test(x.t));
+  return c[0]?{src:c[0].i.thumburl,page:c[0].i.descriptionurl}:null;
+}
 async function fetchInfo(dest){
   const k=`in:${dest.name}|${dest.cc}`;const c=cget(k);if(c)return c;
-  const d=await getJSON(`https://fr.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&generator=search&gsrsearch=${enc(dest.name+" "+dest.country)}&gsrlimit=1&prop=pageimages|extracts|info&exintro=1&explaintext=1&exsentences=2&piprop=thumbnail&pithumbsize=1600&inprop=url`);
+  const d=await getJSON(`https://fr.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&generator=search&gsrsearch=${enc(dest.name+" "+dest.country)}&gsrlimit=1&prop=pageimages|extracts|info|pageprops&ppprop=wikibase_item&exintro=1&explaintext=1&exsentences=2&piprop=thumbnail&pithumbsize=1600&inprop=url`);
   const p=d.query&&d.query.pages&&d.query.pages[0];
-  const out=p?{title:p.title,extract:p.extract||"",img:p.thumbnail&&!/\.svg/i.test(p.thumbnail.source)?p.thumbnail.source:"",url:p.fullurl}:{title:dest.name,extract:"",img:"",url:""};
+  let img="",imgPage="";
+  const q=p&&p.pageprops&&p.pageprops.wikibase_item;
+  if(q){try{const f=pickFile((await wikidataImages([q]))[q]);if(f){img=filePath(f,1600);imgPage="https://commons.wikimedia.org/wiki/File:"+enc(f.replace(/ /g,"_"))}}catch(e){}}
+  if(!img&&p&&p.thumbnail&&goodPhoto(p.thumbnail.source)){img=p.thumbnail.source;imgPage=p.fullurl}
+  if(!img){try{const r=await commonsPhoto(`${dest.name} ${dest.country}`);if(r){img=r.src;imgPage=r.page}}catch(e){}}
+  const out={title:p?p.title:dest.name,extract:p?p.extract||"":"",img,imgPage,url:p?p.fullurl:""};
   cset(k,out);return out;
 }
-async function featuredPhotos(){
-  let m=cget("feat");if(m)return m;
-  const d=await getJSON(`https://fr.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=640&titles=${enc(FEATURED.map(f=>f.w).join("|"))}`);
+async function featuredPhotos(apply){
+  let m=cget("feat");if(m){apply(m);return m}
+  const d=await getJSON(`https://fr.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&redirects=1&prop=pageimages|pageprops&ppprop=wikibase_item&piprop=thumbnail&pithumbsize=640&titles=${enc(FEATURED.map(f=>f.w).join("|"))}`);
   const back={};(d.query.normalized||[]).forEach(x=>back[x.to]=x.from);(d.query.redirects||[]).forEach(x=>back[x.to]=back[x.from]||x.from);
-  m={};(d.query.pages||[]).forEach(p=>{if(p.thumbnail)m[back[p.title]||p.title]=p.thumbnail.source});
+  const pages=d.query.pages||[];
+  // premier affichage immédiat avec les photos Wikipédia valables, remplacées ensuite par celles de Wikidata
+  const quick={};pages.forEach(p=>{if(p.thumbnail&&goodPhoto(p.thumbnail.source))quick[back[p.title]||p.title]=p.thumbnail.source});
+  apply(quick);
+  const ids=pages.map(p=>p.pageprops&&p.pageprops.wikibase_item).filter(Boolean);
+  const imgs=ids.length?await wikidataImages(ids).catch(()=>({})):{};
+  m={};
+  pages.forEach(p=>{
+    const t=back[p.title]||p.title,q=p.pageprops&&p.pageprops.wikibase_item,f=q&&pickFile(imgs[q]);
+    if(f)m[t]=filePath(f,640);
+    else if(p.thumbnail&&goodPhoto(p.thumbnail.source))m[t]=p.thumbnail.source;
+  });
+  apply(m);
+  // les villes sans photo Wikidata sont complétées ensuite (la recherche Commons est plus lente)
+  await Promise.all(FEATURED.filter(f=>!m[f.w]).map(async f=>{const r=await commonsPhoto(`${f.name} ${f.country}`).catch(()=>null);if(r){m[f.w]=r.src.replace(/\/\d+px-/,"/640px-");apply(m)}}));
   cset("feat",m);return m;
 }
 
@@ -897,11 +938,11 @@ function render(){
   // Photo de couverture : celle de l'article de la ville, sinon celle du lieu le plus important
   const topPlace=state.places.find(x=>x.thumb);
   const coverImg=info.img||(topPlace?topPlace.thumb.replace(/\/\d+px-/,"/1280px-"):"");
-  const coverUrl=info.img?info.url:(topPlace?topPlace.url:"");
+  const coverUrl=info.img?(info.imgPage||info.url):(topPlace?topPlace.url:"");
 
   /* Couverture */
   $("#cover").innerHTML=`<div class="cover">${photoOr(coverImg,dest.name,pal,"",dest.name)}<div class="shade"></div>
-    ${coverImg&&coverUrl?`<a class="credit" href="${esc(coverUrl)}" target="_blank" rel="noopener">Photo : Wikipédia</a>`:""}
+    ${coverImg&&coverUrl?`<a class="credit" href="${esc(coverUrl)}" target="_blank" rel="noopener">Photo : Wikimedia</a>`:""}
     <div class="price"><span>TOTAL ${p.pax} PERS.</span><b class="num">${eur(est.total)}</b><span style="color:${fits?"#1C8556":"#B9470F"}">${fits?"Dans le budget":"+"+eur(est.total-p.budget)}</span></div>
     <div class="cover-in">
       <span class="ctry">${ic("pin")}${esc([dest.admin,dest.country].filter(Boolean).join(", "))} · ${Math.round(est.dist).toLocaleString("fr-FR")} km de ${esc(o[1])}</span>
@@ -1097,9 +1138,10 @@ function landing(){
   const P5={...P0};
   $("#drow").innerHTML=FEATURED.map(f=>`<button type="button" class="post" data-go="${f.id}" aria-label="Planifier ${esc(f.name)}">${cover(f.id,palette(f.name),"d")}<div class="shade"></div>
     <span class="pi"><h4>${esc(f.name)}</h4><span class="pp"><span>${esc(f.country)}</span><span class="num">dès ${eur(estimate(f,P5,[],1).total/2)}</span></span></span></button>`).join("");
-  featuredPhotos().then(m=>{
-    FEATURED.forEach(f=>{const img=m[f.w];const b=document.querySelector(`[data-go="${f.id}"]`);if(img&&b){const a=b.querySelector(".art");if(a)a.outerHTML=`<img class="photo" src="${esc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`}});
-    if(m["Lisbonne"]){const a=document.querySelector("#hvPost .art");if(a)a.outerHTML=`<img class="photo" src="${esc(m["Lisbonne"])}" alt="Lisbonne" referrerpolicy="no-referrer">`}
+  featuredPhotos(m=>{
+    const setPhoto=(host,src,alt)=>{if(!host||!src)return;const im=host.querySelector("img.photo");if(im){if(im.src!==src)im.src=src;return}const a=host.querySelector(".art");if(a)a.outerHTML=`<img class="photo" src="${esc(src)}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer">`};
+    FEATURED.forEach(f=>setPhoto(document.querySelector(`[data-go="${f.id}"]`),m[f.w],""));
+    setPhoto(document.querySelector("#hvPost"),m["Lisbonne"],"Lisbonne");
   }).catch(()=>{});
 
   const seg=(o,tot)=>Object.keys(o).map(k=>`<span style="width:${o[k]/tot*100}%;background:${CATS[k][2]}"></span>`).join("");
