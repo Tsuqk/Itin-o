@@ -253,6 +253,30 @@ a.tag:hover{color:var(--sea)}
 @media (prefers-reduced-motion:no-preference){.building li.now .s{animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}}
 .building{padding:0;margin:0}
 
+/* ---------- Inscription ---------- */
+.auth{max-width:440px;margin:0 auto;padding-block:40px 70px;display:grid;gap:16px;justify-items:center;text-align:center}
+.auth h1{font-size:clamp(28px,4vw,36px);font-weight:800}
+.auth .lead{color:var(--muted);margin:0;font-size:17px;max-width:38ch}
+.save-banner{display:flex;gap:10px;align-items:center;justify-content:center;background:var(--mint);color:var(--deep);font-weight:800;font-size:14px;line-height:1.35;border-radius:18px;padding:14px 18px;width:100%}
+.save-banner .ic{flex:none}
+#authForm{display:grid;gap:8px;width:100%;text-align:left;margin-top:6px}
+#authForm label{font-weight:800;font-size:14px;margin-top:8px}
+#authForm input{width:100%;padding:15px 18px;border:2px solid var(--line);border-radius:18px;background:#fff;font-size:16px;outline:none}
+#authForm input:focus{border-color:var(--green)}
+.pw{position:relative}
+.pw input{padding-right:54px!important}
+.eye{position:absolute;right:8px;top:50%;translate:0 -50%;width:40px;height:40px;border:0;background:none;border-radius:50%;cursor:pointer;color:var(--muted);display:grid;place-items:center}
+.eye:hover{background:var(--bg)}
+#authForm .btn.coral{margin-top:14px;width:100%}
+#authForm .linkbtn{justify-self:end;font-size:13px}
+.or{display:flex;align-items:center;gap:14px;width:100%;color:var(--muted);font-size:14px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.gbtn{width:100%;padding:15px;border:2px solid var(--line);font-size:16px;font-weight:800;background:#fff;gap:10px}
+.gbtn svg{width:20px;height:20px}
+.linkbtn{background:none;border:0;padding:0;color:var(--sea);font-weight:800;text-decoration:underline;cursor:pointer;font-size:inherit}
+.switch{margin:0;font-size:15px}
+.legal{margin:0;color:var(--muted);font-size:12px;max-width:42ch}
+
 .wz-card{position:sticky;top:24px;background:#fff;border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 30px 60px -34px rgba(29,42,37,.3);display:grid;gap:14px}
 .wz-card-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .wz-card-h h3{font-size:18px}
@@ -555,7 +579,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 
   <footer class="site-foot">
     <a class="logo" href="#top" style="font-size:20px">Itinéo<i>.</i></a>
-    <nav><a href="#how">Comment ça marche</a><a href="#premium">Tarifs</a><a href="#faq">Questions</a></nav>
+    <nav><a href="#how">Comment ça marche</a><a href="#premium">Tarifs</a><a href="#faq">Questions</a><a href="/confidentialite.html">Confidentialité</a></nav>
     <span>Données : <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipédia</a>, <a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a>, <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>. Budgets estimés, à vérifier avant de réserver.</span>
     <span>© 2026 Itinéo</span>
   </footer>
@@ -569,6 +593,12 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
     <section id="wzStep"></section>
     <aside class="wz-card" id="wzCard"></aside>
   </main>
+</div>
+
+<!-- ================= INSCRIPTION ================= -->
+<div id="vAuth" hidden>
+  <header class="wz-top"><div class="wrap"><a class="logo" href="#top">Itinéo<i>.</i></a><a class="wz-x" href="#top" aria-label="Fermer">×</a></div></header>
+  <main class="wrap"><div class="auth" id="authBox"></div></main>
 </div>
 
 <!-- ================= PLAN ================= -->
@@ -1193,14 +1223,15 @@ $("#copy").onclick=()=>{
 };
 
 /* ---------- Navigation entre les vues : accueil, questionnaire (#creer), plan (#plan) ---------- */
-const VIEWS={landing:$("#vLanding"),wizard:$("#vWizard"),plan:$("#vPlan")};
-let currentView=null;
+const VIEWS={landing:$("#vLanding"),wizard:$("#vWizard"),auth:$("#vAuth"),plan:$("#vPlan")};
+let currentView=null,authReady=false,pendingRoute=false;
 function showView(v){
   if(currentView!==v){
     currentView=v;
     Object.entries(VIEWS).forEach(([k,el])=>el.hidden=k!==v);
     if(v==="wizard")renderWizard();
   }
+  if(v==="auth")renderAuthPage();
   if(v==="plan"){
     if(!state.dest)loadDestination(saved&&saved.dest&&saved.dest.lat!=null?saved.dest:FEATURED[0]);
     setTimeout(()=>{placeMap();if(map)map.invalidateSize();drawMap()},80);
@@ -1210,7 +1241,13 @@ function route(){
   const h=location.hash;
   if(h.includes("access_token")||h.includes("error_description")){showView("landing");return}
   if(h==="#creer"){showView("wizard");window.scrollTo(0,0);return}
-  if(h==="#plan"){showView("plan");window.scrollTo(0,0);return}
+  if(h==="#inscription"){if(sb&&authReady&&user){location.replace("#plan");return}showView("auth");window.scrollTo(0,0);return}
+  if(h==="#plan"){
+    // le plan est réservé aux comptes : on attend de savoir si la personne est connectée
+    if(sb&&!authReady){pendingRoute=true;return}
+    if(sb&&!user){authMode="signup";location.replace("#inscription");return}
+    showView("plan");window.scrollTo(0,0);return;
+  }
   const was=currentView;showView("landing");
   const el=h.length>1&&document.getElementById(h.slice(1));
   if(el&&was&&was!=="landing")setTimeout(()=>el.scrollIntoView(),0);
@@ -1413,7 +1450,7 @@ async function runBuild(){
     items[i].classList.remove("now");items[i].classList.add("done");items[i].querySelector(".s").innerHTML=ic("check");
   }
   await new Promise(r=>setTimeout(r,350));
-  if(runBuild.cur===id&&currentView==="wizard")location.hash="plan";
+  if(runBuild.cur===id&&currentView==="wizard"){authMode="signup";location.hash=sb&&!user?"inscription":"plan"}
 }
 $("#vWizard").addEventListener("click",async e=>{
   const t=e.target.closest("button");if(!t)return;
@@ -1449,16 +1486,11 @@ function renderAuth(){
     :`<button type="button" class="btn ghost" data-act="login">Se connecter</button>`;
   document.querySelectorAll(".authSlot").forEach(el=>el.innerHTML=html);
 }
+// Toute connexion passe par la page d'inscription / connexion
 function loginModal(reason){
-  openModal(`<h3 id="modalTitle">Connexion</h3><p>${reason?esc(reason)+" ":""}Recevez un lien de connexion par e-mail, sans mot de passe.</p>
-    <form id="loginForm" style="display:grid;gap:10px"><input class="inp" id="loginEmail" type="email" required autocomplete="email" placeholder="vous@exemple.fr" aria-label="Adresse e-mail">
-    <button class="btn primary" type="submit">${ic("mail")}Recevoir mon lien</button><div id="loginMsg"></div></form>`);
-  $("#loginForm").addEventListener("submit",async e=>{
-    e.preventDefault();const email=$("#loginEmail").value.trim(),btn=e.target.querySelector("button");btn.disabled=true;
-    const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
-    btn.disabled=false;
-    $("#loginMsg").innerHTML=error?`<div class="msg err">Envoi impossible : ${esc(error.message)}. Réessayez dans quelques minutes.</div>`:`<div class="msg ok">Lien envoyé à ${esc(email)}. Ouvrez-le depuis votre boîte mail pour vous connecter.</div>`;
-  });
+  closeModal();
+  authMode=reason?"signup":"login";
+  if(location.hash==="#inscription")renderAuthPage();else location.hash="inscription";
 }
 function accountModal(){
   const pro=profile&&profile.is_premium,end=profile&&profile.current_period_end?new Date(profile.current_period_end).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):"";
@@ -1557,13 +1589,121 @@ if(premiumParam){
     let tries=0;const poll=setInterval(async()=>{tries++;if(user)await loadProfile();if((profile&&profile.is_premium)||tries>8)clearInterval(poll)},2500);
   }else openModal(`<h3 id="modalTitle">Paiement annulé</h3><p>Aucun montant n'a été débité. Vous pouvez passer Premium quand vous voulez.</p><button type="button" class="btn" data-close>Fermer</button>`);
 }
+/* ---------- Page d'inscription / connexion ---------- */
+P.eye='<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';
+P.eyeoff='<path d="M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 8 10 8a17 17 0 0 1-2.2 3.2M6.6 6.6A17 17 0 0 0 2 12s3.5 8 10 8a9.7 9.7 0 0 0 5.4-1.6M2 2l20 20M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
+const GOOGLE_SVG=`<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;
+let authMode="signup";
+const AFTER="itineo-after-auth";
+function markAfterAuth(){try{localStorage.setItem(AFTER,JSON.stringify({go:"plan",t:Date.now()}))}catch(e){}}
+function takeAfterAuth(){try{const v=JSON.parse(localStorage.getItem(AFTER)||"null");localStorage.removeItem(AFTER);return v&&v.t>Date.now()-864e5?v.go:null}catch(e){return null}}
+function frErr(e){
+  const m=(e&&e.message)||"";
+  if(/invalid login credentials/i.test(m))return"E-mail ou mot de passe incorrect.";
+  if(/already (been )?registered|already exists/i.test(m))return"Un compte existe déjà avec cet e-mail. Connectez-vous.";
+  if(/email not confirmed/i.test(m))return"Confirmez d'abord votre adresse e-mail grâce au lien reçu.";
+  if(/rate limit|too many/i.test(m))return"Trop de tentatives. Réessayez dans quelques minutes.";
+  if(/password/i.test(m)&&/(least|short|weak)/i.test(m))return"Mot de passe trop faible : 8 caractères minimum.";
+  if(/provider is not enabled|unsupported provider/i.test(m))return"La connexion avec Google n'est pas encore activée.";
+  return"Une erreur est survenue : "+m;
+}
+function renderAuthPage(){
+  const box=$("#authBox"),signup=authMode==="signup",d=state.dest;
+  const s=state.est?Math.round(state.est.naiveTotal-state.est.total):0;
+  box.innerHTML=`<span class="wz-illu">${ic(signup?"spark":"users")}</span>
+    <h1>${signup?"Votre voyage est prêt":"Bon retour !"}</h1>
+    <p class="lead">${signup?"Créez votre compte pour le découvrir, il vous attend juste derrière.":"Connectez-vous pour retrouver votre voyage."}</p>
+    ${signup&&s>0?`<div class="save-banner">${ic("piggy")}<span>Votre voyage${d?" à "+esc(d.name):""} vous fait économiser ${eur(s)} par rapport à une réservation de dernière minute</span></div>`:""}
+    <form id="authForm" novalidate>
+      <label for="aEmail">Votre e-mail</label>
+      <input id="aEmail" type="email" autocomplete="email" placeholder="prenom@exemple.fr" required>
+      <label for="aPass">Votre mot de passe</label>
+      <div class="pw"><input id="aPass" type="password" autocomplete="${signup?"new-password":"current-password"}" placeholder="${signup?"8 caractères minimum":"Votre mot de passe"}" minlength="8" required><button type="button" class="eye" data-eye aria-label="Afficher le mot de passe">${ic("eye")}</button></div>
+      ${signup?`<label for="aName">Votre prénom</label><input id="aName" type="text" autocomplete="given-name" placeholder="Camille">`:`<button type="button" class="linkbtn" data-forgot>Mot de passe oublié ?</button>`}
+      <div id="authMsg" aria-live="polite"></div>
+      <button type="submit" class="btn coral big">${signup?"Découvrir mon voyage":"Se connecter"}</button>
+    </form>
+    <div class="or">ou</div>
+    <button type="button" class="btn gbtn" data-google>${GOOGLE_SVG}Continuer avec Google</button>
+    <p class="switch">${signup?`Vous avez déjà un compte ? <button type="button" class="linkbtn" data-mode="login">Se connecter</button>`:`Pas encore de compte ? <button type="button" class="linkbtn" data-mode="signup">Créer un compte</button>`}</p>
+    <p class="legal">En continuant, vous acceptez nos conditions d'utilisation et notre <a href="/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</p>`;
+}
+function showConfirm(email){
+  $("#authBox").innerHTML=`<span class="wz-illu">${ic("mail")}</span><h1>Plus qu'une étape</h1>
+    <p class="lead">Nous avons envoyé un lien de confirmation à <b>${esc(email)}</b>. Cliquez dessus pour activer votre compte et découvrir votre voyage.</p>
+    <button type="button" class="btn coral big" data-mode="login">J'ai confirmé, me connecter</button>
+    <p class="legal">Rien reçu ? Vérifiez vos courriers indésirables.</p>`;
+}
+function afterLogin(isNew){
+  takeAfterAuth();
+  location.hash="plan";
+  if(isNew)setTimeout(()=>{if(state.plan)saveTrip()},1200);
+}
+$("#vAuth").addEventListener("submit",async e=>{
+  if(e.target.id!=="authForm")return;
+  e.preventDefault();
+  const email=$("#aEmail").value.trim(),pass=$("#aPass").value,name=$("#aName")?$("#aName").value.trim():"";
+  const msg=$("#authMsg"),btn=e.target.querySelector("button[type=submit]");
+  const err=t=>{msg.innerHTML=`<div class="msg err">${esc(t)}</div>`};
+  if(!/^\S+@\S+\.\S+$/.test(email))return err("Entrez une adresse e-mail valide.");
+  if(pass.length<8)return err("Le mot de passe doit contenir au moins 8 caractères.");
+  if(!sb)return err("La connexion est indisponible pour le moment. Réessayez plus tard.");
+  btn.disabled=true;msg.innerHTML="";markAfterAuth();
+  if(authMode==="signup"){
+    const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{first_name:name},emailRedirectTo:location.origin+location.pathname}});
+    btn.disabled=false;
+    if(error)return err(frErr(error));
+    if(data.user&&Array.isArray(data.user.identities)&&!data.user.identities.length)return err("Un compte existe déjà avec cet e-mail. Connectez-vous.");
+    if(data.session){user=data.session.user;renderAuth();afterLogin(true)}
+    else showConfirm(email);
+  }else{
+    const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    btn.disabled=false;
+    if(error)return err(frErr(error));
+    user=data.user;renderAuth();afterLogin(false);
+  }
+});
+$("#vAuth").addEventListener("click",async e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.hasAttribute("data-eye")){const i=$("#aPass"),show=i.type==="password";i.type=show?"text":"password";b.innerHTML=ic(show?"eyeoff":"eye");b.setAttribute("aria-label",show?"Masquer le mot de passe":"Afficher le mot de passe");return}
+  if(b.dataset.mode){authMode=b.dataset.mode;renderAuthPage();return}
+  if(b.hasAttribute("data-google")){
+    if(!sb)return;markAfterAuth();
+    const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}});
+    if(error){const m=$("#authMsg");if(m)m.innerHTML=`<div class="msg err">${esc(frErr(error))}</div>`}
+    return;
+  }
+  if(b.hasAttribute("data-forgot")){
+    const email=$("#aEmail").value.trim(),m=$("#authMsg");
+    if(!/^\S+@\S+\.\S+$/.test(email)){m.innerHTML=`<div class="msg err">Entrez votre e-mail ci-dessus, puis cliquez à nouveau.</div>`;return}
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+    m.innerHTML=error?`<div class="msg err">${esc(frErr(error))}</div>`:`<div class="msg ok">Lien de réinitialisation envoyé à ${esc(email)}.</div>`;
+  }
+});
+function newPasswordModal(){
+  openModal(`<h3 id="modalTitle">Nouveau mot de passe</h3><p>Choisissez un nouveau mot de passe pour votre compte.</p>
+    <form id="npForm" style="display:grid;gap:10px"><input class="inp" id="npPass" type="password" minlength="8" autocomplete="new-password" placeholder="8 caractères minimum" aria-label="Nouveau mot de passe"><button class="btn primary" type="submit">Enregistrer</button><div id="npMsg"></div></form>`);
+  $("#npForm").addEventListener("submit",async e=>{
+    e.preventDefault();const p=$("#npPass").value;
+    if(p.length<8){$("#npMsg").innerHTML=`<div class="msg err">8 caractères minimum.</div>`;return}
+    const {error}=await sb.auth.updateUser({password:p});
+    $("#npMsg").innerHTML=error?`<div class="msg err">${esc(frErr(error))}</div>`:`<div class="msg ok">Mot de passe modifié.</div>`;
+  });
+}
+
 if(sb){
   sb.auth.onAuthStateChange((event,session)=>{
     user=session?session.user:null;renderAuth();setTimeout(loadProfile,0);
+    const fromLink=location.hash.includes("access_token");
+    if(fromLink)history.replaceState(null,"",location.pathname);
+    if(event==="PASSWORD_RECOVERY"){setTimeout(newPasswordModal,0);return}
     if(user&&pendingSave){pendingSave=false;closeModal();saveTrip()}
-    if(event==="SIGNED_IN"&&location.hash.includes("access_token"))history.replaceState(null,"",location.pathname);
+    if(!authReady){authReady=true;if(pendingRoute||fromLink){pendingRoute=false;setTimeout(()=>{if(user&&takeAfterAuth()==="plan")location.hash="plan";else route()},0)};return}
+    if(event==="SIGNED_IN"&&user){const go=takeAfterAuth();if(go==="plan"||currentView==="auth")location.hash="plan"}
+    if(event==="SIGNED_OUT"&&currentView==="plan")location.hash="top";
   });
-}
+  setTimeout(()=>{if(!authReady){authReady=true;if(pendingRoute){pendingRoute=false;route()}}},3000);
+}else authReady=true;
 renderAuth();
 
 /* ---------- Démarrage ---------- */
