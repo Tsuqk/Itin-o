@@ -100,11 +100,52 @@ a.tag:hover{color:var(--sea)}
 @media (max-width:600px){.wk-float{left:8px;right:8px;bottom:-34px}}
 @media (prefers-reduced-motion:no-preference){.wk-float{animation:bob 6s ease-in-out infinite}@keyframes bob{50%{translate:0 -6px}}}
 
+/* Carte postale + billet d'embarquement */
+.hpost{position:relative;max-width:450px;width:100%;justify-self:center;padding-bottom:96px}
+.hp-frame{position:relative;aspect-ratio:4/4.4;max-width:100%;border-radius:30px;overflow:hidden;background:#20322b;box-shadow:0 34px 60px -30px rgba(29,42,37,.5);color:#fff}
+.hp-slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease}
+.hp-slide.on{opacity:1}
+.hp-slide img,.hp-slide .art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media (prefers-reduced-motion:no-preference){.hp-slide.on img{animation:kb 6s ease-out both}@keyframes kb{from{transform:scale(1.07)}to{transform:scale(1)}}}
+@media (prefers-reduced-motion:reduce){.hp-slide{transition:none}}
+.hp-frame .shade{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.08) 38%,transparent 60%,rgba(0,0,0,.35))}
+.hp-info{position:absolute;top:22px;left:24px;right:24px;display:grid;gap:4px;justify-items:start}
+.hp-kicker{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;opacity:.95}
+.hp-kicker .ic{width:15px;height:15px}
+.hp-info h3{font-size:clamp(36px,5vw,50px);font-weight:800;color:#fff;letter-spacing:-.03em;text-shadow:0 2px 14px rgba(0,0,0,.35)}
+.hp-info p{margin:0;font-weight:700;font-size:15px;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.hp-weather{margin-top:6px}
+.hp-dots{position:absolute;right:20px;top:26px;display:flex;gap:6px}
+.hp-dots button{width:8px;height:8px;border-radius:4px;border:0;padding:0;background:rgba(255,255,255,.55);cursor:pointer;transition:width .3s,background .3s}
+.hp-dots button.on{width:22px;background:#fff}
+.ticket{position:absolute;left:-34px;bottom:0;width:286px;max-width:calc(100% + 20px);background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 48px -18px rgba(29,42,37,.45);overflow:hidden}
+.tk-top{display:flex;justify-content:space-between;align-items:center;background:var(--deep);color:#fff;padding:9px 16px;font-size:12px;font-weight:700}
+.tk-top span{display:inline-flex;align-items:center;gap:6px}
+.tk-top .ic{width:14px;height:14px}
+.tk-top b{font-family:var(--f-display);font-size:14px}
+.tk-route{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:12px 16px 6px}
+.tk-route b{display:block;font-family:var(--f-display);font-size:28px;font-weight:800;line-height:1;letter-spacing:.02em}
+.tk-route small{font-size:12px;color:var(--muted);font-weight:600}
+.tk-line{position:relative;height:2px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 11px);display:grid;place-items:center}
+.tk-line .ic{position:absolute;width:18px;height:18px;color:var(--green);background:#fff;padding:0 2px;box-sizing:content-box}
+.tk-meta{display:grid;grid-template-columns:repeat(3,auto);justify-content:space-between;gap:8px;padding:6px 16px 12px;font-size:13px;font-weight:700}
+.tk-meta small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.tk-stub{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:2px dashed var(--line);padding:11px 16px 13px}
+.tk-stub::before,.tk-stub::after{content:"";position:absolute;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
+.tk-stub::before{left:-9px}.tk-stub::after{right:-9px}
+.tk-stub small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.tk-stub b{font-family:var(--f-display);font-size:20px;font-weight:800}
+.tk-save{background:var(--mint);color:var(--deep);font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px;white-space:nowrap}
+@media (max-width:600px){.ticket{left:10px;right:10px;width:auto;max-width:none}.hpost{padding-bottom:120px}}
+@media (prefers-reduced-motion:no-preference){.ticket{animation:bob 6s ease-in-out infinite}}
+
 .marquee-h{text-align:center;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:56px 0 18px}
 .marquee{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
-.marquee-track{display:flex;gap:56px;width:max-content;padding-block:6px}
+.marquee-track{display:flex;align-items:center;gap:64px;width:max-content;padding-block:6px}
 @media (prefers-reduced-motion:no-preference){.marquee-track{animation:scroll 32s linear infinite}@keyframes scroll{to{transform:translateX(-50%)}}}
-.marquee-track span{display:inline-flex;align-items:center;gap:9px;font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--ink);opacity:.72;white-space:nowrap}
+.marquee-track span{display:inline-flex;align-items:center;gap:10px;height:58px;white-space:nowrap}
+.marquee-track img{display:block;width:auto;max-width:none}
+.marquee-track em{font-style:normal;font-family:var(--f-display);font-weight:700;font-size:20px;color:#3d3d3d}
 .marquee-track .ic{width:22px;height:22px;color:var(--green)}
 
 .sect{padding-block:80px}
@@ -1263,6 +1304,7 @@ function applyFeat(m){
   const setPhoto=(host,src)=>{if(!host||!src)return;const im=host.querySelector("img.photo");if(im){if(im.src!==src)im.src=src;return}const a=host.querySelector(".art");if(a)a.outerHTML=`<img class="photo" src="${esc(src)}" alt="" loading="lazy" referrerpolicy="no-referrer">`};
   FEATURED.forEach(f=>{
     setPhoto(document.querySelector(`#drow [data-go="${f.id}"]`),m[f.w]);
+    setPhoto(document.querySelector(`.hp-slide[data-id="${f.id}"]`),m[f.w]);
     document.querySelectorAll(`.idea[data-idea="${f.id}"] span`).forEach(s=>{if(m[f.w])s.innerHTML=`<img src="${esc(m[f.w])}" alt="" referrerpolicy="no-referrer">`});
   });
   if(currentView==="wizard")renderCard();
@@ -1285,6 +1327,46 @@ function miniMap(plan,id){
   return s+"</svg>";
 }
 
+/* ---------- Visuel principal : carte postale qui défile + billet d'embarquement ---------- */
+const ROT=[["lisbonne","LIS"],["kyoto","KIX"],["lecap","CPT"],["marrakech","RAK"],["reykjavik","KEF"],["seville","SVQ"]].map(([id,code])=>({...FEATURED.find(f=>f.id===id),code}));
+let hpIdx=0,hpTimer=null,hpP0=null;
+function renderHeroPost(P0){
+  hpP0=P0;
+  const box=$("#heroWeek");box.className="hpost";
+  box.innerHTML=`<div class="hp-frame" aria-roledescription="carrousel" aria-label="Exemples de destinations">
+      ${ROT.map((f,i)=>`<div class="hp-slide${i===hpIdx?" on":""}" data-id="${f.id}">${FEAT_IMG[f.w]?`<img class="photo" src="${esc(FEAT_IMG[f.w])}" alt="${esc(f.name)}" referrerpolicy="no-referrer">`:cover(f.id,palette(f.name),"hp")}</div>`).join("")}
+      <div class="shade"></div>
+      <div class="hp-info"><span class="hp-kicker">${ic("pin")}<span id="hpCountry"></span></span><h3 id="hpName"></h3><p id="hpPrice"></p><span class="ctag hp-weather" id="hpWeather" hidden></span></div>
+      <div class="hp-dots">${ROT.map((f,i)=>`<button type="button" data-hp="${i}" aria-label="Voir ${esc(f.name)}"></button>`).join("")}</div>
+    </div>
+    <div class="ticket" id="hpTicket" aria-live="polite"></div>`;
+  box.querySelector(".hp-dots").addEventListener("click",e=>{const b=e.target.closest("[data-hp]");if(b){setHeroSlide(+b.dataset.hp);startHeroTimer()}});
+  box.addEventListener("mouseenter",()=>clearInterval(hpTimer));
+  box.addEventListener("mouseleave",startHeroTimer);
+  setHeroSlide(hpIdx);startHeroTimer();
+}
+function startHeroTimer(){clearInterval(hpTimer);hpTimer=setInterval(()=>{if(currentView==="landing"&&!document.hidden)setHeroSlide((hpIdx+1)%ROT.length)},4500)}
+function setHeroSlide(i){
+  hpIdx=i;const f=ROT[i];
+  document.querySelectorAll(".hp-slide").forEach((s,k)=>s.classList.toggle("on",k===i));
+  document.querySelectorAll(".hp-dots button").forEach((b,k)=>b.classList.toggle("on",k===i));
+  $("#hpName").textContent=f.name;$("#hpCountry").textContent=f.country;
+  updateHeroData(f);
+  if(!f._cl&&!f._loading){f._loading=true;fetchClimate(f.lat,f.lon).then(cl=>{f._cl=cl;if(ROT[hpIdx]===f)updateHeroData(f)}).catch(()=>{})}
+}
+function updateHeroData(f){
+  const good=goodMonths(f._cl),P=hpP0;
+  const best=good.length?good.slice().sort((a,b)=>season(a,good)-season(b,good))[0]:P.m;
+  const E=estimate(f,{...P,m:best},good,1),save=E.naiveTotal-E.total,dep=nextDep(best);
+  $("#hpPrice").textContent=`5 jours dès ${eur(E.total/P.pax)} / pers.`;
+  const w=$("#hpWeather");
+  if(f._cl&&f._cl.tmax[best]!=null){w.hidden=false;w.innerHTML=`${ic("sun")}${MOIS[best]} · ${f._cl.tmax[best]}°`}else w.hidden=true;
+  $("#hpTicket").innerHTML=`<div class="tk-top"><span>${ic("plane")}Carte d'embarquement</span><b>Itinéo</b></div>
+    <div class="tk-route"><div><b>PAR</b><small>Paris</small></div><span class="tk-line">${ic("plane")}</span><div style="text-align:right"><b>${f.code}</b><small>${esc(f.name)}</small></div></div>
+    <div class="tk-meta"><span><small>Départ</small>${fd(dep)}</span><span><small>Passagers</small>${P.pax}</span><span><small>Durée</small>${P.days} jours</span></div>
+    <div class="tk-stub"><div><small>Total estimé</small><b class="num">${eur(E.total)}</b></div><span class="tk-save">− ${eur(save)} économisés</span></div>`;
+}
+
 /* ---------- Page d'accueil ---------- */
 function renderLanding(){
   const m0=(now.getMonth()+2)%12;
@@ -1293,14 +1375,21 @@ function renderLanding(){
   const plan={days:itinerary(demoPlaces,P0)},E=estimate(DEMO,P0,DEMO.w,1),pct=Math.round((E.naiveTotal-E.total)/E.naiveTotal*100);
 
   $("#heroEyebrow").innerHTML=ic("piggy")+"Voyager mieux, même petit budget";
-  $("#heroWeek").innerHTML=`<h3>Lisbonne, 5 jours ${ic("spark")}</h3>
-    ${plan.days.map((d,i)=>{const a=d.acts[0];return `<div class="wk-row"><b>J${i+1}</b><span class="bub" style="background:${DAYC[i%8]}">${ic(a?ICAT[a.cat]:"sun")}</span><span>${a?esc(a.title):"Temps libre"}${d.acts.length>1?` <small style="color:var(--muted);font-weight:600">+${d.acts.length-1}</small>`:""}</span></div>`}).join("")}
-    <div class="wk-budget"><div><span>Budget : ${eur(E.total)} / ${eur(P0.budget)}</span><span class="ok">${ic("check")}</span></div><div class="wk-bar"><i style="width:${Math.min(100,E.total/P0.budget*100)}%"></i></div></div>
-    <div class="wk-float"><span class="cart">${ic("ticket")}</span><div><b>${ic("check")}Liens prêts</b><small>vols, hôtel et visites aux bonnes dates</small></div></div>`;
+  renderHeroPost(P0);
 
-  const partners=[["plane","Google Flights"],["bed","Booking.com"],["home","Airbnb"],["ticket","GetYourGuide"],["route","Rome2rio"],["book","Wikivoyage"],["globe","Wikipédia"],["map","OpenStreetMap"],["sun","Open-Meteo"]];
-  const one=partners.map(([i,n])=>`<span>${ic(i)}${n}</span>`).join("");
-  $("#marquee").innerHTML=one+one.replace(/<span>/g,'<span aria-hidden="true">');
+  // Logos officiels hébergés sur Wikimedia Commons : [fichier, nom, hauteur en px, libellé affiché à côté]
+  const C="https://upload.wikimedia.org/wikipedia/commons/";
+  const partners=[
+    [C+"8/86/Google_Flights_logo.svg","Google Flights",24],
+    [C+"d/dd/Booking.com_Logo.svg","Booking.com",22],
+    [C+"6/69/Airbnb_Logo_B%C3%A9lo.svg","Airbnb",30],
+    [C+"e/e2/GetYourGuide_logo.svg","GetYourGuide",40],
+    [C+"d/d1/Wikivoyage-Logo-v3-en.svg","Wikivoyage",56],
+    [C+"0/0b/Wikipedia-wordmark-fr.svg","Wikipédia",24],
+    [C+"b/b0/Openstreetmap_logo.svg","OpenStreetMap",38,"OpenStreetMap"]
+  ];
+  const one=partners.map(([src,n,h,label])=>`<span title="${n}"><img src="${src}" alt="${n}" height="${h}" style="height:${h}px" loading="lazy">${label?`<em>${label}</em>`:""}</span>`).join("");
+  $("#marquee").innerHTML=one+one.replace(/<span /g,'<span aria-hidden="true" ');
 
   $("#howCards").innerHTML=[
     ["pin","Choisissez votre destination","N'importe quelle ville du monde, vos dates, votre budget et vos envies. 2 minutes, on ne vous demandera rien deux fois."],
