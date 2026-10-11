@@ -517,7 +517,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 /* Carte réelle */
 #mapBox{position:relative;width:100%;height:100%;isolation:isolate;background:var(--land)}
 #mapCanvas{position:absolute;inset:0}
-.map-top{position:absolute;top:12px;left:12px;right:60px;display:flex;gap:6px;flex-wrap:wrap;z-index:500}
+.map-top{position:absolute;top:12px;left:58px;right:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:500}
 .map-top button{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--card);color:var(--ink);padding:6px 11px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.15)}
 .map-top button i{width:10px;height:10px;border-radius:50%;display:inline-block}
 .map-top button.on{background:var(--ink);color:var(--paper)}
@@ -1073,14 +1073,22 @@ async function loadDestination(geo){
 
 /* ---------- Carte (Leaflet + OpenStreetMap) ---------- */
 let map=null,layer=null,tiles=null,markers={};
-const mqMobile=matchMedia("(max-width:980px)"),mqDark=matchMedia("(prefers-color-scheme: dark)");
+const mqMobile=matchMedia("(max-width:980px)");
 function placeMap(){
   const box=$("#mapBox"),target=mqMobile.matches?$("#mapB"):$("#mapA");
   if(box.parentNode!==target){target.appendChild(box);if(map)setTimeout(()=>map.invalidateSize(),60)}
 }
+// Fonds de carte OpenStreetMap, gratuits et sans clé. Si le serveur principal échoue, on bascule sur OpenStreetMap France.
+const TILE_SOURCES=[
+  {url:"https://tile.openstreetmap.org/{z}/{x}/{y}.png",opt:{maxZoom:19}},
+  {url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",opt:{maxZoom:20,subdomains:"abc"}}
+];
+let tileSrc=0,tileErrors=0;
 function setTiles(){
   if(!map)return;if(tiles)map.removeLayer(tiles);
-  tiles=L.tileLayer(`https://{s}.basemaps.cartocdn.com/${mqDark.matches?"dark_all":"rastertiles/voyager"}/{z}/{x}/{y}{r}.png`,{maxZoom:19,subdomains:"abcd",attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
+  const s=TILE_SOURCES[tileSrc];tileErrors=0;
+  tiles=L.tileLayer(s.url,{...s.opt,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">les contributeurs OpenStreetMap</a>'}).addTo(map);
+  tiles.on("tileerror",()=>{if(++tileErrors>=4&&tileSrc<TILE_SOURCES.length-1){tileSrc++;setTiles()}});
 }
 function ensureMap(){
   if(map||!window.L)return;
@@ -1123,7 +1131,6 @@ function hl(id){
   const m=markers[id];if(m){const el=m.getElement();if(el)el.classList.add("hl");m.setZIndexOffset(1000)}
 }
 mqMobile.addEventListener("change",()=>placeMap());
-mqDark.addEventListener("change",()=>setTiles());
 
 /* ---------- Rendu du planificateur ---------- */
 const CATS={vol:["Transport A/R","plane","var(--c-vol)"],log:["Hébergement","bed","var(--c-log)"],rep:["Repas","food","var(--c-rep)"],tra:["Transports sur place","bus","var(--c-tra)"],act:["Visites et activités","ticket","var(--c-act)"]};
