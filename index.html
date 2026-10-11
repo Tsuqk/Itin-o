@@ -217,6 +217,29 @@ a.tag:hover{color:var(--sea)}
 .plan .btn.sun{background:var(--green);border-color:var(--green);color:#fff}
 .badge-pro{display:inline-flex;align-items:center;gap:4px;background:var(--yellow);color:var(--ink);font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;justify-self:start}
 
+/* Avis */
+.rv{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 24px 22px;display:grid;gap:16px;grid-template-rows:auto 1fr auto;box-shadow:0 14px 40px -28px rgba(17,22,58,.35)}
+.stars{display:flex;gap:4px;color:var(--sun)}
+.stars .ic{width:24px;height:24px;fill:var(--sun);stroke:#11163A;stroke-width:1.4}
+.stars .ic.off{fill:none;stroke:var(--line)}
+.rv blockquote{margin:0;font-size:16px;line-height:1.6;color:var(--ink)}
+.rv footer{border-top:1px solid var(--line);padding-top:14px}
+.rv footer b{display:block;font-weight:800}
+.rv footer small{color:var(--muted);font-size:14px}
+.rv-empty{grid-column:1/-1;background:var(--card);border:1px dashed var(--line);border-radius:26px;padding:30px 24px;text-align:center;display:grid;gap:12px;justify-items:center}
+.rv-empty p{margin:0;color:var(--muted);max-width:46ch}
+.avis-note{text-align:center;color:var(--muted);font-size:13px;margin:22px 0 0}
+.rform{display:grid;gap:12px}
+.rform label{font-weight:800;font-size:14px}
+.rform input,.rform textarea{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;font:inherit;outline:none}
+.rform input:focus,.rform textarea:focus{border-color:var(--green)}
+.rform textarea{min-height:110px;resize:vertical}
+.rform .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.rform .row2{grid-template-columns:1fr}}
+.starpick{display:flex;gap:6px}
+.starpick button{border:0;background:none;padding:2px;cursor:pointer;color:var(--sun)}
+.starpick .ic{width:32px;height:32px;fill:none;stroke:var(--muted);stroke-width:1.5}
+.starpick button.on .ic{fill:var(--sun);stroke:#11163A}
 .faq{display:grid;gap:12px;max-width:740px;margin:0 auto}
 .faq details{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px}
 .faq summary{font-weight:800;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -561,6 +584,36 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 
 /* Fenêtres */
 .modal{position:fixed;inset:0;z-index:1000;background:color-mix(in srgb,#0B1620 55%,transparent);display:grid;place-items:center;padding:16px}
+.modal-card.wide{max-width:900px}
+.pw-steps{display:grid;gap:4px;border:1px solid var(--line);border-radius:20px;padding:14px 16px;background:#fff}
+.pw-step{display:grid;grid-template-columns:38px minmax(0,1fr);gap:12px;align-items:start;padding:8px 0;position:relative}
+.pw-step:not(:last-child)::after{content:"";position:absolute;left:18px;top:46px;bottom:-6px;width:2px;background:var(--mint)}
+.pw-ic{width:38px;height:38px;border-radius:50%;background:var(--mint);color:var(--green);display:grid;place-items:center}
+.pw-step:first-child .pw-ic{background:var(--green);color:#fff}
+.pw-ic .ic{width:18px;height:18px}
+.pw-step b{display:block;font-size:15px}
+.modal-card .pw-step p{margin:2px 0 0;font-size:14px}
+.pw-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px}
+@media (max-width:760px){.pw-plans{grid-template-columns:minmax(0,1fr)}}
+.pw-plan{position:relative;display:grid;gap:6px;align-content:start;border:2px solid var(--line);border-radius:20px;padding:18px 16px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s}
+.pw-plan input{position:absolute;opacity:0;pointer-events:none}
+.pw-plan.on{border-color:var(--green);background:var(--mint)}
+.pw-plan:has(input:focus-visible){outline:3px solid var(--yellow);outline-offset:2px}
+.pw-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pw-name{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pw-tag{font-size:11px;font-weight:800;background:var(--yellow);color:var(--ink);padding:3px 9px;border-radius:999px;letter-spacing:.04em}
+.pw-badge{position:absolute;top:-12px;right:14px;font-size:12px;font-weight:800;background:var(--green);color:#fff;padding:4px 10px;border-radius:999px}
+.pw-price{font-family:var(--f-display);font-size:32px;font-weight:800;line-height:1.05;letter-spacing:-.02em}
+.pw-price small{font-family:var(--f-body);font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}
+.pw-cmp{color:var(--muted);font-size:13px}
+.pw-sub{font-size:14px;font-weight:700;color:var(--green)}
+.pw-plan ul{list-style:none;margin:8px 0 0;padding:10px 0 0;border-top:1px solid var(--line);display:grid;gap:7px}
+.pw-plan li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:8px;font-size:13px;line-height:1.35}
+.pw-plan li .ic{width:15px;height:15px;color:var(--green);margin-top:1px}
+.pw-waiver{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;font-size:13px;color:var(--muted);cursor:pointer}
+.pw-waiver input{width:18px;height:18px;margin-top:1px;accent-color:var(--green)}
+.modal-card #pwGo{width:100%}
+.pw-legal{text-align:center;color:var(--muted);font-size:12px}
 .modal-card{position:relative;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);color:var(--ink);border-radius:22px;padding:24px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);display:grid;gap:14px}
 .modal-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:var(--paper);cursor:pointer;font-size:20px;line-height:1}
 .modal-card h3{font-size:24px;letter-spacing:-.02em;padding-right:30px}
@@ -635,7 +688,13 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
       <div class="cards3" id="moreCards"></div>
     </div></section>
 
-    <section class="sandsec" id="dests"><div class="wrap sect">
+    <section class="sandsec" id="avis"><div class="wrap sect">
+      <div class="sect-h"><h2>Ils voyagent mieux, ils dépensent moins</h2><p id="avisSummary">Les avis de nos voyageurs</p></div>
+      <div class="cards3" id="avisList"></div>
+      <p class="avis-note">Avis laissés par des utilisateurs connectés à leur compte Itinéo, vérifiés avant publication. Aucun avis n'est rémunéré.</p>
+    </div></section>
+
+    <section id="dests"><div class="wrap sect">
       <div class="sect-h"><h2>Toutes les villes du monde</h2><p>Quelques idées pour commencer. Prix estimé pour 5 jours depuis Paris, par personne, transport compris.</p></div>
       <div class="drow" id="drow"></div>
     </div></section>
@@ -652,7 +711,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
         <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des estimations pour comparer et planifier. Les boutons « Voir les prix » ouvrent les vrais tarifs du jour sur Kayak, Booking, Airbnb ou GetYourGuide, aux dates de votre voyage.</p></details>
         <details><summary>Ça marche avec un petit budget ?</summary><p>Oui. Si votre budget est trop juste, Itinéo vous propose des solutions en un clic : un style plus économique, un mois moins cher ou un jour de moins.</p></details>
         <details><summary>Itinéo réserve-t-il à ma place ?</summary><p>Non. Itinéo vous dit quoi réserver et quand, puis vous envoie directement sur la bonne recherche. Vous réservez où vous voulez.</p></details>
-        <details><summary>Combien ça coûte ?</summary><p>Créer votre plan est gratuit : vous voyez le premier jour du programme, le budget, la météo et les liens de réservation. Le programme complet, la carte de tous les lieux et les astuces sont inclus dans Premium, à 4,99 € par mois, sans engagement et résiliable à tout moment depuis votre compte.</p></details>
+        <details><summary>Combien ça coûte ?</summary><p>Créer votre plan est gratuit : vous voyez le premier jour du programme, le budget, la météo et les liens de réservation. Le programme complet, la carte de tous les lieux et les astuces sont inclus dans Premium : 9,99 € par mois sans engagement, 19,99 € pour 3 mois, ou 39,99 € en paiement unique pour un accès à vie. Les abonnements sont résiliables à tout moment depuis votre compte.</p></details>
       </div>
     </section>
 
@@ -709,6 +768,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
       <div id="stats"></div>
       <nav class="tabs" id="tabs"></nav>
       <div id="body" style="display:grid;gap:28px"></div>
+      <section class="sec" id="reviewBox" hidden></section>
     </div>
     <aside class="mapcol" id="mapA">
       <div id="mapBox"><div class="map-top" id="mapTop"></div><div id="mapCanvas"></div><div class="map-msg" id="mapMsg" hidden></div></div>
@@ -728,7 +788,14 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 /* ---------- Réglages ---------- */
 const SUPABASE_URL = "https://evrhuolamwdynouvixwu.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_UVRJr4OvqGfxF9pGGrH5Iw_oeI2fEhO";
-const PREMIUM_PRICE = "4,99 €";   // le prix réel se règle dans Stripe : gardez ce texte identique
+// Offres Premium : les prix réels se règlent dans Stripe, gardez ces textes identiques
+const PREMIUM_PRICE = "9,99 €";
+const PLANS = [
+  {id:"monthly",label:"Mensuel",price:"9,99 €",per:" / mois",sub:"Sans engagement",total:"9,99 € / mois",legal:"Abonnement renouvelé chaque mois, résiliable à tout moment depuis votre compte."},
+  {id:"quarterly",label:"3 mois",price:"19,99 €",per:" / 3 mois",sub:"Soit 6,66 € par mois",badge:"Économisez 33 %",total:"19,99 € / 3 mois",legal:"Abonnement renouvelé tous les 3 mois (19,99 €), résiliable à tout moment depuis votre compte."},
+  {id:"lifetime",label:"À vie",price:"39,99 €",per:"",sub:"Payé une fois, à vous pour toujours",tag:"Paiement unique",compare:"119,88 € par an en mensuel",total:"39,99 €",featured:true,legal:"Paiement unique de 39,99 €, sans abonnement ni renouvellement."}
+];
+const PLAN_FEATURES = ["Programme complet, jour par jour","Carte avec tous les lieux","Liens de réservation préremplis","Astuces de chaque destination","Voyages illimités, toutes les villes"];
 const PREMIUM_PERKS = ["Le programme complet, jour par jour","La carte avec tous les lieux et les trajets","Les astuces et bons plans de chaque destination","Toutes les villes du monde, autant de voyages que vous voulez"];
 
 /* ---------- Icônes ---------- */
@@ -766,6 +833,7 @@ bookmark:'<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
 mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
 logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
 trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>',
+star:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>',
 lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
 const ic=(n,cls="ic")=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
@@ -1245,7 +1313,7 @@ function render(){
   $("#planTitle").textContent=fname?`${fname}, voici votre voyage`:"Votre voyage";
   const pb=$("#paybar");pb.hidden=!locked||!days;
   $(".app").classList.toggle("haspay",locked&&!!days);
-  if(locked&&days){$("#paybarBtn").innerHTML=`Dévoiler mes ${p.days} jours + la carte complète ${ic("spark")}`;$("#paybarNote").textContent=`${PREMIUM_PRICE} / mois · accès immédiat · résiliable à tout moment`}
+  if(locked&&days){$("#paybarBtn").innerHTML=`Dévoiler mes ${p.days} jours + la carte complète ${ic("spark")}`;$("#paybarNote").textContent="Dès 6,66 € / mois · ou 39,99 € une fois pour toutes · accès immédiat"}
   const fits=est.total<=p.budget,saved=est.naiveTotal-est.total,hours=Math.round(p.days*1.25+(days?Math.min(3,museums*.5):1));
   const dep=depFor(p),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);
   const longHaul=est.dist>3000;
@@ -1742,8 +1810,8 @@ $("#vWizard").addEventListener("click",async e=>{
 /* ---------- Comptes, voyages enregistrés, Premium (Supabase + Stripe) ---------- */
 let sb=null,user=null,pendingSave=false,profile=null,tripsCache=[];
 try{if(SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase)sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(e){sb=null}
-function openModal(html){$("#modalBody").innerHTML=html;$("#modal").hidden=false;const f=$("#modalBody input,#modalBody button");if(f)f.focus()}
-function closeModal(){$("#modal").hidden=true;$("#modalBody").innerHTML=""}
+function openModal(html,size){$("#modalBody").innerHTML=html;$(".modal-card").classList.toggle("wide",size==="wide");$("#modal").hidden=false;const f=$("#modalBody input,#modalBody button");if(f)f.focus()}
+function closeModal(){$("#modal").hidden=true;$("#modalBody").innerHTML="";$(".modal-card").classList.remove("wide")}
 $("#modal").addEventListener("click",e=>{if(e.target.id==="modal"||e.target.closest("[data-close]"))closeModal()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#modal").hidden)closeModal()});
 
@@ -1762,8 +1830,10 @@ function loginModal(reason){
 function accountModal(){
   const pro=profile&&profile.is_premium,end=profile&&profile.current_period_end?new Date(profile.current_period_end).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):"";
   openModal(`<h3 id="modalTitle">Mon compte</h3><p>Connecté avec ${esc(user.email||"")}</p>
-    ${pro?`<span class="badge-pro">${ic("spark")}Premium</span>${end?`<p>Prochain renouvellement le ${end}</p>`:""}<button type="button" class="btn" data-act="portal">${ic("wallet")}Gérer mon abonnement</button>`
-      :`<button type="button" class="btn primary" data-act="upgrade">${ic("spark")}Passer Premium · ${PREMIUM_PRICE}/mois</button>`}
+    ${pro?(profile.subscription_status==="lifetime"
+        ?`<span class="badge-pro">${ic("spark")}Premium à vie</span><p>Accès définitif, sans abonnement.</p><button type="button" class="btn" data-act="portal">${ic("wallet")}Mes factures</button>`
+        :`<span class="badge-pro">${ic("spark")}Premium</span>${end?`<p>Prochain renouvellement le ${end}</p>`:""}<button type="button" class="btn" data-act="portal">${ic("wallet")}Gérer mon abonnement</button>`)
+      :`<button type="button" class="btn primary" data-act="upgrade">${ic("spark")}Voir les offres Premium</button>`}
     <button type="button" class="btn" data-act="trips">${ic("route")}Mes voyages</button>
     <button type="button" class="btn danger" data-act="logout">${ic("logout")}Se déconnecter</button>`);
 }
@@ -1814,23 +1884,127 @@ function renderPlans(){
   const pro=profile&&profile.is_premium,li=t=>`<li>${ic("check")}<span>${esc(t)}</span></li>`;
   const free=["Toutes les villes du monde","Aperçu du plan : le premier jour du programme","Budget estimé, météo réelle et liens de réservation","Voyages enregistrés avec un compte gratuit"];
   $("#plans").innerHTML=`<div class="plan"><h3>Gratuit</h3><div class="price">0 €<small> pour toujours</small></div><ul>${free.map(li).join("")}</ul><a class="btn" href="#planner">Commencer</a></div>
-    <div class="plan pro"><span class="ribbon">Premium</span><h3>Premium</h3><div class="price">${esc(PREMIUM_PRICE)}<small> / mois</small></div><ul>${PREMIUM_PERKS.map(li).join("")}</ul>
+    <div class="plan pro"><span class="ribbon">Premium</span><h3>Premium</h3><div class="price">9,99 €<small> / mois</small></div><p style="margin:-8px 0 0;color:var(--muted);font-size:14px;font-weight:600">ou 19,99 € pour 3 mois · ou 39,99 € une fois pour toutes</p><ul>${PREMIUM_PERKS.map(li).join("")}</ul>
       ${pro?`<button type="button" class="btn sun" data-act="portal">${ic("check")}Vous êtes Premium · gérer</button>`:`<button type="button" class="btn sun" data-act="upgrade">${ic("spark")}Passer Premium</button>`}
       <small style="color:var(--muted);font-size:12px">Paiement sécurisé par Stripe. Résiliable à tout moment.</small></div>`;
 }
+/* ---------- Avis des voyageurs (vrais avis, publiés après validation dans Supabase) ---------- */
+const starsHTML=n=>`<span class="stars" role="img" aria-label="${n} sur 5">${[1,2,3,4,5].map(i=>ic("star",i<=n?"ic":"ic off")).join("")}</span>`;
+async function loadReviews(){
+  const list=$("#avisList"),sum=$("#avisSummary");
+  let rows=[];
+  if(sb){try{const {data,error}=await sb.from("reviews").select("first_name,city,destination,rating,comment,created_at").eq("approved",true).order("created_at",{ascending:false}).limit(60);if(!error&&data)rows=data}catch(e){}}
+  if(!rows.length){
+    sum.textContent="Les premiers avis arrivent";
+    list.innerHTML=`<div class="rv-empty">${starsHTML(5)}<p>Itinéo vient d'ouvrir. Vous avez préparé un voyage avec nous ? Votre avis aidera les prochains voyageurs.</p><a class="btn coral" href="#plan" data-review-cta>Donner mon avis</a></div>`;
+    return;
+  }
+  const avg=rows.reduce((s,r)=>s+r.rating,0)/rows.length;
+  sum.textContent=`${avg.toLocaleString("fr-FR",{maximumFractionDigits:1})}/5 · ${rows.length} avis vérifié${rows.length>1?"s":""}`;
+  list.innerHTML=rows.slice(0,6).map(r=>`<article class="rv">${starsHTML(r.rating)}<blockquote>« ${esc(r.comment)} »</blockquote><footer><b>${esc(r.first_name)}</b><small>${esc([r.city,r.destination?"voyage à "+r.destination:""].filter(Boolean).join(" · "))}</small></footer></article>`).join("");
+}
+let myReview=null,reviewUser=null,reviewStars=0;
+async function renderReviewBox(){
+  const box=$("#reviewBox");
+  if(!sb||!user){box.hidden=true;return}
+  if(reviewUser!==user.id){reviewUser=user.id;myReview=null}
+  if(myReview===null){try{const {data,error}=await sb.from("reviews").select("first_name,city,rating,comment,approved").eq("user_id",user.id).maybeSingle();if(error)throw error;myReview=data||false}catch(e){box.hidden=true;return}}
+  const r=myReview||{};reviewStars=r.rating||0;box.hidden=false;
+  box.innerHTML=`<div class="sec-h"><h2>Votre avis sur Itinéo</h2>${r.approved?`<span class="tag free">${ic("check")}Publié</span>`:myReview?`<span class="tag">En attente de vérification</span>`:""}</div>
+    <form class="panel rform" id="reviewForm" novalidate>
+      <div><label>Votre note</label><div class="starpick" role="radiogroup" aria-label="Note sur 5">${[1,2,3,4,5].map(i=>`<button type="button" data-star="${i}" class="${i<=reviewStars?"on":""}" aria-label="${i} étoile${i>1?"s":""}">${ic("star")}</button>`).join("")}</div></div>
+      <div class="row2"><div><label for="rvName">Prénom</label><input id="rvName" maxlength="40" value="${esc(r.first_name||firstName())}" autocomplete="given-name"></div><div><label for="rvCity">Ville (facultatif)</label><input id="rvCity" maxlength="60" value="${esc(r.city||"")}" placeholder="Lyon" autocomplete="address-level2"></div></div>
+      <div><label for="rvText">Votre expérience</label><textarea id="rvText" maxlength="600" placeholder="Ce qui vous a aidé, ce qui pourrait être mieux…">${esc(r.comment||"")}</textarea></div>
+      <div id="rvMsg" aria-live="polite"></div>
+      <button type="submit" class="btn primary">${myReview?"Mettre à jour mon avis":"Publier mon avis"}</button>
+      <small style="color:var(--muted)">Votre prénom, votre ville et votre destination s'afficheront avec votre avis, après vérification.</small>
+    </form>`;
+}
+$("#reviewBox").addEventListener("click",e=>{
+  const b=e.target.closest("[data-star]");if(!b)return;
+  reviewStars=+b.dataset.star;
+  document.querySelectorAll("#reviewBox [data-star]").forEach(x=>x.classList.toggle("on",+x.dataset.star<=reviewStars));
+});
+$("#reviewBox").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=$("#rvName").value.trim(),city=$("#rvCity").value.trim(),text=$("#rvText").value.trim(),msg=$("#rvMsg");
+  const err=t=>{msg.innerHTML=`<div class="msg err">${esc(t)}</div>`};
+  if(!reviewStars)return err("Choisissez une note de 1 à 5 étoiles.");
+  if(!name)return err("Indiquez votre prénom.");
+  if(text.length<10)return err("Votre avis doit faire au moins 10 caractères.");
+  const btn=e.target.querySelector("button[type=submit]");btn.disabled=true;
+  const payload={user_id:user.id,first_name:name,city:city||null,destination:state.dest?state.dest.name:null,rating:reviewStars,comment:text,approved:false};
+  const {error}=await sb.from("reviews").upsert(payload,{onConflict:"user_id"});
+  btn.disabled=false;
+  if(error)return err(/relation|does not exist|schema cache/i.test(error.message)?"Les avis ne sont pas encore activés sur le site.":"Envoi impossible : "+error.message);
+  myReview=payload;await renderReviewBox();
+  $("#rvMsg").innerHTML=`<div class="msg ok">Merci ! Votre avis sera publié après vérification.</div>`;
+});
+document.addEventListener("click",e=>{
+  if(!e.target.closest("[data-review-cta]"))return;
+  setTimeout(()=>{const b=$("#reviewBox");if(currentView==="plan"&&b&&!b.hidden)b.scrollIntoView({behavior:"smooth",block:"start"})},1200);
+});
+
 async function loadProfile(){
   profile=null;
   if(sb&&user){const {data}=await sb.from("profiles").select("is_premium,subscription_status,current_period_end").maybeSingle();profile=data||null}
-  renderAuth();renderPlans();
+  renderAuth();renderPlans();renderReviewBox();
   if(state.dest)render();
 }
-async function goPremium(btn,path){
+/* ---------- Fenêtre des offres Premium ---------- */
+let pwPlan="lifetime";
+function planModal(){
+  if(!user){loginModal("Connectez-vous pour passer Premium.");return}
+  const days=state.plan?state.plan.days.length:readForm().days;
+  const save=state.est?Math.round(state.est.naiveTotal-state.est.total):0;
+  const li=t=>`<li>${ic("check")}<span>${esc(t)}</span></li>`;
+  openModal(`<h3 id="modalTitle">Débloquez votre voyage</h3>
+    ${save>0?`<div class="save-banner">${ic("piggy")}<span>Ce voyage${state.dest?" à "+esc(state.dest.name):""} vous fait économiser ${eur(save)} par rapport à une réservation de dernière minute</span></div>`:""}
+    <div class="pw-steps">
+      <div class="pw-step"><span class="pw-ic">${ic("lock")}</span><div><b>Là, tout de suite</b><p>Vos ${days} jours complets, la carte de tous les lieux et les astuces, déjà calés sur votre budget</p></div></div>
+      <div class="pw-step"><span class="pw-ic">${ic("ticket")}</span><div><b>Avant de partir</b><p>Les liens vers les vrais prix du jour pour vos vols, hôtels et visites, préremplis à vos dates</p></div></div>
+      <div class="pw-step"><span class="pw-ic">${ic("globe")}</span><div><b>À chaque voyage ensuite</b><p>Toutes les villes du monde, vos voyages enregistrés et un nouveau plan en 2 minutes</p></div></div>
+    </div>
+    <div class="pw-plans" role="radiogroup" aria-label="Choisissez votre offre">
+      ${PLANS.map(p=>`<label class="pw-plan${p.featured?" feat":""}${p.id===pwPlan?" on":""}">
+        <input type="radio" name="pwplan" value="${p.id}"${p.id===pwPlan?" checked":""}>
+        ${p.badge?`<span class="pw-badge">${p.badge}</span>`:""}
+        <span class="pw-top"><span class="pw-name">${p.label}</span>${p.tag?`<span class="pw-tag">${p.tag}</span>`:""}</span>
+        <b class="pw-price">${p.price}<small>${p.per}</small></b>
+        ${p.compare?`<s class="pw-cmp">${p.compare}</s>`:""}
+        <span class="pw-sub">${p.sub}</span>
+        <ul>${PLAN_FEATURES.map(li).join("")}</ul>
+      </label>`).join("")}
+    </div>
+    <label class="pw-waiver"><input type="checkbox" id="pwWaiver"><span>Je demande l'accès immédiat à Premium et je reconnais perdre mon droit de rétractation de 14 jours une fois l'accès ouvert.</span></label>
+    <div id="pwMsg" aria-live="polite"></div>
+    <button type="button" class="btn coral big" id="pwGo"></button>
+    <small class="pw-legal" id="pwLegal"></small>`,"wide");
+  updatePlanModal();
+}
+function updatePlanModal(){
+  const p=PLANS.find(x=>x.id===pwPlan);
+  document.querySelectorAll(".pw-plan").forEach(l=>l.classList.toggle("on",l.querySelector("input").value===pwPlan));
+  $("#pwGo").innerHTML=`Continuer · ${p.total} ${ic("spark")}`;
+  $("#pwLegal").textContent=p.legal+" Paiement sécurisé par Stripe.";
+}
+$("#modal").addEventListener("change",e=>{
+  if(e.target.name==="pwplan"){pwPlan=e.target.value;updatePlanModal()}
+  if(e.target.id==="pwWaiver"&&e.target.checked)$("#pwMsg").innerHTML="";
+});
+$("#modal").addEventListener("click",e=>{
+  if(!e.target.closest("#pwGo"))return;
+  if(!$("#pwWaiver").checked){$("#pwMsg").innerHTML=`<div class="msg err">Cochez la case de demande d'accès immédiat pour continuer.</div>`;return}
+  goPremium(e.target.closest("#pwGo"),"/api/checkout",{plan:pwPlan,waiver:true});
+});
+
+async function goPremium(btn,path,payload){
   if(!sb)return;
   if(!user){loginModal(path==="/api/checkout"?"Connectez-vous pour passer Premium.":"");return}
   const label=btn.innerHTML;btn.disabled=true;btn.textContent="Redirection vers Stripe…";
   try{
     const {data:{session}}=await sb.auth.getSession();
-    const r=await fetch(path,{method:"POST",headers:{Authorization:"Bearer "+(session?session.access_token:"")}});
+    const r=await fetch(path,{method:"POST",headers:{Authorization:"Bearer "+(session?session.access_token:""),"Content-Type":"application/json"},body:JSON.stringify(payload||{})});
     let body=null;try{body=await r.json()}catch(e){}
     if(!r.ok||!body||!body.url)throw new Error(body&&body.error?body.error:"Le paiement est disponible uniquement sur le site Vercel (itineo-beryl.vercel.app).");
     location.href=body.url;
@@ -1845,7 +2019,7 @@ document.addEventListener("click",async e=>{
   else if(act==="account")accountModal();
   else if(act==="trips")tripsModal();
   else if(act==="logout"){await sb.auth.signOut();closeModal();showToast("Déconnecté")}
-  else if(act==="upgrade")goPremium(a,"/api/checkout");
+  else if(act==="upgrade")planModal();
   else if(act==="portal")goPremium(a,"/api/portal");
 });
 renderPlans();
@@ -1976,6 +2150,7 @@ renderAuth();
 
 /* ---------- Démarrage ---------- */
 renderLanding();
+loadReviews();
 route();
 </script>
 </body>
