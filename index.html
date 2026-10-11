@@ -254,18 +254,20 @@ a.tag:hover{color:var(--sea)}
 .wz-step .lead{color:var(--muted);font-size:18px;margin:0;max-width:46ch}
 .wz-step .q{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
 .wz-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;width:100%}
+@media (max-width:420px){.wz-nav .btn.coral{flex:1;white-space:normal;padding:14px 18px}.wz-nav .btn.ghost{padding-inline:4px}}
 .wz-nav .btn.coral{padding:15px 28px;font-size:16px;font-weight:800}
 .bigin{position:relative;width:100%}
 .bigin .ic{position:absolute;left:18px;top:50%;translate:0 -50%;color:var(--green);width:22px;height:22px}
 .bigin input{width:100%;padding:18px 18px 18px 52px;font-size:18px;font-weight:700;border:2px solid var(--line);border-radius:18px;background:#fff;outline:none}
 .bigin input:focus{border-color:var(--green)}
-.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;width:100%}
-.opt{display:grid;gap:4px;justify-items:start;text-align:left;background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px 16px;cursor:pointer;color:var(--ink);font-weight:700;transition:border-color .15s,background .15s}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;width:100%}
+@media (max-width:420px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}.opts .opt{padding:12px}}
+.opt{min-width:0;display:grid;gap:4px;justify-items:start;text-align:left;background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px 16px;cursor:pointer;color:var(--ink);font-weight:700;transition:border-color .15s,background .15s}
 .opt:hover{border-color:color-mix(in srgb,var(--green) 50%,var(--line))}
 .opt.on{border-color:var(--green);background:var(--mint)}
 .opt small{font-weight:600;color:var(--muted);font-size:13px}
 .opt .ic{color:var(--green);width:24px;height:24px}
-.opt .t{font-family:var(--f-display);font-size:19px;font-weight:800}
+.opt .t{font-family:var(--f-display);font-size:18px;font-weight:800;line-height:1.15;hyphens:auto;overflow-wrap:break-word;max-width:100%}
 .opts.mgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:520px){.opts.mgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .opts.mgrid .opt{justify-items:center;text-align:center;padding:12px 6px}
@@ -1374,7 +1376,7 @@ function renderLanding(){
   const demoPlaces=DEMO.a.map((a,i)=>({id:"d"+i,title:a[0],cat:a[1],h:a[2],lat:a[3],lon:a[4],len:1000-i,thumb:""}));
   const plan={days:itinerary(demoPlaces,P0)},E=estimate(DEMO,P0,DEMO.w,1),pct=Math.round((E.naiveTotal-E.total)/E.naiveTotal*100);
 
-  $("#heroEyebrow").innerHTML=ic("piggy")+"Voyager mieux, même petit budget";
+  $("#heroEyebrow").innerHTML=ic("piggy")+"Voyager plus, dépenser moins";
   renderHeroPost(P0);
 
   // Logos officiels hébergés sur Wikimedia Commons : [fichier, nom, hauteur en px, libellé affiché à côté]
