@@ -618,7 +618,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
       <div class="sect-h"><h2>Questions fréquentes</h2></div>
       <div class="faq">
         <details open><summary>Ça marche vraiment pour n'importe quelle ville ?</summary><p>Oui. Tapez n'importe quelle ville du monde : Itinéo trouve les lieux à visiter référencés sur Wikipédia, la météo réelle des deux dernières années et calcule un budget adapté au niveau des prix du pays.</p></details>
-        <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des estimations pour comparer et planifier. Les boutons « Voir les prix » ouvrent les vrais tarifs du jour sur Google Flights, Booking, Airbnb ou GetYourGuide, aux dates de votre voyage.</p></details>
+        <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des estimations pour comparer et planifier. Les boutons « Voir les prix » ouvrent les vrais tarifs du jour sur Kayak, Booking, Airbnb ou GetYourGuide, aux dates de votre voyage.</p></details>
         <details><summary>Ça marche avec un petit budget ?</summary><p>Oui. Si votre budget est trop juste, Itinéo vous propose des solutions en un clic : un style plus économique, un mois moins cher ou un jour de moins.</p></details>
         <details><summary>Itinéo réserve-t-il à ma place ?</summary><p>Non. Itinéo vous dit quoi réserver et quand, puis vous envoie directement sur la bonne recherche. Vous réservez où vous voulez.</p></details>
         <details><summary>Combien ça coûte ?</summary><p>La planification est gratuite, sans publicité. L'abonnement Premium est facultatif et résiliable à tout moment depuis votre compte.</p></details>
@@ -885,6 +885,21 @@ async function commonsPhoto(q){
     .filter(x=>x.i&&/jpeg/.test(x.i.mime)&&x.i.width>=1200&&x.i.width>x.i.height*1.2&&!BADNAME.test(x.t));
   return c[0]?{src:c[0].i.thumburl,page:c[0].i.descriptionurl}:null;
 }
+// Code d'aéroport (ou de ville) le plus proche de la destination, pour préremplir la recherche de vols
+async function fetchIata(dest){
+  const k=`ia:${dest.lat.toFixed(2)},${dest.lon.toFixed(2)}`;const c=cget(k);if(c!==null)return c;
+  const terms=[...new Set([dest.name,dest.admin,dest.country].filter(Boolean))];
+  const res=await Promise.all(terms.map(t=>getJSON(`https://autocomplete.travelpayouts.com/places2?term=${enc(t)}&locale=fr&types[]=city&types[]=airport`).catch(()=>[])));
+  let best=null;
+  res.flat().forEach(x=>{
+    if(!x||!x.code||!x.coordinates)return;
+    const d=km([dest.lat,dest.lon],[x.coordinates.lat,x.coordinates.lon]),score=d+(x.type==="airport"?15:0);
+    if(d<250&&(!best||score<best.score))best={code:x.code,name:x.name,km:Math.round(d),score};
+  });
+  const out=best?{code:best.code,name:best.name,km:best.km}:"";
+  if(res.some(r=>r.length))cset(k,out);
+  return out;
+}
 async function fetchInfo(dest){
   const k=`in:${dest.name}|${dest.cc}`;const c=cget(k);if(c)return c;
   const d=await getJSON(`https://fr.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&generator=search&gsrsearch=${enc(dest.name+" "+dest.country)}&gsrlimit=1&prop=pageimages|extracts|info|pageprops&ppprop=wikibase_item&exintro=1&explaintext=1&exsentences=2&piprop=thumbnail&pithumbsize=1600&inprop=url`);
@@ -964,7 +979,10 @@ const depFor=p=>validDate(p.date)||nextDep(p.m);
 function links(dest,p,dep,ret,est){
   const o=ORIGINS[p.o],place=`${dest.name}, ${dest.country}`;
   const L={
-    flights:`https://www.google.com/travel/flights?hl=fr&curr=EUR&q=${enc(`Flights from ${o[1]} to ${dest.name} on ${iso(dep)} through ${iso(ret)}`)}`,
+    // Kayak accepte un lien prérempli avec les codes d'aéroport (ex. PAR-LIS) ; sans code connu, recherche Google
+    flights:state.iata&&state.iata.code
+      ?`https://www.kayak.fr/flights/${o[0]}-${state.iata.code}/${iso(dep)}/${iso(ret)}${p.pax>1?`/${p.pax}adults`:""}?sort=price_a`
+      :`https://www.google.com/search?q=${enc(`vols ${o[1]} ${dest.name} ${fdy(dep)} ${fdy(ret)}`)}`,
     booking:`https://www.booking.com/searchresults.fr.html?ss=${enc(place)}&checkin=${iso(dep)}&checkout=${iso(ret)}&group_adults=${p.pax}&no_rooms=1&lang=fr`,
     airbnb:`https://www.airbnb.fr/s/${enc(place)}/homes?checkin=${iso(dep)}&checkout=${iso(ret)}&adults=${p.pax}`,
     gyg:`https://www.getyourguide.fr/s/?q=${enc(dest.name)}`,
@@ -1054,8 +1072,9 @@ function attachAC(input,onPick){
 async function loadDestination(geo){
   const id=++state.reqId;
   state.dest={name:geo.name,country:geo.country,cc:(geo.cc||"").toUpperCase(),admin:geo.admin||"",lat:geo.lat,lon:geo.lon};
-  state.loading=true;state.error=null;state.places=[];state.climate=null;state.info=null;state.dayF=null;
+  state.loading=true;state.error=null;state.places=[];state.climate=null;state.info=null;state.dayF=null;state.iata=null;
   $("#destq").value=geo.name;persist();render();
+  fetchIata(state.dest).then(v=>{if(id===state.reqId){state.iata=v||null;if(!state.loading)render()}}).catch(()=>{});
   try{
     const [places,climate,info]=await Promise.all([
       fetchPlaces(geo.lat,geo.lon),
@@ -1200,7 +1219,7 @@ function render(){
   const trLabel=est.mode==="avion"?"Vols aller-retour":"Train ou voiture";
   const lk=(href,icn,col,t,sub)=>`<a class="lk" href="${href}" target="_blank" rel="noopener"><span class="bub" style="background:${col}">${ic(icn)}</span><span style="min-width:0"><b>${t}</b><small>${sub}</small></span><span class="go">Voir les prix ${ic("ext")}</span></a>`;
   const reserver=`<div class="links">
-    ${est.mode==="avion"?lk(L.flights,"plane","var(--c-vol)","Google Flights",`${esc(o[1])} → ${esc(dest.name)} · env. ${eur(est.opt.vol/p.pax)}/pers.`):lk(L.r2r,"train","var(--c-vol)","Rome2rio",`Train, bus, voiture · env. ${eur(est.opt.vol/p.pax)}/pers.`)}
+    ${est.mode==="avion"?lk(L.flights,"plane","var(--c-vol)",state.iata&&state.iata.code?"Kayak":"Vols",state.iata&&state.iata.code?`${o[0]} → ${esc(state.iata.code)}${state.iata.km>25?` (${esc(state.iata.name)}, ${state.iata.km} km)`:""} · ${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.vol/p.pax)}/pers.`:`${esc(o[1])} → ${esc(dest.name)} · env. ${eur(est.opt.vol/p.pax)}/pers.`):lk(L.r2r,"train","var(--c-vol)","Rome2rio",`Train, bus, voiture · env. ${eur(est.opt.vol/p.pax)}/pers.`)}
     ${lk(L.booking,"bed","var(--c-log)","Booking.com",`${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.log/Math.max(1,p.days-1))}/nuit pour ${p.pax}`)}
     ${lk(L.airbnb,"home","#E8505B","Airbnb",`Logements entiers · ${p.pax} voyageur${p.pax>1?"s":""}`)}
     ${lk(L.gyg,"ticket","var(--c-act)","GetYourGuide",`Visites et billets coupe-file à ${esc(dest.name)}`)}
@@ -1425,7 +1444,7 @@ function renderLanding(){
   // Logos officiels hébergés sur Wikimedia Commons : [fichier, nom, hauteur en px, libellé affiché à côté]
   const C="https://upload.wikimedia.org/wikipedia/commons/";
   const partners=[
-    [C+"8/86/Google_Flights_logo.svg","Google Flights",24],
+    [C+"c/cb/Kayak_Logo.svg","Kayak",24],
     [C+"d/dd/Booking.com_Logo.svg","Booking.com",22],
     [C+"6/69/Airbnb_Logo_B%C3%A9lo.svg","Airbnb",30],
     [C+"e/e2/GetYourGuide_logo.svg","GetYourGuide",40],
