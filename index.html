@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css">
 <style>
 /* Itinéo : ciel de nuit (bleu nuit et indigo) et soleil jaune pour l'action principale, comme une carte d'embarquement. Trois vues : accueil, questionnaire, plan.
    Les noms --green / --coral / --mint sont gardés pour ne pas toucher au reste du code : --green = indigo principal, --coral = jaune soleil des boutons d'action, --mint = teinte indigo claire. */
@@ -688,6 +689,8 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 <div class="modal" id="modal" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button type="button" class="modal-x" data-close aria-label="Fermer">×</button><div id="modalBody" style="display:grid;gap:14px"></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.js"></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.0/dist/umd/supabase.js"></script>
 <script>
 /* ---------- Réglages ---------- */
@@ -1103,8 +1106,34 @@ const TILE_SOURCES=[
   {url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",opt:{maxZoom:20,subdomains:"abc"}}
 ];
 let tileSrc=0,tileErrors=0;
+// Carte vectorielle OpenFreeMap (gratuite, sans clé) : les noms s'affichent dans la langue du navigateur du visiteur
+const MAP_LANG=((navigator.languages&&navigator.languages[0])||navigator.language||"fr").slice(0,2).toLowerCase();
+let useVector=true;
+function localizeLabels(gl){
+  const st=gl.getStyle();if(!st||!st.layers)return;
+  // langue du visiteur, sinon anglais, sinon nom transcrit en alphabet latin, sinon nom local
+  const expr=["coalesce",["get","name:"+MAP_LANG],["get","name:en"],["get","name_en"],["get","name_int"],["get","name:latin"],["get","name"]];
+  st.layers.forEach(l=>{
+    if(l.type!=="symbol")return;
+    const tf=gl.getLayoutProperty(l.id,"text-field");
+    if(tf&&JSON.stringify(tf).includes("name"))gl.setLayoutProperty(l.id,"text-field",expr);
+  });
+}
 function setTiles(){
-  if(!map)return;if(tiles)map.removeLayer(tiles);
+  if(!map)return;if(tiles){map.removeLayer(tiles);tiles=null}
+  if(useVector&&L.maplibreGL&&window.maplibregl){
+    try{
+      const layer=L.maplibreGL({style:"https://tiles.openfreemap.org/styles/liberty",
+        attribution:'<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">les contributeurs OpenStreetMap</a>'}).addTo(map);
+      tiles=layer;
+      const gl=layer.getMaplibreMap();
+      let ok=false;
+      gl.once("load",()=>{ok=true;localizeLabels(gl)});
+      // si la carte vectorielle ne se charge pas (navigateur sans WebGL, serveur indisponible), retour aux tuiles classiques
+      setTimeout(()=>{if(!ok&&tiles===layer){useVector=false;setTiles()}},8000);
+      return;
+    }catch(e){useVector=false}
+  }
   const s=TILE_SOURCES[tileSrc];tileErrors=0;
   tiles=L.tileLayer(s.url,{...s.opt,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">les contributeurs OpenStreetMap</a>'}).addTo(map);
   tiles.on("tileerror",()=>{if(++tileErrors>=4&&tileSrc<TILE_SOURCES.length-1){tileSrc++;setTiles()}});
