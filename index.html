@@ -296,6 +296,8 @@ a.tag:hover{color:var(--sea)}
 .stepper output{min-width:110px;text-align:center;font-family:var(--f-display);font-size:24px;font-weight:800}
 .bigprice{font-family:var(--f-display);font-size:52px;font-weight:800;line-height:1;color:var(--deep)}
 .range{width:100%;accent-color:var(--green);height:28px}
+.sugg{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--green);background:var(--mint);padding:5px 12px;border-radius:999px}
+.sugg .ic{width:14px;height:14px}
 .estim{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 16px;font-weight:700;font-size:15px}
 .estim .ic{color:var(--green)}
 .estim.warn{border-color:var(--warn);background:var(--warn-soft)}
@@ -1579,7 +1581,7 @@ const MS=["Janv.","Févr.","Mars","Avr.","Mai","Juin","Juil.","Août","Sept.","O
 const STEPS=["intro","dest","origin","dates","pax","budget","ints","build"];
 const W={step:0,dest:null,img:"",o:0,m:(now.getMonth()+2)%12,date:"",days:5,pax:2,budget:1400,style:1,ints:["culture","gastronomie"],ans:{}};
 if(saved){["o","m","days","pax","budget","style"].forEach(k=>{if(saved[k]!=null)W[k]=saved[k]});if(validDate(saved.date))W.date=saved.date;if(saved.ints)W.ints=saved.ints;if(saved.dest&&saved.dest.lat!=null)W.dest=saved.dest}
-function resetWizard(step){W.step=step||0;W.ans={};if(step>=2&&W.dest)W.ans.dest=true}
+function resetWizard(step){W.step=step||0;W.ans={};W.budgetTouched=false;if(step>=2&&W.dest)W.ans.dest=true}
 document.addEventListener("click",e=>{
   const a=e.target.closest('a[href="#creer"]');if(!a)return;
   if(a.hasAttribute("data-restart")){W.step=1;W.ans={dest:!!W.dest,origin:true,dates:true,pax:true,budget:true,ints:true}}
@@ -1588,7 +1590,15 @@ document.addEventListener("click",e=>{
 });
 const sameDest=()=>W.dest&&state.dest&&state.dest.name===W.dest.name&&Math.abs(state.dest.lat-W.dest.lat)<1e-3;
 const wp=()=>({o:W.o,m:W.m,date:W.date,days:W.days,pax:W.pax,budget:W.budget,style:W.style,ints:W.ints});
+// Budget proposé par défaut : l'estimation du voyage (destination, départ, dates, voyageurs, style) + 5 % de marge, arrondie à 50 €
+function suggestBudget(){
+  if(!W.dest)return W.budget;
+  const good=goodMonths(sameDest()?state.climate:null),E=estimate(W.dest,wp(),good,1);
+  return Math.max(300,Math.ceil(E.total*1.05/50)*50);
+}
+const budgetMax=()=>Math.max(15000,Math.ceil(W.budget*1.5/1000)*1000);
 function applyW(){
+  if(W.budget>+$("#budget").max)$("#budget").max=budgetMax();
   $("#origin").value=W.o;$("#month").value=W.m;$("#depdate").value=W.date||"";$("#days").value=W.days;$("#pax").value=W.pax;$("#budget").value=W.budget;
   $("#st"+W.style).checked=true;INTERESTS.forEach(([k])=>$("#in-"+k).checked=W.ints.includes(k));
 }
@@ -1630,7 +1640,8 @@ function stepHTML(){
   if(s==="budget")return `<div class="wz-step">${qn(5)}<h2>Quel est votre budget total ?</h2>
     <p class="lead">Transport, hébergement, repas et visites compris, pour ${W.pax} voyageur${W.pax>1?"s":""}.</p>
     <div class="bigprice num" id="wzBudgetOut">${eur(W.budget)}</div>
-    <input type="range" class="range" id="wzBudget" min="300" max="15000" step="50" value="${W.budget}" aria-label="Budget total">
+    ${W.budgetTouched?"":`<span class="sugg">${ic("spark")}Budget conseillé pour ce voyage, ajustez-le à votre guise</span>`}
+    <input type="range" class="range" id="wzBudget" min="300" max="${budgetMax()}" step="50" value="${W.budget}" aria-label="Budget total">
     <div class="opts">${[[0,"Éco","Auberges, street food, transports en commun"],[1,"Confort","Hôtels 3 étoiles, bonnes tables"],[2,"Luxe","Beaux hôtels, tables réputées"]].map(([v,t,d])=>`<button type="button" class="opt${W.style===v?" on":""}" data-wst="${v}">${ic(["wallet","bed","spark"][v])}<span class="t">${t}</span><small>${d}</small></button>`).join("")}</div>
     <div id="wzEstim"></div>${navHTML(false)}</div>`;
   if(s==="ints")return `<div class="wz-step">${qn(6)}<h2>Qu'est-ce qui vous fait envie ?</h2><p class="lead">Plusieurs choix possibles.</p>
@@ -1646,6 +1657,7 @@ function updateEstim(){
   box.innerHTML=`<div class="estim${ok?"":" warn"}">${ic(ok?"check":"wallet")}Estimation pour ce voyage : ${eur(E.total)} · ${ok?"dans votre budget":`il manque ${eur(E.total-W.budget)}, Itinéo vous proposera des solutions`}</div>`;
 }
 function renderStep(){
+  if(STEPS[W.step]==="budget"&&!W.budgetTouched&&W.dest)W.budget=suggestBudget();
   $("#wzStep").innerHTML=stepHTML();
   const inp=$("#wzDest");
   if(inp){attachAC(inp,g=>pickDest(g));setTimeout(()=>inp.focus(),50)}
@@ -1657,7 +1669,7 @@ function renderStep(){
     W.date=di.value;W.m=d.getMonth();W.ans.dates=true;renderStep();renderCard();
   });
   const rg=$("#wzBudget");
-  if(rg)rg.addEventListener("input",()=>{W.budget=+rg.value;$("#wzBudgetOut").textContent=eur(W.budget);updateEstim();renderCard()});
+  if(rg)rg.addEventListener("input",()=>{W.budget=+rg.value;W.budgetTouched=true;const sg=document.querySelector(".wz-step .sugg");if(sg)sg.remove();$("#wzBudgetOut").textContent=eur(W.budget);updateEstim();renderCard()});
   updateEstim();
 }
 function renderWizard(){
