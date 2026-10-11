@@ -310,6 +310,26 @@ a.tag:hover{color:var(--sea)}
 @media (prefers-reduced-motion:no-preference){.building li.now .s{animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}}
 .building{padding:0;margin:0}
 
+/* ---------- Aperçu gratuit et paywall ---------- */
+.lockbox{position:relative;display:block;width:calc(100% - 32px);margin-left:32px;height:132px;border:0;padding:0;border-radius:18px;overflow:hidden;cursor:pointer;background:var(--sand)}
+.lockpics{position:absolute;inset:-12px;display:flex;filter:blur(12px) saturate(1.1);transform:scale(1.05)}
+.lockpics img,.lockpics i{flex:1;height:100%;object-fit:cover;display:block;min-width:0}
+.lockbox::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--deep) 18%,transparent)}
+.lockic{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:1;width:46px;height:46px;border-radius:50%;background:rgba(17,22,58,.72);color:#fff;display:grid;place-items:center;transition:transform .2s}
+.lockic .ic{width:20px;height:20px}
+.lockbox:hover .lockic{transform:scale(1.08)}
+.lockwrap{position:relative;border-radius:18px;overflow:hidden}
+.blurred{filter:blur(6px);pointer-events:none;user-select:none}
+.lockover{position:absolute;left:50%;top:50%;translate:-50% -50%;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--deep);color:#fff;font-weight:800;padding:12px 18px;cursor:pointer;box-shadow:0 12px 28px -12px rgba(17,22,58,.6);white-space:nowrap}
+.lockover .ic{width:16px;height:16px}
+.map-top .lockchip{opacity:.75}
+.map-top .lockchip .ic{width:13px;height:13px}
+.paybar{position:fixed;left:0;right:0;bottom:0;z-index:900;background:linear-gradient(transparent,var(--bg) 40%);padding:28px 16px calc(14px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.paybar-in{max-width:640px;margin:0 auto;display:grid;gap:6px;justify-items:center;pointer-events:auto}
+.paybar .btn{width:100%;white-space:normal;text-align:center}
+.paybar small{color:var(--muted);font-size:13px;font-weight:600}
+.app.haspay .left{padding-bottom:150px}
+
 /* ---------- Inscription ---------- */
 .auth{max-width:440px;margin:0 auto;padding-block:40px 70px;display:grid;gap:16px;justify-items:center;text-align:center}
 .auth h1{font-size:clamp(28px,4vw,36px);font-weight:800}
@@ -614,7 +634,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
     </div></section>
 
     <section class="wrap sect" id="premium">
-      <div class="sect-h"><h2>Gratuit pour planifier</h2><p>Premium pour ceux qui voyagent souvent.</p></div>
+      <div class="sect-h"><h2>Commencez gratuitement</h2><p>Passez Premium pour débloquer tout votre voyage.</p></div>
       <div class="plans" id="plans"></div>
     </section>
 
@@ -625,7 +645,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
         <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des estimations pour comparer et planifier. Les boutons « Voir les prix » ouvrent les vrais tarifs du jour sur Kayak, Booking, Airbnb ou GetYourGuide, aux dates de votre voyage.</p></details>
         <details><summary>Ça marche avec un petit budget ?</summary><p>Oui. Si votre budget est trop juste, Itinéo vous propose des solutions en un clic : un style plus économique, un mois moins cher ou un jour de moins.</p></details>
         <details><summary>Itinéo réserve-t-il à ma place ?</summary><p>Non. Itinéo vous dit quoi réserver et quand, puis vous envoie directement sur la bonne recherche. Vous réservez où vous voulez.</p></details>
-        <details><summary>Combien ça coûte ?</summary><p>La planification est gratuite, sans publicité. L'abonnement Premium est facultatif et résiliable à tout moment depuis votre compte.</p></details>
+        <details><summary>Combien ça coûte ?</summary><p>Créer votre plan est gratuit : vous voyez le premier jour du programme, le budget, la météo et les liens de réservation. Le programme complet, la carte de tous les lieux et les astuces sont inclus dans Premium, à 4,99 € par mois, sans engagement et résiliable à tout moment depuis votre compte.</p></details>
       </div>
     </section>
 
@@ -667,7 +687,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
   <div class="app">
     <div class="left">
       <div class="brandbar">
-        <h2 style="font-size:20px">Votre plan</h2>
+        <h2 style="font-size:20px" id="planTitle">Votre voyage</h2>
         <div class="acts"><span class="toast" id="toast" hidden></span><button class="btn" id="save" type="button"></button><button class="btn primary" id="copy" type="button"></button></div>
       </div>
       <div id="cover"></div>
@@ -689,6 +709,8 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
   </div>
 </div>
 
+<div class="paybar" id="paybar" hidden><div class="paybar-in"><button type="button" class="btn coral big" data-act="upgrade" id="paybarBtn">Dévoiler mon voyage complet</button><small id="paybarNote"></small></div></div>
+
 <div class="modal" id="modal" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button type="button" class="modal-x" data-close aria-label="Fermer">×</button><div id="modalBody" style="display:grid;gap:14px"></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -700,7 +722,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 const SUPABASE_URL = "https://evrhuolamwdynouvixwu.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_UVRJr4OvqGfxF9pGGrH5Iw_oeI2fEhO";
 const PREMIUM_PRICE = "4,99 €";   // le prix réel se règle dans Stripe : gardez ce texte identique
-const PREMIUM_PERKS = ["Tout ce qui est inclus dans l'offre gratuite","Accès en avant-première aux nouvelles fonctionnalités","Badge Premium sur votre compte","Soutien direct au développement d'Itinéo"];
+const PREMIUM_PERKS = ["Le programme complet, jour par jour","La carte avec tous les lieux et les trajets","Les astuces et bons plans de chaque destination","Toutes les villes du monde, autant de voyages que vous voulez"];
 
 /* ---------- Icônes ---------- */
 const P={
@@ -736,7 +758,8 @@ home:'<path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V
 bookmark:'<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
 mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
 logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
-trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>'
+trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>',
+lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
 const ic=(n,cls="ic")=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
 
@@ -1150,19 +1173,28 @@ function pinIcon(n,col){
   return L.divIcon({className:"pinicon",iconSize:[28,37],iconAnchor:[14,35],popupAnchor:[0,-30],
     html:`<svg width="28" height="37" viewBox="-14 -35 28 37"><path d="M0 0C-4-8-12-12-12-21a12 12 0 1 1 24 0C12-12 4-8 0 0z" fill="${col}" stroke="#fff" stroke-width="2.2"/><text y="-17" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Figtree,sans-serif">${n}</text></svg>`});
 }
+// Le plan complet est réservé aux comptes Premium (sans Supabase, tout reste visible)
+function isLocked(){try{return !!(sb&&user&&!(profile&&profile.is_premium))}catch(e){return false}}
+function firstName(){
+  try{const m=(user&&user.user_metadata)||{};const n=(m.first_name||m.given_name||m.full_name||m.name||"").trim().split(/\s+/)[0];return n?n.charAt(0).toUpperCase()+n.slice(1):""}catch(e){return ""}
+}
 function drawMap(){
   placeMap();ensureMap();
   const msg=$("#mapMsg");
   if(!map){msg.hidden=false;msg.textContent="Carte indisponible";return}
   layer.clearLayers();markers={};
   const plan=state.plan;
-  $("#mapTop").innerHTML=plan?`<button type="button" data-dayf="all" class="${state.dayF==null?"on":""}">Tout</button>`+plan.days.map((d,i)=>`<button type="button" data-dayf="${i}" class="${state.dayF===i?"on":""}"><i style="background:${DAYC[i%8]}"></i>J${i+1}</button>`).join(""):"";
+  const lockedMap=isLocked();
+  $("#mapTop").innerHTML=plan?`<button type="button" data-dayf="all" class="${state.dayF==null?"on":""}">Tout</button>`+plan.days.map((d,i)=>lockedMap&&i>0
+    ?`<button type="button" data-act="upgrade" class="lockchip" aria-label="Jour ${i+1} réservé à Premium">${ic("lock")}J${i+1}</button>`
+    :`<button type="button" data-dayf="${i}" class="${state.dayF===i?"on":""}"><i style="background:${DAYC[i%8]}"></i>J${i+1}</button>`).join(""):"";
   if(state.loading){msg.hidden=false;msg.textContent="Chargement de la carte…"}else msg.hidden=true;
   if(!state.dest)return;
   if(!plan){map.setView([state.dest.lat,state.dest.lon],12);return}
   const bounds=[];
   plan.days.forEach((d,di)=>{
     if(state.dayF!=null&&state.dayF!==di)return;
+    if(lockedMap&&di>0)return;
     const col=DAYC[di%8],ll=d.acts.map(a=>[a.lat,a.lon]);
     if(ll.length>1)L.polyline(ll,{color:col,weight:3,dashArray:"6 7",opacity:.85}).addTo(layer);
     d.acts.forEach((a,ai)=>{
@@ -1201,6 +1233,12 @@ function render(){
   const museums=days?days.reduce((s,d)=>s+d.acts.filter(a=>a.museum).length,0):1;
   const est=estimate(dest,p,good,museums);
   state.plan=days?{days}:null;state.est=est;
+  const locked=isLocked();
+  const fname=firstName();
+  $("#planTitle").textContent=fname?`${fname}, voici votre voyage`:"Votre voyage";
+  const pb=$("#paybar");pb.hidden=!locked||!days;
+  $(".app").classList.toggle("haspay",locked&&!!days);
+  if(locked&&days){$("#paybarBtn").innerHTML=`Dévoiler mes ${p.days} jours + la carte complète ${ic("spark")}`;$("#paybarNote").textContent=`${PREMIUM_PRICE} / mois · accès immédiat · résiliable à tout moment`}
   const fits=est.total<=p.budget,saved=est.naiveTotal-est.total,hours=Math.round(p.days*1.25+(days?Math.min(3,museums*.5):1));
   const dep=depFor(p),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);
   const longHaul=est.dist>3000;
@@ -1234,6 +1272,15 @@ function render(){
   else if(state.loading)itin=[0,1,2].map(()=>`<div class="sk" style="height:118px"></div>`).join("");
   else itin=days.map((d,di)=>{
     const col=DAYC[di%8],title=d.kind||"Jour "+(di+1);
+    // Aperçu gratuit : seul le premier jour est visible, les suivants sont floutés jusqu'au passage en Premium
+    if(locked&&di>0){
+      const th=d.acts.filter(a=>a.thumb).slice(0,3);
+      return `<div class="day" style="--dc:${col}"><div class="day-h"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${title}</h3><small>${d.acts.length?`${d.acts.length} lieu${d.acts.length>1?"x":""} à découvrir`:"Journée à découvrir"}</small></div></div>
+        <button type="button" class="lockbox" data-act="upgrade" aria-label="Débloquer le jour ${di+1} avec Premium">
+          <span class="lockpics">${th.length?th.map(a=>`<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">`).join(""):`<i style="background:${col}"></i><i style="background:var(--c-${(d.acts[0]||{}).cat||"culture"})"></i>`}</span>
+          <span class="lockic">${ic("lock")}</span>
+        </button></div>`;
+    }
     let items="";
     d.acts.forEach((a,ai)=>{
       if(ai>0){const prev=d.acts[ai-1],k=km([prev.lat,prev.lon],[a.lat,a.lon]),walk=k<1.6,min=walk?Math.round(k*13)+2:Math.round(k*2.5+10);
@@ -1310,7 +1357,8 @@ function render(){
     `Guide pratique de ${dest.name} <a href="${L.voyage}" target="_blank" rel="noopener">sur Wikivoyage</a>`
   ];
   const k=dest.name.replace(/\W/g,"");
-  const astuces=`<div class="tips">${money.map((t,i)=>`<label class="tip money"><span class="bub">${ic("piggy")}</span><span>${t}</span><input type="checkbox" id="tm-${k}-${i}"></label>`).join("")}${time.map((t,i)=>`<label class="tip time"><span class="bub">${ic("clock")}</span><span>${t}</span><input type="checkbox" id="th-${k}-${i}"></label>`).join("")}</div>`;
+  let astuces=`<div class="tips">${money.map((t,i)=>`<label class="tip money"><span class="bub">${ic("piggy")}</span><span>${t}</span><input type="checkbox" id="tm-${k}-${i}"></label>`).join("")}${time.map((t,i)=>`<label class="tip time"><span class="bub">${ic("clock")}</span><span>${t}</span><input type="checkbox" id="th-${k}-${i}"></label>`).join("")}</div>`;
+  if(locked)astuces=`<div class="lockwrap"><div class="blurred" aria-hidden="true" inert>${astuces}</div><button type="button" class="lockover" data-act="upgrade">${ic("lock")}Débloquer les ${money.length+time.length} astuces</button></div>`;
 
   $("#body").innerHTML=`
   <section class="sec" id="itin"><div class="sec-h"><h2>Itinéraire</h2><span class="tag">${ic("route")}${p.days} jours · ${days?days.reduce((s,d)=>s+d.acts.length,0):"…"} lieux</span></div>${itin}</section>
@@ -1351,7 +1399,7 @@ $("#copy").onclick=()=>{
   if(!state.dest||!state.plan)return;
   const p=readForm(),d=state.dest,dep=depFor(p),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);const L=links(d,p,dep,ret,state.est);
   const txt=[`${ORIGINS[p.o][1]} → ${d.name} (${d.country}) · ${fd(dep)} → ${fdy(ret)} · ${p.pax} pers. · env. ${eur(state.est.total)}`,"",
-    ...state.plan.days.map((x,i)=>`Jour ${i+1} : `+(x.acts.length?x.acts.map(a=>a.title).join(" ; "):"temps libre")),"",
+    ...state.plan.days.map((x,i)=>isLocked()&&i>0?`Jour ${i+1} : réservé à Premium`:`Jour ${i+1} : `+(x.acts.length?x.acts.map(a=>a.title).join(" ; "):"temps libre")),"",
     "Vols : "+L.flights,"Hôtels : "+L.booking,"Activités : "+L.gyg].join("\n");
   navigator.clipboard.writeText(txt).then(()=>showToast("Plan copié")).catch(()=>showToast("Copie impossible ici",false));
 };
@@ -1744,7 +1792,7 @@ $("#modal").addEventListener("click",async e=>{
 });
 function renderPlans(){
   const pro=profile&&profile.is_premium,li=t=>`<li>${ic("check")}<span>${esc(t)}</span></li>`;
-  const free=["Toutes les villes du monde","Lieux réels, carte et météo réelle","Budget estimé et liens de réservation","Voyages enregistrés avec un compte gratuit"];
+  const free=["Toutes les villes du monde","Aperçu du plan : le premier jour du programme","Budget estimé, météo réelle et liens de réservation","Voyages enregistrés avec un compte gratuit"];
   $("#plans").innerHTML=`<div class="plan"><h3>Gratuit</h3><div class="price">0 €<small> pour toujours</small></div><ul>${free.map(li).join("")}</ul><a class="btn" href="#planner">Commencer</a></div>
     <div class="plan pro"><span class="ribbon">Premium</span><h3>Premium</h3><div class="price">${esc(PREMIUM_PRICE)}<small> / mois</small></div><ul>${PREMIUM_PERKS.map(li).join("")}</ul>
       ${pro?`<button type="button" class="btn sun" data-act="portal">${ic("check")}Vous êtes Premium · gérer</button>`:`<button type="button" class="btn sun" data-act="upgrade">${ic("spark")}Passer Premium</button>`}
@@ -1754,6 +1802,7 @@ async function loadProfile(){
   profile=null;
   if(sb&&user){const {data}=await sb.from("profiles").select("is_premium,subscription_status,current_period_end").maybeSingle();profile=data||null}
   renderAuth();renderPlans();
+  if(state.dest)render();
 }
 async function goPremium(btn,path){
   if(!sb)return;
