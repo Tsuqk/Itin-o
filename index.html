@@ -270,7 +270,9 @@ a.tag:hover{color:var(--sea)}
 .opt .t{font-family:var(--f-display);font-size:18px;font-weight:800;line-height:1.15;hyphens:auto;overflow-wrap:break-word;max-width:100%}
 .opts.mgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:520px){.opts.mgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.opts.mgrid .opt{justify-items:center;text-align:center;padding:12px 6px}
+.opts.mgrid .opt{justify-items:center;text-align:center;padding:12px 6px;gap:2px}
+.opt .yr{font-size:12px;font-weight:700;color:var(--muted)}
+.opt.on .yr{color:var(--deep)}
 .ideas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .idea{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 14px 5px 5px;cursor:pointer;font-weight:700;font-size:14px;color:var(--ink)}
 .idea:hover{border-color:var(--green)}
@@ -979,7 +981,14 @@ $("#fields").innerHTML=`
 $("#interests").innerHTML=INTERESTS.map(([k,l])=>`<label style="--chip:var(--c-${k})"><input type="checkbox" id="in-${k}" value="${k}"${["culture","gastronomie"].includes(k)?" checked":""}><span>${ic(ICAT[k])}${l}</span></label>`).join("");
 $("#copy").innerHTML=ic("copy")+"Copier le plan";
 $("#save").innerHTML=ic("bookmark")+"Enregistrer";
-$("#tabs").innerHTML=[["itin","route","Itinéraire"],["reserver","ticket","Réserver"],["budget","wallet","Budget"],["quand","sun","Quand partir"],["astuces","spark","Astuces"]].map(([id,i,l])=>`<a href="#${id}">${ic(i)}${l}</a>`).join("");
+$("#tabs").innerHTML=[["itin","route","Itinéraire"],["reserver","ticket","Réserver"],["budget","wallet","Budget"],["quand","sun","Quand partir"],["astuces","spark","Astuces"]].map(([id,i,l])=>`<a href="#plan" data-sec="${id}">${ic(i)}${l}</a>`).join("");
+// Les onglets font défiler le plan jusqu'à la section, sans quitter la page
+$("#tabs").addEventListener("click",e=>{
+  const a=e.target.closest("[data-sec]");if(!a)return;
+  e.preventDefault();
+  const sec=document.getElementById(a.dataset.sec);
+  if(sec)sec.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+});
 $("#month").value=(now.getMonth()+2)%12;
 
 const KEY="itineo-form-v2";
@@ -1104,6 +1113,9 @@ mqDark.addEventListener("change",()=>setTiles());
 /* ---------- Rendu du planificateur ---------- */
 const CATS={vol:["Transport A/R","plane","var(--c-vol)"],log:["Hébergement","bed","var(--c-log)"],rep:["Repas","food","var(--c-rep)"],tra:["Transports sur place","bus","var(--c-tra)"],act:["Visites et activités","ticket","var(--c-act)"]};
 const fd=d=>d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+const fdy=d=>d.toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"});
+// Les 12 prochains mois de départ possibles, dans l'ordre chronologique
+const monthOrder=()=>{const start=now.getDate()>8?(now.getMonth()+1)%12:now.getMonth();return [...Array(12).keys()].map(k=>(start+k)%12)};
 
 function render(){
   const p=readForm();
@@ -1135,7 +1147,7 @@ function render(){
     <div class="cover-in">
       <span class="ctry">${ic("pin")}${esc([dest.admin,dest.country].filter(Boolean).join(", "))} · ${Math.round(est.dist).toLocaleString("fr-FR")} km de ${esc(o[1])}</span>
       <h1>${esc(dest.name)}</h1>
-      <div class="ctags"><span class="ctag">${ic("cal")}${fd(dep)} → ${fd(ret)}</span><span class="ctag">${ic("users")}${p.pax}</span>
+      <div class="ctags"><span class="ctag">${ic("cal")}${fd(dep)} → ${fdy(ret)}</span><span class="ctag">${ic("users")}${p.pax}</span>
       ${state.climate?`<span class="ctag">${ic(isGood?"sun":"cloud")}${state.climate.tmax[p.m]}° · ${state.climate.rain[p.m]} j de pluie</span>`:""}</div>
     </div></div>`;
   $("#about").innerHTML=info.extract?`${esc(info.extract)} <a href="${esc(info.url)}" target="_blank" rel="noopener">Lire sur Wikipédia</a>`:"";
@@ -1167,7 +1179,7 @@ function render(){
   const lk=(href,icn,col,t,sub)=>`<a class="lk" href="${href}" target="_blank" rel="noopener"><span class="bub" style="background:${col}">${ic(icn)}</span><span style="min-width:0"><b>${t}</b><small>${sub}</small></span><span class="go">Voir les prix ${ic("ext")}</span></a>`;
   const reserver=`<div class="links">
     ${est.mode==="avion"?lk(L.flights,"plane","var(--c-vol)","Google Flights",`${esc(o[1])} → ${esc(dest.name)} · env. ${eur(est.opt.vol/p.pax)}/pers.`):lk(L.r2r,"train","var(--c-vol)","Rome2rio",`Train, bus, voiture · env. ${eur(est.opt.vol/p.pax)}/pers.`)}
-    ${lk(L.booking,"bed","var(--c-log)","Booking.com",`${fd(dep)} → ${fd(ret)} · env. ${eur(est.opt.log/Math.max(1,p.days-1))}/nuit pour ${p.pax}`)}
+    ${lk(L.booking,"bed","var(--c-log)","Booking.com",`${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.log/Math.max(1,p.days-1))}/nuit pour ${p.pax}`)}
     ${lk(L.airbnb,"home","#E8505B","Airbnb",`Logements entiers · ${p.pax} voyageur${p.pax>1?"s":""}`)}
     ${lk(L.gyg,"ticket","var(--c-act)","GetYourGuide",`Visites et billets coupe-file à ${esc(dest.name)}`)}
     ${est.mode==="avion"?lk(L.r2r,"route","var(--c-tra)","Rome2rio","Comparer avion, train et bus"):""}
@@ -1259,7 +1271,7 @@ function showToast(msg,ok=true){const t=$("#toast");t.textContent=msg;t.style.co
 $("#copy").onclick=()=>{
   if(!state.dest||!state.plan)return;
   const p=readForm(),d=state.dest,dep=nextDep(p.m),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);const L=links(d,p,dep,ret,state.est);
-  const txt=[`${ORIGINS[p.o][1]} → ${d.name} (${d.country}) · ${fd(dep)} → ${fd(ret)} · ${p.pax} pers. · env. ${eur(state.est.total)}`,"",
+  const txt=[`${ORIGINS[p.o][1]} → ${d.name} (${d.country}) · ${fd(dep)} → ${fdy(ret)} · ${p.pax} pers. · env. ${eur(state.est.total)}`,"",
     ...state.plan.days.map((x,i)=>`Jour ${i+1} : `+(x.acts.length?x.acts.map(a=>a.title).join(" ; "):"temps libre")),"",
     "Vols : "+L.flights,"Hôtels : "+L.booking,"Activités : "+L.gyg].join("\n");
   navigator.clipboard.writeText(txt).then(()=>showToast("Plan copié")).catch(()=>showToast("Copie impossible ici",false));
@@ -1291,6 +1303,9 @@ function route(){
     if(sb&&!user){authMode="signup";location.replace("#inscription");return}
     showView("plan");window.scrollTo(0,0);return;
   }
+  // une ancre qui pointe vers une section du plan reste sur le plan
+  const target=h.length>1&&document.getElementById(h.slice(1));
+  if(target&&VIEWS.plan.contains(target)){history.replaceState(null,"","#plan");route();setTimeout(()=>target.scrollIntoView(),100);return}
   const was=currentView;showView("landing");
   const el=h.length>1&&document.getElementById(h.slice(1));
   if(el&&was&&was!=="landing")setTimeout(()=>el.scrollIntoView(),0);
@@ -1365,7 +1380,7 @@ function updateHeroData(f){
   if(f._cl&&f._cl.tmax[best]!=null){w.hidden=false;w.innerHTML=`${ic("sun")}${MOIS[best]} · ${f._cl.tmax[best]}°`}else w.hidden=true;
   $("#hpTicket").innerHTML=`<div class="tk-top"><span>${ic("plane")}Carte d'embarquement</span><b>Itinéo</b></div>
     <div class="tk-route"><div><b>PAR</b><small>Paris</small></div><span class="tk-line">${ic("plane")}</span><div style="text-align:right"><b>${f.code}</b><small>${esc(f.name)}</small></div></div>
-    <div class="tk-meta"><span><small>Départ</small>${fd(dep)}</span><span><small>Passagers</small>${P.pax}</span><span><small>Durée</small>${P.days} jours</span></div>
+    <div class="tk-meta"><span><small>Départ</small>${fdy(dep)}</span><span><small>Passagers</small>${P.pax}</span><span><small>Durée</small>${P.days} jours</span></div>
     <div class="tk-stub"><div><small>Total estimé</small><b class="num">${eur(E.total)}</b></div><span class="tk-save">− ${eur(save)} économisés</span></div>`;
 }
 
@@ -1465,7 +1480,7 @@ function stepHTML(){
     <div class="opts">${ORIGINS.map((o,i)=>`<button type="button" class="opt${W.o===i?" on":""}" data-worig="${i}">${ic(i===ORIGINS.length-1?"plane":"plane")}<span class="t">${o[1]}</span></button>`).join("")}</div>${navHTML(false)}</div>`;
   if(s==="dates")return `<div class="wz-step">${qn(3)}<h2>Quand partez-vous ?</h2>
     <p class="lead">${cl?`Températures maximales moyennes à ${esc(W.dest.name)} (mesures réelles 2024-2025).`:W.dest?"Chargement de la météo réelle…":"Choisissez le mois de départ."}</p>
-    <div class="opts mgrid">${MS.map((m,i)=>`<button type="button" class="opt${W.m===i?" on":""}" data-wm="${i}"><span class="t">${m}</span><small>${cl&&cl.tmax[i]!=null?`${good.includes(i)?"☀ ":""}${cl.tmax[i]}°`:"&nbsp;"}</small></button>`).join("")}</div>
+    <div class="opts mgrid">${monthOrder().map(i=>`<button type="button" class="opt${W.m===i?" on":""}" data-wm="${i}"><span class="t">${MS[i]}</span><span class="yr">${nextDep(i).getFullYear()}</span><small>${cl&&cl.tmax[i]!=null?`${good.includes(i)?"☀ ":""}${cl.tmax[i]}°`:"&nbsp;"}</small></button>`).join("")}</div>
     <p style="font-weight:800;margin:8px 0 0">Combien de jours sur place ?</p>
     <div class="stepper"><button type="button" data-wd="-1" aria-label="Un jour de moins">−</button><output>${W.days} jours</output><button type="button" data-wd="1" aria-label="Un jour de plus">+</button></div>${navHTML(false)}</div>`;
   if(s==="pax")return `<div class="wz-step">${qn(4)}<h2>Combien de voyageurs ?</h2>
@@ -1518,7 +1533,7 @@ function renderCard(){
   const rows=[
     ["Destination",A.dest&&d?`${esc(d.name)}, ${esc(d.country)}`:soon],
     ["Départ",A.origin?esc(ORIGINS[W.o][1]):soon],
-    ["Dates",A.dates?`${MOIS[W.m]} · ${W.days} jours`:soon],
+    ["Dates",A.dates?`${MOIS[W.m]} ${nextDep(W.m).getFullYear()} · ${W.days} jours`:soon],
     ["Voyageurs",A.pax?`${W.pax}`:soon],
     ["Budget",A.budget?`${eur(W.budget)} · ${styleL}`:soon],
     ["Envies",A.ints?esc(W.ints.map(k=>INTERESTS.find(x=>x[0]===k)[1]).join(", ")):soon]
