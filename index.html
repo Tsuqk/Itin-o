@@ -311,6 +311,11 @@ a.tag:hover{color:var(--sea)}
 .building{padding:0;margin:0}
 
 /* ---------- Aperçu gratuit et paywall ---------- */
+button.lk{font:inherit;text-align:left;width:100%;cursor:pointer}
+.lk-locked .go{color:var(--muted)}
+.lk-locked:hover .go{color:var(--green)}
+.tag-lock{border:0;cursor:pointer;font:inherit;font-size:12px;font-weight:700}
+.tag-lock:hover{color:var(--green)}
 .lockbox{position:relative;display:block;width:calc(100% - 32px);margin-left:32px;height:132px;border:0;padding:0;border-radius:18px;overflow:hidden;cursor:pointer;background:var(--sand)}
 .lockpics{position:absolute;inset:-12px;display:flex;filter:blur(12px) saturate(1.1);transform:scale(1.05)}
 .lockpics img,.lockpics i{flex:1;height:100%;object-fit:cover;display:block;min-width:0}
@@ -1286,7 +1291,7 @@ function render(){
       if(ai>0){const prev=d.acts[ai-1],k=km([prev.lat,prev.lon],[a.lat,a.lon]),walk=k<1.6,min=walk?Math.round(k*13)+2:Math.round(k*2.5+10);
         items+=`<div class="hop">${ic(walk?"walk":"train")}${walk?"À pied":"En transport"} · ${min} min · ${k<1?Math.round(k*1000)+" m":k.toFixed(1)+" km"}</div>`}
       items+=`<div class="place" data-card="${di}-${ai}"><span class="n">${ai+1}</span><div style="min-width:0"><h4>${esc(a.title)}</h4>${a.desc?`<p class="desc">${esc(a.desc)}</p>`:""}
-        <div class="pmeta"><span class="tag">${ic(ICAT[a.cat])}${fmtH(a.h)}</span><a class="tag" href="${esc(a.url)}" target="_blank" rel="noopener">${ic("book")}Wikipédia</a><a class="tag" href="${mapsLinkLL(a)}" target="_blank" rel="noopener">${ic("map")}Itinéraire</a>${a.museum||a.cat==="culture"?`<a class="tag" href="${ticketLink(a,dest)}" target="_blank" rel="noopener">${ic("ticket")}Billets</a>`:""}</div></div>
+        <div class="pmeta"><span class="tag">${ic(ICAT[a.cat])}${fmtH(a.h)}</span><a class="tag" href="${esc(a.url)}" target="_blank" rel="noopener">${ic("book")}Wikipédia</a><a class="tag" href="${mapsLinkLL(a)}" target="_blank" rel="noopener">${ic("map")}Itinéraire</a>${a.museum||a.cat==="culture"?(locked?`<button type="button" class="tag tag-lock" data-act="upgrade">${ic("lock")}Billets</button>`:`<a class="tag" href="${ticketLink(a,dest)}" target="_blank" rel="noopener">${ic("ticket")}Billets</a>`):""}</div></div>
         <span class="thumb" style="background:var(--c-${a.cat})">${a.thumb?`<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:ic(ICAT[a.cat])}</span></div>`;
     });
     if(!d.acts.length)items=`<div class="empty">${ic(di===0?"bed":di===p.days-1?"plane":"sun")}${di===0?"Installation et dîner dans votre quartier.":di===p.days-1?"Dernière balade, puis départ.":`Journée libre. <a href="${L.excursions}" target="_blank" rel="noopener">Idées d'excursions autour de ${esc(dest.name)}</a>`}</div>`;
@@ -1296,7 +1301,10 @@ function render(){
 
   /* Réserver */
   const trLabel=est.mode==="avion"?"Vols aller-retour":"Train ou voiture";
-  const lk=(href,icn,col,t,sub)=>`<a class="lk" href="${href}" target="_blank" rel="noopener"><span class="bub" style="background:${col}">${ic(icn)}</span><span style="min-width:0"><b>${t}</b><small>${sub}</small></span><span class="go">Voir les prix ${ic("ext")}</span></a>`;
+  // Liens partenaires : réservés à Premium (les prix estimés restent visibles)
+  const lk=(href,icn,col,t,sub)=>locked
+    ?`<button type="button" class="lk lk-locked" data-act="upgrade"><span class="bub" style="background:${col}">${ic(icn)}</span><span style="min-width:0"><b>${t}</b><small>${sub}</small></span><span class="go">${ic("lock")}Premium</span></button>`
+    :`<a class="lk" href="${href}" target="_blank" rel="noopener"><span class="bub" style="background:${col}">${ic(icn)}</span><span style="min-width:0"><b>${t}</b><small>${sub}</small></span><span class="go">Voir les prix ${ic("ext")}</span></a>`;
   const reserver=`<div class="links">
     ${est.mode==="avion"?lk(L.flights,"plane","var(--c-vol)",state.iata&&state.iata.code?"Kayak":"Vols",state.iata&&state.iata.code?`${o[0]} → ${esc(state.iata.code)}${state.iata.km>25?` (${esc(state.iata.name)}, ${state.iata.km} km)`:""} · ${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.vol/p.pax)}/pers.`:`${esc(o[1])} → ${esc(dest.name)} · env. ${eur(est.opt.vol/p.pax)}/pers.`):lk(L.r2r,"train","var(--c-vol)","Rome2rio",`Train, bus, voiture · env. ${eur(est.opt.vol/p.pax)}/pers.`)}
     ${lk(L.booking,"bed","var(--c-log)","Booking.com",`${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.log/Math.max(1,p.days-1))}/nuit pour ${p.pax}`)}
@@ -1304,7 +1312,7 @@ function render(){
     ${lk(L.gyg,"ticket","var(--c-act)","GetYourGuide",`Visites et billets coupe-file à ${esc(dest.name)}`)}
     ${est.mode==="avion"?lk(L.r2r,"route","var(--c-tra)","Rome2rio","Comparer avion, train et bus"):""}
     ${lk(L.voyage,"book","var(--c-nature)","Wikivoyage","Guide pratique gratuit")}
-  </div><p class="note">Dates pré-remplies : départ un mardi, souvent moins cher. Les montants sont des estimations ; les liens affichent les vrais prix du jour.</p>`;
+  </div><p class="note">${locked?"Les liens vers les vrais prix du jour, déjà remplis à vos dates, sont inclus dans Premium. Les montants affichés sont des estimations.":"Dates pré-remplies : départ un mardi, souvent moins cher. Les montants sont des estimations ; les liens affichent les vrais prix du jour."}</p>`;
 
   /* Budget */
   const C=2*Math.PI*62;let off=0;
@@ -1358,7 +1366,7 @@ function render(){
   ];
   const k=dest.name.replace(/\W/g,"");
   let astuces=`<div class="tips">${money.map((t,i)=>`<label class="tip money"><span class="bub">${ic("piggy")}</span><span>${t}</span><input type="checkbox" id="tm-${k}-${i}"></label>`).join("")}${time.map((t,i)=>`<label class="tip time"><span class="bub">${ic("clock")}</span><span>${t}</span><input type="checkbox" id="th-${k}-${i}"></label>`).join("")}</div>`;
-  if(locked)astuces=`<div class="lockwrap"><div class="blurred" aria-hidden="true" inert>${astuces}</div><button type="button" class="lockover" data-act="upgrade">${ic("lock")}Débloquer les ${money.length+time.length} astuces</button></div>`;
+  if(locked)astuces=`<div class="lockwrap"><div class="blurred" aria-hidden="true" inert>${astuces.replace(/<a [^>]*>(.*?)<\/a>/g,"$1")}</div><button type="button" class="lockover" data-act="upgrade">${ic("lock")}Débloquer les ${money.length+time.length} astuces</button></div>`;
 
   $("#body").innerHTML=`
   <section class="sec" id="itin"><div class="sec-h"><h2>Itinéraire</h2><span class="tag">${ic("route")}${p.days} jours · ${days?days.reduce((s,d)=>s+d.acts.length,0):"…"} lieux</span></div>${itin}</section>
@@ -1400,7 +1408,7 @@ $("#copy").onclick=()=>{
   const p=readForm(),d=state.dest,dep=depFor(p),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);const L=links(d,p,dep,ret,state.est);
   const txt=[`${ORIGINS[p.o][1]} → ${d.name} (${d.country}) · ${fd(dep)} → ${fdy(ret)} · ${p.pax} pers. · env. ${eur(state.est.total)}`,"",
     ...state.plan.days.map((x,i)=>isLocked()&&i>0?`Jour ${i+1} : réservé à Premium`:`Jour ${i+1} : `+(x.acts.length?x.acts.map(a=>a.title).join(" ; "):"temps libre")),"",
-    "Vols : "+L.flights,"Hôtels : "+L.booking,"Activités : "+L.gyg].join("\n");
+    ...(isLocked()?["Liens de réservation : réservés à Premium"]:["Vols : "+L.flights,"Hôtels : "+L.booking,"Activités : "+L.gyg])].join("\n");
   navigator.clipboard.writeText(txt).then(()=>showToast("Plan copié")).catch(()=>showToast("Copie impossible ici",false));
 };
 
