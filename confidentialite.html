@@ -9,14 +9,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap">
 <style>
-:root{--bg:#FBF8F1;--card:#FFFFFF;--ink:#1D2A25;--muted:#66746D;--line:#ECE5D7;--deep:#165A45;--coral:#FF6A57;--green:#22A672}
+:root{--bg:#F3F5FC;--card:#FFFFFF;--ink:#11163A;--muted:#5B6282;--line:#DEE3F2;--deep:#4338CA;--coral:#FFC233;--green:#4338CA}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree","Segoe UI",system-ui,sans-serif;font-size:16px;line-height:1.65}
 header{background:#fff;border-bottom:1px solid var(--line)}
 .wrap{max-width:760px;margin:0 auto;padding-inline:20px}
 header .wrap{display:flex;justify-content:space-between;align-items:center;padding-block:14px}
-.logo{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:24px;color:var(--deep);text-decoration:none}
-.logo i{font-style:normal;color:var(--coral)}
+.logo{display:inline-flex;line-height:0}
+.logo svg{height:38px;width:auto;display:block}
 header a.back{color:var(--ink);font-weight:700;text-decoration:none;font-size:14px}
 main{padding-block:40px 80px}
 h1,h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.02em;line-height:1.15}
@@ -36,7 +36,7 @@ footer{border-top:1px solid var(--line);background:#fff;padding-block:24px;text-
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="logo" href="/">Itinéo<i>.</i></a><a class="back" href="/">← Retour au site</a></div></header>
+<header><div class="wrap"><a class="logo" href="/" aria-label="Itinéo, retour au site"><svg viewBox="-4 -8 246 112" aria-hidden="true" focusable="false"><path d="M12 27C60-14 150-16 204 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="232" lengthAdjust="spacingAndGlyphs">ıtinéo</text><circle cx="12" cy="27" r="10" fill="#4338CA"/><path d="M204 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="204" cy="15" r="5.5" fill="#11163A"/></svg></a><a class="back" href="/">← Retour au site</a></div></header>
 <main class="wrap">
   <h1>Politique de confidentialité</h1>
   <p class="updated">Dernière mise à jour : 10 octobre 2026</p>
