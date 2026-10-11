@@ -10,14 +10,15 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
-/* Itinéo : crème chaleureux, vert voyage, corail pour l'action principale. Trois vues : accueil, questionnaire, plan. */
+/* Itinéo : ciel de nuit (bleu nuit et indigo) et soleil jaune pour l'action principale, comme une carte d'embarquement. Trois vues : accueil, questionnaire, plan.
+   Les noms --green / --coral / --mint sont gardés pour ne pas toucher au reste du code : --green = indigo principal, --coral = jaune soleil des boutons d'action, --mint = teinte indigo claire. */
 :root{
-  --bg:#FBF8F1; --sand:#F4EFE3; --card:#FFFFFF; --ink:#1D2A25; --muted:#66746D; --line:#ECE5D7;
-  --green:#22A672; --green-ink:#FFFFFF; --deep:#165A45; --deep-2:#1F6B53; --mint:#E4F4EB; --coral:#FF6A57; --coral-ink:#FFFFFF; --yellow:#FFD45C;
+  --bg:#F3F5FC; --sand:#E9EDF8; --card:#FFFFFF; --ink:#11163A; --muted:#5B6282; --line:#DEE3F2;
+  --green:#4338CA; --green-ink:#FFFFFF; --deep:#11163A; --deep-2:#1E2560; --mint:#E8EAFE; --coral:#FFC233; --coral-ink:#11163A; --yellow:#FFC233; --sky:#7CC4FF;
   /* jetons utilisés par le planificateur */
-  --paper:#F6F1E7; --sea:#1C9466; --sea-ink:#FFFFFF; --sun:#FFC93C; --sun-ink:#1D2A25; --sun-soft:#FFF4D1;
-  --good:#1C8556; --good-soft:#E2F4EA; --warn:#C24A12; --warn-soft:#FDEBDF; --bar:#DCD5C6;
-  --land:#EEF0E8; --grid:#DCE2D6; --park:#D5E8CB;
+  --paper:#EEF1FA; --sea:#4338CA; --sea-ink:#FFFFFF; --sun:#FFC233; --sun-ink:#11163A; --sun-soft:#FFF4D6;
+  --good:#1C8556; --good-soft:#E2F4EA; --warn:#C24A12; --warn-soft:#FDEBDF; --bar:#D6DBEE;
+  --land:#EEF1F4; --grid:#DCE1EA; --park:#D7E9D3;
   --c-vol:#2E86DE; --c-log:#7A5CE0; --c-rep:#F29E38; --c-tra:#14A3A3; --c-act:#E8505B;
   --c-culture:#7A5CE0; --c-gastronomie:#F08A24; --c-plage:#1E9BD7; --c-nature:#2FA36B; --c-fete:#D9488F;
   --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
@@ -45,7 +46,7 @@ a{color:var(--sea)}
 .wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
 .logo{display:inline-flex;align-items:baseline;font-family:var(--f-display);font-weight:800;font-size:24px;color:var(--deep);text-decoration:none;letter-spacing:-.02em}
 .logo i{font-style:normal;color:var(--coral)}
-.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:800;color:var(--ink);background:var(--yellow);padding:7px 14px;border-radius:999px;justify-self:start}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:800;color:var(--green);background:var(--mint);padding:7px 14px;border-radius:999px;justify-self:start}
 .eyebrow .ic{width:15px;height:15px}
 .tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--muted);background:var(--paper);border-radius:999px;padding:2px 8px;text-decoration:none}
 .tag .ic{width:13px;height:13px}
@@ -71,14 +72,14 @@ a.tag:hover{color:var(--sea)}
 #vLanding{overflow-x:clip}
 .hero{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:center;padding-block:56px 40px}
 .hero::before{content:"";position:absolute;inset:-40px -30vw auto auto;width:60vw;height:520px;background:radial-gradient(closest-side,color-mix(in srgb,var(--green) 16%,transparent),transparent);pointer-events:none;z-index:-1}
-.hero::after{content:"";position:absolute;inset:40px auto auto -30vw;width:55vw;height:480px;background:radial-gradient(closest-side,color-mix(in srgb,var(--yellow) 26%,transparent),transparent);pointer-events:none;z-index:-1}
+.hero::after{content:"";position:absolute;inset:40px auto auto -30vw;width:55vw;height:480px;background:radial-gradient(closest-side,color-mix(in srgb,var(--sky) 30%,transparent),transparent);pointer-events:none;z-index:-1}
 @media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:40px;padding-block:32px}}
 .hero h1{font-size:clamp(38px,5.4vw,64px);font-weight:800;line-height:1.04;margin:20px 0 22px}
 .hero .lead{font-size:18px;color:var(--muted);max-width:50ch;margin:0 0 30px}
 .cta-wrap{display:grid;justify-items:center;gap:10px;justify-self:start}
 .cta-wrap small{color:var(--muted);font-size:14px}
 
-.week{position:relative;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 30px 60px -30px rgba(29,42,37,.28);display:grid;gap:10px;max-width:420px;justify-self:center;width:100%}
+.week{position:relative;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 30px 60px -30px rgba(17,22,58,.28);display:grid;gap:10px;max-width:420px;justify-self:center;width:100%}
 .week h3{font-size:19px;display:flex;align-items:center;gap:8px}
 .week h3 .ic{color:var(--green)}
 .wk-row{display:grid;grid-template-columns:38px 36px minmax(0,1fr);gap:12px;align-items:center;background:var(--bg);border-radius:16px;padding:10px 12px}
@@ -92,7 +93,7 @@ a.tag:hover{color:var(--sea)}
 .wk-budget .ok .ic{width:14px;height:14px}
 .wk-bar{height:8px;border-radius:4px;background:var(--sand);overflow:hidden}
 .wk-bar i{display:block;height:100%;background:var(--green);border-radius:4px}
-.wk-float{position:absolute;left:-36px;bottom:-26px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 16px;box-shadow:0 18px 40px -16px rgba(29,42,37,.35)}
+.wk-float{position:absolute;left:-36px;bottom:-26px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 16px;box-shadow:0 18px 40px -16px rgba(17,22,58,.35)}
 .wk-float .cart{width:38px;height:38px;border-radius:50%;background:var(--mint);color:var(--green);display:grid;place-items:center}
 .wk-float b{display:flex;align-items:center;gap:5px;font-size:15px}
 .wk-float b .ic{color:var(--green);width:15px;height:15px}
@@ -102,7 +103,7 @@ a.tag:hover{color:var(--sea)}
 
 /* Carte postale + billet d'embarquement */
 .hpost{position:relative;max-width:450px;width:100%;justify-self:center;padding-bottom:96px}
-.hp-frame{position:relative;aspect-ratio:4/4.4;max-width:100%;border-radius:30px;overflow:hidden;background:#20322b;box-shadow:0 34px 60px -30px rgba(29,42,37,.5);color:#fff}
+.hp-frame{position:relative;aspect-ratio:4/4.4;max-width:100%;border-radius:30px;overflow:hidden;background:#1E2560;box-shadow:0 34px 60px -30px rgba(17,22,58,.5);color:#fff}
 .hp-slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease}
 .hp-slide.on{opacity:1}
 .hp-slide img,.hp-slide .art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -118,7 +119,7 @@ a.tag:hover{color:var(--sea)}
 .hp-dots{position:absolute;right:20px;top:26px;display:flex;gap:6px}
 .hp-dots button{width:8px;height:8px;border-radius:4px;border:0;padding:0;background:rgba(255,255,255,.55);cursor:pointer;transition:width .3s,background .3s}
 .hp-dots button.on{width:22px;background:#fff}
-.ticket{position:absolute;left:-34px;bottom:0;width:286px;max-width:calc(100% + 20px);background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 48px -18px rgba(29,42,37,.45);overflow:hidden}
+.ticket{position:absolute;left:-34px;bottom:0;width:286px;max-width:calc(100% + 20px);background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 48px -18px rgba(17,22,58,.45);overflow:hidden}
 .tk-top{display:flex;justify-content:space-between;align-items:center;background:var(--deep);color:#fff;padding:9px 16px;font-size:12px;font-weight:700}
 .tk-top span{display:inline-flex;align-items:center;gap:6px}
 .tk-top .ic{width:14px;height:14px}
@@ -154,7 +155,7 @@ a.tag:hover{color:var(--sea)}
 .sect-h p{color:var(--muted);font-size:18px;margin:0}
 .cards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 @media (max-width:860px){.cards3{grid-template-columns:minmax(0,1fr)}}
-.fcard{position:relative;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:30px 28px 28px;display:grid;gap:12px;align-content:start;box-shadow:0 14px 40px -28px rgba(29,42,37,.35)}
+.fcard{position:relative;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:30px 28px 28px;display:grid;gap:12px;align-content:start;box-shadow:0 14px 40px -28px rgba(17,22,58,.35)}
 .fcard .no{position:absolute;top:-16px;left:28px;width:34px;height:34px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font-weight:800;font-size:14px}
 .fcard .ico{color:var(--green)}
 .fcard .ico .ic{width:30px;height:30px;stroke-width:1.8}
@@ -178,7 +179,7 @@ a.tag:hover{color:var(--sea)}
 .checks li{display:flex;align-items:center;gap:12px;font-weight:600}
 .checks li span{width:26px;height:26px;border-radius:50%;background:var(--mint);color:var(--green);display:grid;place-items:center;flex:none}
 .checks .ic{width:15px;height:15px}
-.mock{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:18px;box-shadow:0 30px 60px -30px rgba(29,42,37,.28);display:grid;gap:12px;max-width:440px;justify-self:center;width:100%}
+.mock{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:18px;box-shadow:0 30px 60px -30px rgba(17,22,58,.28);display:grid;gap:12px;max-width:440px;justify-self:center;width:100%}
 .mock-h{display:flex;justify-content:space-between;align-items:center}
 .mock-h .pill{background:var(--mint);color:var(--deep);font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px}
 .mock>svg{width:100%;height:auto;border-radius:18px;display:block}
@@ -189,7 +190,7 @@ a.tag:hover{color:var(--sea)}
 .mintsec{background:var(--mint)}
 .sandsec{background:var(--sand)}
 .drow{display:flex;gap:16px;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory;scrollbar-width:thin}
-.post{position:relative;flex:0 0 220px;scroll-snap-align:start;border-radius:22px;overflow:hidden;aspect-ratio:4/5;max-width:100%;cursor:pointer;border:0;padding:0;color:#fff;text-align:left;background:#20322b}
+.post{position:relative;flex:0 0 220px;scroll-snap-align:start;border-radius:22px;overflow:hidden;aspect-ratio:4/5;max-width:100%;cursor:pointer;border:0;padding:0;color:#fff;text-align:left;background:#1E2560}
 .post .art,.post img.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .post .shade,.cover .shade{position:absolute;inset:0;background:linear-gradient(transparent 38%,rgba(0,0,0,.66))}
 .post .pi{position:absolute;inset:auto 0 0 0;padding:14px;display:grid;gap:4px}
@@ -229,7 +230,7 @@ a.tag:hover{color:var(--sea)}
 .site-foot a{color:var(--muted)}
 
 /* Suggestions de villes */
-.ac{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:60;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px -12px rgba(29,42,37,.3);padding:6px;display:grid;gap:2px;min-width:240px}
+.ac{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:60;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px -12px rgba(17,22,58,.3);padding:6px;display:grid;gap:2px;min-width:240px}
 .ac button{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;align-items:center;text-align:left;padding:10px 12px;border:0;background:none;border-radius:12px;cursor:pointer;color:var(--ink)}
 .ac button:hover,.ac button.on{background:var(--bg)}
 .ac button .ic{color:var(--green)}
@@ -271,6 +272,13 @@ a.tag:hover{color:var(--sea)}
 .opts.mgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:520px){.opts.mgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .opts.mgrid .opt{justify-items:center;text-align:center;padding:12px 6px;gap:2px}
+.exact{display:flex;align-items:center;justify-content:center;gap:10px 14px;flex-wrap:wrap;width:100%;background:#fff;border:2px solid var(--line);border-radius:18px;padding:10px 16px}
+.exact.on{border-color:var(--green);background:var(--mint)}
+.exact label{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:15px}
+.exact label .ic{color:var(--green)}
+.exact input{border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px 12px;font-weight:700;font-size:16px;color:var(--ink);min-width:0}
+.exact input:focus{outline:none;border-color:var(--green)}
+.exact-err{flex-basis:100%;text-align:center;color:var(--warn);font-weight:700;font-size:13px}
 .opt .yr{font-size:12px;font-weight:700;color:var(--muted)}
 .opt.on .yr{color:var(--deep)}
 .ideas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
@@ -322,7 +330,7 @@ a.tag:hover{color:var(--sea)}
 .switch{margin:0;font-size:15px}
 .legal{margin:0;color:var(--muted);font-size:12px;max-width:42ch}
 
-.wz-card{position:sticky;top:24px;background:#fff;border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 30px 60px -34px rgba(29,42,37,.3);display:grid;gap:14px}
+.wz-card{position:sticky;top:24px;background:#fff;border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 30px 60px -34px rgba(17,22,58,.3);display:grid;gap:14px}
 .wz-card-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .wz-card-h h3{font-size:18px}
 .live{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;background:var(--mint);color:var(--deep);font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px}
@@ -362,12 +370,12 @@ a.tag:hover{color:var(--sea)}
 .brandbar .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .toast{font-size:13px;color:var(--good);font-weight:700}
 
-.cover{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/8.5;max-width:100%;background:#13283B;color:#fff}
+.cover{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/8.5;max-width:100%;background:#11163A;color:#fff}
 .cover .art,.cover img.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cover-in{position:absolute;inset:auto 0 0 0;padding:20px;display:grid;gap:10px}
 .cover h1{font-size:clamp(34px,7vw,56px);font-weight:800;letter-spacing:-.03em;text-shadow:0 2px 18px rgba(0,0,0,.35)}
 .cover .ctry{font-size:14px;font-weight:600;opacity:.95;display:flex;align-items:center;gap:6px}
-.cover .price{position:absolute;top:14px;right:14px;background:#fff;color:#13283B;border-radius:16px;padding:8px 12px;text-align:right;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.cover .price{position:absolute;top:14px;right:14px;background:#fff;color:#11163A;border-radius:16px;padding:8px 12px;text-align:right;box-shadow:0 6px 20px rgba(0,0,0,.18)}
 .cover .price b{display:block;font-family:var(--f-display);font-size:24px;line-height:1}
 .cover .price span{font-size:11px;font-weight:700;color:#5F7183}
 @media (max-width:560px){.cover{aspect-ratio:4/3.6}.cover .price{padding:6px 10px}.cover .price b{font-size:19px}.cover-in{padding:14px}}
@@ -380,7 +388,7 @@ a.tag:hover{color:var(--sea)}
 @media (max-width:560px){.fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .fld{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 8px;align-items:center;background:var(--paper);border-radius:12px;padding:8px 10px}
 .fld>.ic{grid-row:span 2;color:var(--sea)}
-.fld select,.fld input[type=number],.fld input[type=text]{border:0;background:transparent;padding:0;font-weight:700;width:100%;min-width:0;outline:none}
+.fld select,.fld input[type=number],.fld input[type=text],.fld input[type=date]{border:0;background:transparent;padding:0;font-weight:700;width:100%;min-width:0;outline:none}
 .fld.wide{grid-column:1/-1}
 .fld input[type=range]{width:100%;accent-color:var(--sea);margin:2px 0 0}
 .fld .rv{display:flex;justify-content:space-between;align-items:center}
@@ -533,7 +541,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 .msg.err{background:var(--warn-soft);color:var(--warn)}
 .trips{display:grid;gap:10px}
 .trip{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px}
-.trip .th{width:56px;height:56px;border-radius:12px;overflow:hidden;position:relative;background:#13283B}
+.trip .th{width:56px;height:56px;border-radius:12px;overflow:hidden;position:relative;background:#11163A}
 .trip .th .art{position:absolute;inset:0;width:100%;height:100%}
 .trip b{display:block;font-size:15px}
 .trip small{color:var(--muted);font-size:12px;font-weight:600}
@@ -945,6 +953,12 @@ function nextDep(m){
   const d=new Date(y,m,8);while(d.getDay()!==2)d.setDate(d.getDate()+1); // un mardi, jour souvent moins cher
   return d;
 }
+// Date précise choisie par le voyageur (format AAAA-MM-JJ), de demain à dans 2 ans
+const parseISO=s=>{const [y,mo,d]=s.split("-").map(Number);return new Date(y,mo-1,d)};
+const minDate=()=>new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+const maxDate=()=>new Date(now.getFullYear()+2,now.getMonth(),now.getDate());
+function validDate(s){if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s))return null;const d=parseISO(s);return d>=minDate()&&d<=maxDate()?d:null}
+const depFor=p=>validDate(p.date)||nextDep(p.m);
 
 /* ---------- Liens de réservation ---------- */
 function links(dest,p,dep,ret,est){
@@ -973,9 +987,10 @@ $("#fields").innerHTML=`
 <div class="fld wide">${ic("pin")}<small>Destination</small><input id="destq" type="text" placeholder="Tapez une ville du monde" autocomplete="off" aria-label="Destination"></div>
 <label class="fld">${ic("plane")}<small>Départ</small><select id="origin">${ORIGINS.map((o,i)=>`<option value="${i}">${o[1]}</option>`).join("")}</select></label>
 <label class="fld">${ic("cal")}<small>Mois</small><select id="month">${MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("")}</select></label>
+<label class="fld">${ic("cal")}<small>Date précise</small><input id="depdate" type="date" min="${iso(minDate())}" max="${iso(maxDate())}" aria-label="Date de départ précise (facultatif)"></label>
 <label class="fld">${ic("clock")}<small>Jours</small><input id="days" type="number" min="2" max="21" value="5"></label>
 <label class="fld">${ic("users")}<small>Voyageurs</small><input id="pax" type="number" min="1" max="10" value="2"></label>
-<div class="fld" style="grid-column:span 2">${ic("bed")}<small>Style</small><div class="seg" role="radiogroup" aria-label="Style">
+<div class="fld">${ic("bed")}<small>Style</small><div class="seg" role="radiogroup" aria-label="Style">
   <label><input type="radio" name="style" id="st0" value="0"><span>Éco</span></label><label><input type="radio" name="style" id="st1" value="1" checked><span>Confort</span></label><label><input type="radio" name="style" id="st2" value="2"><span>Luxe</span></label></div></div>
 <label class="fld wide">${ic("wallet")}<span class="rv"><small>Budget total</small><b class="num" id="budgetOut"></b></span><input id="budget" type="range" min="300" max="15000" step="50" value="1400"></label>`;
 $("#interests").innerHTML=INTERESTS.map(([k,l])=>`<label style="--chip:var(--c-${k})"><input type="checkbox" id="in-${k}" value="${k}"${["culture","gastronomie"].includes(k)?" checked":""}><span>${ic(ICAT[k])}${l}</span></label>`).join("");
@@ -994,13 +1009,13 @@ $("#month").value=(now.getMonth()+2)%12;
 const KEY="itineo-form-v2";
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
 if(saved){
-  [["origin",saved.o],["month",saved.m],["days",saved.days],["pax",saved.pax],["budget",saved.budget]].forEach(([k,v])=>{if(v!=null)$("#"+k).value=v});
+  [["origin",saved.o],["month",saved.m],["depdate",validDate(saved.date)?saved.date:""],["days",saved.days],["pax",saved.pax],["budget",saved.budget]].forEach(([k,v])=>{if(v!=null)$("#"+k).value=v});
   if(saved.style!=null&&$("#st"+saved.style))$("#st"+saved.style).checked=true;
   if(saved.ints)INTERESTS.forEach(([k])=>$("#in-"+k).checked=saved.ints.includes(k));
 }
 function readForm(){
   return{o:+$("#origin").value,m:+$("#month").value,days:Math.min(21,Math.max(2,+$("#days").value||5)),pax:Math.min(10,Math.max(1,+$("#pax").value||1)),
-    budget:+$("#budget").value,style:+document.querySelector("input[name=style]:checked").value,ints:INTERESTS.map(i=>i[0]).filter(k=>$("#in-"+k).checked)};
+    budget:+$("#budget").value,style:+document.querySelector("input[name=style]:checked").value,ints:INTERESTS.map(i=>i[0]).filter(k=>$("#in-"+k).checked),date:validDate($("#depdate").value)?$("#depdate").value:""};
 }
 function persist(){const p=readForm();try{localStorage.setItem(KEY,JSON.stringify({...p,dest:state.dest}))}catch(e){}}
 
@@ -1129,7 +1144,7 @@ function render(){
   const est=estimate(dest,p,good,museums);
   state.plan=days?{days}:null;state.est=est;
   const fits=est.total<=p.budget,saved=est.naiveTotal-est.total,hours=Math.round(p.days*1.25+(days?Math.min(3,museums*.5):1));
-  const dep=nextDep(p.m),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);
+  const dep=depFor(p),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);
   const longHaul=est.dist>3000;
   const bookBy=new Date(dep);bookBy.setDate(bookBy.getDate()-(longHaul?105:49));
   const bookFrom=new Date(dep);bookFrom.setDate(bookFrom.getDate()-(longHaul?150:84));
@@ -1250,7 +1265,13 @@ function render(){
 }
 
 /* ---------- Interactions du planificateur ---------- */
-$("#f").addEventListener("input",e=>{if(e.target.id==="destq")return;render()});
+$("#f").addEventListener("input",e=>{
+  if(e.target.id==="destq")return;
+  // la date précise et le mois restent cohérents
+  if(e.target.id==="month")$("#depdate").value="";
+  if(e.target.id==="depdate"){const d=validDate(e.target.value);if(d)$("#month").value=d.getMonth();else if(e.target.value)return}
+  render();
+});
 $("#f").addEventListener("submit",e=>e.preventDefault());
 attachAC($("#destq"),g=>loadDestination(g));
 document.addEventListener("click",e=>{
@@ -1260,7 +1281,7 @@ document.addEventListener("click",e=>{
   if(card&&!e.target.closest("a")){hl(card.dataset.card);const m=markers[card.dataset.card];if(m&&map){map.panTo(m.getLatLng());m.openPopup()}return}
   const el=e.target.closest("[data-month],[data-style],[data-days]");
   if(el&&!el.closest(".modal")){
-    if(el.dataset.month!=null)$("#month").value=el.dataset.month;
+    if(el.dataset.month!=null){$("#month").value=el.dataset.month;$("#depdate").value=""}
     if(el.dataset.style!=null)$("#st"+el.dataset.style).checked=true;
     if(el.dataset.days)$("#days").value=el.dataset.days;
     render();
@@ -1270,7 +1291,7 @@ document.addEventListener("mouseover",e=>{const c=e.target.closest(".place");if(
 function showToast(msg,ok=true){const t=$("#toast");t.textContent=msg;t.style.color=ok?"var(--good)":"var(--warn)";t.hidden=false;clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.hidden=true,3000)}
 $("#copy").onclick=()=>{
   if(!state.dest||!state.plan)return;
-  const p=readForm(),d=state.dest,dep=nextDep(p.m),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);const L=links(d,p,dep,ret,state.est);
+  const p=readForm(),d=state.dest,dep=depFor(p),ret=new Date(dep);ret.setDate(ret.getDate()+p.days-1);const L=links(d,p,dep,ret,state.est);
   const txt=[`${ORIGINS[p.o][1]} → ${d.name} (${d.country}) · ${fd(dep)} → ${fdy(ret)} · ${p.pax} pers. · env. ${eur(state.est.total)}`,"",
     ...state.plan.days.map((x,i)=>`Jour ${i+1} : `+(x.acts.length?x.acts.map(a=>a.title).join(" ; "):"temps libre")),"",
     "Vols : "+L.flights,"Hôtels : "+L.booking,"Activités : "+L.gyg].join("\n");
@@ -1442,8 +1463,8 @@ $("#drow").addEventListener("click",e=>{
 /* ---------- Questionnaire ---------- */
 const MS=["Janv.","Févr.","Mars","Avr.","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."];
 const STEPS=["intro","dest","origin","dates","pax","budget","ints","build"];
-const W={step:0,dest:null,img:"",o:0,m:(now.getMonth()+2)%12,days:5,pax:2,budget:1400,style:1,ints:["culture","gastronomie"],ans:{}};
-if(saved){["o","m","days","pax","budget","style"].forEach(k=>{if(saved[k]!=null)W[k]=saved[k]});if(saved.ints)W.ints=saved.ints;if(saved.dest&&saved.dest.lat!=null)W.dest=saved.dest}
+const W={step:0,dest:null,img:"",o:0,m:(now.getMonth()+2)%12,date:"",days:5,pax:2,budget:1400,style:1,ints:["culture","gastronomie"],ans:{}};
+if(saved){["o","m","days","pax","budget","style"].forEach(k=>{if(saved[k]!=null)W[k]=saved[k]});if(validDate(saved.date))W.date=saved.date;if(saved.ints)W.ints=saved.ints;if(saved.dest&&saved.dest.lat!=null)W.dest=saved.dest}
 function resetWizard(step){W.step=step||0;W.ans={};if(step>=2&&W.dest)W.ans.dest=true}
 document.addEventListener("click",e=>{
   const a=e.target.closest('a[href="#creer"]');if(!a)return;
@@ -1452,9 +1473,9 @@ document.addEventListener("click",e=>{
   if(currentView==="wizard")renderWizard();
 });
 const sameDest=()=>W.dest&&state.dest&&state.dest.name===W.dest.name&&Math.abs(state.dest.lat-W.dest.lat)<1e-3;
-const wp=()=>({o:W.o,m:W.m,days:W.days,pax:W.pax,budget:W.budget,style:W.style,ints:W.ints});
+const wp=()=>({o:W.o,m:W.m,date:W.date,days:W.days,pax:W.pax,budget:W.budget,style:W.style,ints:W.ints});
 function applyW(){
-  $("#origin").value=W.o;$("#month").value=W.m;$("#days").value=W.days;$("#pax").value=W.pax;$("#budget").value=W.budget;
+  $("#origin").value=W.o;$("#month").value=W.m;$("#depdate").value=W.date||"";$("#days").value=W.days;$("#pax").value=W.pax;$("#budget").value=W.budget;
   $("#st"+W.style).checked=true;INTERESTS.forEach(([k])=>$("#in-"+k).checked=W.ints.includes(k));
 }
 function pickDest(g,advance=true){
@@ -1480,7 +1501,13 @@ function stepHTML(){
     <div class="opts">${ORIGINS.map((o,i)=>`<button type="button" class="opt${W.o===i?" on":""}" data-worig="${i}">${ic(i===ORIGINS.length-1?"plane":"plane")}<span class="t">${o[1]}</span></button>`).join("")}</div>${navHTML(false)}</div>`;
   if(s==="dates")return `<div class="wz-step">${qn(3)}<h2>Quand partez-vous ?</h2>
     <p class="lead">${cl?`Températures maximales moyennes à ${esc(W.dest.name)} (mesures réelles 2024-2025).`:W.dest?"Chargement de la météo réelle…":"Choisissez le mois de départ."}</p>
-    <div class="opts mgrid">${monthOrder().map(i=>`<button type="button" class="opt${W.m===i?" on":""}" data-wm="${i}"><span class="t">${MS[i]}</span><span class="yr">${nextDep(i).getFullYear()}</span><small>${cl&&cl.tmax[i]!=null?`${good.includes(i)?"☀ ":""}${cl.tmax[i]}°`:"&nbsp;"}</small></button>`).join("")}</div>
+    <div class="opts mgrid">${monthOrder().map(i=>`<button type="button" class="opt${W.m===i&&!W.date?" on":""}" data-wm="${i}"><span class="t">${MS[i]}</span><span class="yr">${nextDep(i).getFullYear()}</span><small>${cl&&cl.tmax[i]!=null?`${good.includes(i)?"☀ ":""}${cl.tmax[i]}°`:"&nbsp;"}</small></button>`).join("")}</div>
+    <div class="exact${W.date?" on":""}">
+      <label for="wzDate">${ic("cal")}Ou une date précise</label>
+      <input id="wzDate" type="date" min="${iso(minDate())}" max="${iso(maxDate())}" value="${W.date}">
+      ${W.date?`<button type="button" class="linkbtn" data-wclear>Effacer</button>`:""}
+      <small class="exact-err" id="wzDateErr" hidden>Choisissez une date entre le ${fdy(minDate())} et le ${fdy(maxDate())}.</small>
+    </div>
     <p style="font-weight:800;margin:8px 0 0">Combien de jours sur place ?</p>
     <div class="stepper"><button type="button" data-wd="-1" aria-label="Un jour de moins">−</button><output>${W.days} jours</output><button type="button" data-wd="1" aria-label="Un jour de plus">+</button></div>${navHTML(false)}</div>`;
   if(s==="pax")return `<div class="wz-step">${qn(4)}<h2>Combien de voyageurs ?</h2>
@@ -1508,6 +1535,13 @@ function renderStep(){
   $("#wzStep").innerHTML=stepHTML();
   const inp=$("#wzDest");
   if(inp){attachAC(inp,g=>pickDest(g));setTimeout(()=>inp.focus(),50)}
+  const di=$("#wzDate");
+  if(di)di.addEventListener("change",()=>{
+    const d=validDate(di.value);
+    if(!di.value){W.date="";renderStep();renderCard();return}
+    if(!d){$("#wzDateErr").hidden=false;return}
+    W.date=di.value;W.m=d.getMonth();W.ans.dates=true;renderStep();renderCard();
+  });
   const rg=$("#wzBudget");
   if(rg)rg.addEventListener("input",()=>{W.budget=+rg.value;$("#wzBudgetOut").textContent=eur(W.budget);updateEstim();renderCard()});
   updateEstim();
@@ -1533,7 +1567,7 @@ function renderCard(){
   const rows=[
     ["Destination",A.dest&&d?`${esc(d.name)}, ${esc(d.country)}`:soon],
     ["Départ",A.origin?esc(ORIGINS[W.o][1]):soon],
-    ["Dates",A.dates?`${MOIS[W.m]} ${nextDep(W.m).getFullYear()} · ${W.days} jours`:soon],
+    ["Dates",A.dates?`${W.date?"Le "+fdy(parseISO(W.date)):MOIS[W.m]+" "+nextDep(W.m).getFullYear()} · ${W.days} jours`:soon],
     ["Voyageurs",A.pax?`${W.pax}`:soon],
     ["Budget",A.budget?`${eur(W.budget)} · ${styleL}`:soon],
     ["Envies",A.ints?esc(W.ints.map(k=>INTERESTS.find(x=>x[0]===k)[1]).join(", ")):soon]
@@ -1571,7 +1605,8 @@ $("#vWizard").addEventListener("click",async e=>{
   if(ds.wz==="build"){if(!W.dest){W.step=1;renderWizard();return}W.ans.ints=true;W.step=STEPS.length-1;renderWizard();return}
   if(ds.idea){const f=FEATURED.find(x=>x.id===ds.idea);if(f)pickDest(f);return}
   if(ds.worig!=null){W.o=+ds.worig;W.ans.origin=true;W.step++;renderWizard();return}
-  if(ds.wm!=null){W.m=+ds.wm;W.ans.dates=true;renderStep();renderCard();return}
+  if(ds.wm!=null){W.m=+ds.wm;W.date="";W.ans.dates=true;renderStep();renderCard();return}
+  if(t.hasAttribute("data-wclear")){W.date="";renderStep();renderCard();return}
   if(ds.wd){W.days=Math.min(21,Math.max(2,W.days+ +ds.wd));W.ans.dates=true;renderStep();renderCard();return}
   if(ds.wpax){W.pax=+ds.wpax;W.ans.pax=true;renderStep();renderCard();return}
   if(ds.wpd){W.pax=Math.min(10,Math.max(1,W.pax+ +ds.wpd));W.ans.pax=true;renderStep();renderCard();return}
@@ -1632,7 +1667,7 @@ async function tripsModal(){
     <div class="ta"><button type="button" class="btn primary" data-open="${t.id}">Ouvrir</button><button type="button" class="btn danger" data-del="${t.id}">${ic("trash")}Supprimer</button></div></div>`}).join("");
 }
 function applyParams(p,dest){
-  if(p.o!=null)$("#origin").value=p.o;if(p.m!=null)$("#month").value=p.m;if(p.days)$("#days").value=p.days;if(p.pax)$("#pax").value=p.pax;if(p.budget)$("#budget").value=p.budget;
+  if(p.o!=null)$("#origin").value=p.o;if(p.m!=null)$("#month").value=p.m;$("#depdate").value=validDate(p.date)?p.date:"";if(p.days)$("#days").value=p.days;if(p.pax)$("#pax").value=p.pax;if(p.budget)$("#budget").value=p.budget;
   if(p.style!=null&&$("#st"+p.style))$("#st"+p.style).checked=true;
   if(Array.isArray(p.ints))INTERESTS.forEach(([k])=>$("#in-"+k).checked=p.ints.includes(k));
   if(dest)loadDestination(dest);else render();
