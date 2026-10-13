@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -8 325 112" width="1300" height="448">
+  <title>Valisino</title>
+  <style>@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&amp;display=swap');</style>
+  <path d="M130 27C169.5-14 244-16 288 8" fill="none" stroke="#9DA3FF" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/>
+  <text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#FFFFFF" textLength="315" lengthAdjust="spacingAndGlyphs">valısıno</text>
+  <circle cx="130" cy="27" r="10" fill="#9DA3FF"/>
+  <circle cx="199" cy="27" r="8" fill="#FFC233"/>
+  <path d="M288 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/>
+  <circle cx="288" cy="15" r="5.5" fill="#11163A"/>
+</svg>

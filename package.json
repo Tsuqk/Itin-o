@@ -1,8 +1,8 @@
 {
-  "name": "itineo",
+  "name": "valisino",
   "private": true,
   "version": "1.0.0",
-  "description": "Itinéo : planificateur de voyages, avec abonnement Premium via Stripe",
+  "description": "Valisino : planificateur de voyages, avec abonnement Premium via Stripe",
   "engines": { "node": ">=18" },
   "dependencies": {
     "stripe": "^17.7.0"

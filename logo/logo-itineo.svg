@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -8 246 112" width="984" height="448">
+  <title>Itinéo</title>
+  <style>@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&amp;display=swap');</style>
+  <path d="M12 27C60-14 150-16 204 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/>
+  <text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="232" lengthAdjust="spacingAndGlyphs">ıtinéo</text>
+  <circle cx="12" cy="27" r="10" fill="#4338CA"/>
+  <path d="M204 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/>
+  <circle cx="204" cy="15" r="5.5" fill="#11163A"/>
+</svg>

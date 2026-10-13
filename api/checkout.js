@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
     const profile = await getProfile(user.id);
     if (profile && profile.is_premium) return res.status(400).json({ error: "Vous êtes déjà Premium." });
 
-    // Un seul client Stripe par compte Itinéo
+    // Un seul client Stripe par compte Valisino
     let customer = profile && profile.stripe_customer_id;
     if (!customer) {
       const c = await stripe.customers.create({ email: user.email, metadata: { user_id: user.id } });

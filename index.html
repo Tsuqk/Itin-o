@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Itinéo : des voyages planifiés au meilleur prix, sans perdre de temps sur place. Itinéraire, carte, météo réelle, budget et liens pour réserver, pour n'importe quelle ville du monde.">
-<title>Itinéo</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234338CA'/%3E%3Cpath d='M17 45C22 25 33 20 44 25' fill='none' stroke='%23fff' stroke-width='4' stroke-dasharray='5 5' stroke-linecap='round'/%3E%3Ccircle cx='17' cy='46' r='6' fill='%23fff'/%3E%3Cpath d='M45 39c-5-5-9-9-9-15a9 9 0 1 1 18 0c0 6-4 10-9 15z' fill='%23FFC233'/%3E%3Ccircle cx='45' cy='24' r='3.5' fill='%2311163A'/%3E%3C/svg%3E">
+<meta name="description" content="Valisino : des voyages planifiés au meilleur prix, sans perdre de temps sur place. Itinéraire, carte, météo réelle, budget et liens pour réserver, pour n'importe quelle ville du monde.">
+<title>Valisino</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234338CA'/%3E%3Cpath d='M17 45C22 25 33 20 44 25' fill='none' stroke='%23fff' stroke-width='4' stroke-dasharray='5 5' stroke-linecap='round'/%3E%3Ccircle cx='17' cy='46' r='6' fill='%23fff'/%3E%3Ccircle cx='29' cy='27' r='3.5' fill='%23FFC233'/%3E%3Cpath d='M45 39c-5-5-9-9-9-15a9 9 0 1 1 18 0c0 6-4 10-9 15z' fill='%23FFC233'/%3E%3Ccircle cx='45' cy='24' r='3.5' fill='%2311163A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css">
 <style>
-/* Itinéo : ciel de nuit (bleu nuit et indigo) et soleil jaune pour l'action principale, comme une carte d'embarquement. Trois vues : accueil, questionnaire, plan.
+/* Valisino : ciel de nuit (bleu nuit et indigo) et soleil jaune pour l'action principale, comme une carte d'embarquement. Trois vues : accueil, questionnaire, plan.
    Les noms --green / --coral / --mint sont gardés pour ne pas toucher au reste du code : --green = indigo principal, --coral = jaune soleil des boutons d'action, --mint = teinte indigo claire. */
 :root{
   --bg:#F3F5FC; --sand:#E9EDF8; --card:#FFFFFF; --ink:#11163A; --muted:#5B6282; --line:#DEE3F2;
@@ -642,7 +642,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 <!-- ================= ACCUEIL ================= -->
 <div id="vLanding">
   <header class="topbar"><div class="wrap topbar-in">
-    <a class="logo" href="#top" aria-label="Itinéo, retour à l'accueil"><svg viewBox="-4 -8 246 112" aria-hidden="true" focusable="false"><path d="M12 27C60-14 150-16 204 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="232" lengthAdjust="spacingAndGlyphs">ıtinéo</text><circle cx="12" cy="27" r="10" fill="#4338CA"/><path d="M204 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="204" cy="15" r="5.5" fill="#11163A"/></svg></a>
+    <a class="logo" href="#top" aria-label="Valisino, retour à l'accueil"><svg viewBox="-4 -8 325 112" aria-hidden="true" focusable="false"><path d="M130 27C169.5-14 244-16 288 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="315" lengthAdjust="spacingAndGlyphs">valısıno</text><circle cx="130" cy="27" r="10" fill="#4338CA"/><circle cx="199" cy="27" r="8" fill="#FFC233"/><path d="M288 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="288" cy="15" r="5.5" fill="#11163A"/></svg></a>
     <nav class="topnav"><span class="authSlot"></span><a class="btn green" href="#creer">Commencer</a></nav>
   </div></header>
 
@@ -651,14 +651,14 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
       <div>
         <span class="eyebrow" id="heroEyebrow"></span>
         <h1>Des voyages planifiés au meilleur prix, sans perdre de temps sur place.</h1>
-        <p class="lead">Vous choisissez la ville, les dates et le budget. Itinéo trouve les vrais lieux à visiter, regarde la météo réelle, organise vos journées par quartier et prépare les liens pour réserver, pile dans votre budget.</p>
+        <p class="lead">Vous choisissez la ville, les dates et le budget. Valisino trouve les vrais lieux à visiter, regarde la météo réelle, organise vos journées par quartier et prépare les liens pour réserver, pile dans votre budget.</p>
         <div class="cta-wrap"><a class="btn coral big" href="#creer">Créer mon voyage</a><small>2 min chrono</small></div>
       </div>
       <div class="week" id="heroWeek"></div>
     </section>
 
     <div class="wrap">
-      <p class="marquee-h">Itinéo vous envoie directement sur les bonnes recherches</p>
+      <p class="marquee-h">Valisino vous envoie directement sur les bonnes recherches</p>
       <div class="marquee"><div class="marquee-track" id="marquee"></div></div>
     </div>
 
@@ -684,14 +684,14 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
     </section>
 
     <section class="mintsec"><div class="wrap sect">
-      <div class="sect-h"><h2>Plus vous voyagez, plus c'est simple</h2><p>Itinéo garde vos voyages et vos préférences. Chaque nouveau départ se prépare plus vite.</p></div>
+      <div class="sect-h"><h2>Plus vous voyagez, plus c'est simple</h2><p>Valisino garde vos voyages et vos préférences. Chaque nouveau départ se prépare plus vite.</p></div>
       <div class="cards3" id="moreCards"></div>
     </div></section>
 
     <section class="sandsec" id="avis"><div class="wrap sect">
       <div class="sect-h"><h2>Ils voyagent mieux, ils dépensent moins</h2><p id="avisSummary">Les avis de nos voyageurs</p></div>
       <div class="cards3" id="avisList"></div>
-      <p class="avis-note">Avis laissés par des utilisateurs connectés à leur compte Itinéo, vérifiés avant publication. Aucun avis n'est rémunéré.</p>
+      <p class="avis-note">Avis laissés par des utilisateurs connectés à leur compte Valisino, vérifiés avant publication. Aucun avis n'est rémunéré.</p>
     </div></section>
 
     <section id="dests"><div class="wrap sect">
@@ -707,30 +707,30 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
     <section class="wrap sect" id="faq" style="padding-top:20px">
       <div class="sect-h"><h2>Questions fréquentes</h2></div>
       <div class="faq">
-        <details open><summary>Ça marche vraiment pour n'importe quelle ville ?</summary><p>Oui. Tapez n'importe quelle ville du monde : Itinéo trouve les lieux à visiter référencés sur Wikipédia, la météo réelle des deux dernières années et calcule un budget adapté au niveau des prix du pays.</p></details>
+        <details open><summary>Ça marche vraiment pour n'importe quelle ville ?</summary><p>Oui. Tapez n'importe quelle ville du monde : Valisino trouve les lieux à visiter référencés sur Wikipédia, la météo réelle des deux dernières années et calcule un budget adapté au niveau des prix du pays.</p></details>
         <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des estimations pour comparer et planifier. Les boutons « Voir les prix » ouvrent les vrais tarifs du jour sur Kayak, Booking, Airbnb ou GetYourGuide, aux dates de votre voyage.</p></details>
-        <details><summary>Ça marche avec un petit budget ?</summary><p>Oui. Si votre budget est trop juste, Itinéo vous propose des solutions en un clic : un style plus économique, un mois moins cher ou un jour de moins.</p></details>
-        <details><summary>Itinéo réserve-t-il à ma place ?</summary><p>Non. Itinéo vous dit quoi réserver et quand, puis vous envoie directement sur la bonne recherche. Vous réservez où vous voulez.</p></details>
+        <details><summary>Ça marche avec un petit budget ?</summary><p>Oui. Si votre budget est trop juste, Valisino vous propose des solutions en un clic : un style plus économique, un mois moins cher ou un jour de moins.</p></details>
+        <details><summary>Valisino réserve-t-il à ma place ?</summary><p>Non. Valisino vous dit quoi réserver et quand, puis vous envoie directement sur la bonne recherche. Vous réservez où vous voulez.</p></details>
         <details><summary>Combien ça coûte ?</summary><p>Créer votre plan est gratuit : vous voyez le premier jour du programme, le budget, la météo et les liens de réservation. Le programme complet, la carte de tous les lieux et les astuces sont inclus dans Premium : 9,99 € par mois sans engagement, 19,99 € pour 3 mois, ou 39,99 € en paiement unique pour un accès à vie. Les abonnements sont résiliables à tout moment depuis votre compte.</p></details>
       </div>
     </section>
 
     <section class="wrap" style="padding-bottom:20px">
-      <div class="endcta"><h2>Votre prochain voyage, pile dans votre budget.</h2><p>2 minutes pour votre premier plan. Vous donnez la destination, Itinéo fait le reste.</p><a class="btn" href="#creer">Créer mon voyage →</a></div>
+      <div class="endcta"><h2>Votre prochain voyage, pile dans votre budget.</h2><p>2 minutes pour votre premier plan. Vous donnez la destination, Valisino fait le reste.</p><a class="btn" href="#creer">Créer mon voyage →</a></div>
     </section>
   </main>
 
   <footer class="site-foot">
-    <a class="logo logo-sm" href="#top" aria-label="Itinéo, retour à l'accueil"><svg viewBox="-4 -8 246 112" aria-hidden="true" focusable="false"><path d="M12 27C60-14 150-16 204 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="232" lengthAdjust="spacingAndGlyphs">ıtinéo</text><circle cx="12" cy="27" r="10" fill="#4338CA"/><path d="M204 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="204" cy="15" r="5.5" fill="#11163A"/></svg></a>
+    <a class="logo logo-sm" href="#top" aria-label="Valisino, retour à l'accueil"><svg viewBox="-4 -8 325 112" aria-hidden="true" focusable="false"><path d="M130 27C169.5-14 244-16 288 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="315" lengthAdjust="spacingAndGlyphs">valısıno</text><circle cx="130" cy="27" r="10" fill="#4338CA"/><circle cx="199" cy="27" r="8" fill="#FFC233"/><path d="M288 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="288" cy="15" r="5.5" fill="#11163A"/></svg></a>
     <nav><a href="#how">Comment ça marche</a><a href="#premium">Tarifs</a><a href="#faq">Questions</a><a href="/confidentialite.html">Confidentialité</a></nav>
     <span>Données : <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipédia</a>, <a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a>, <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>. Budgets estimés, à vérifier avant de réserver.</span>
-    <span>© 2026 Itinéo</span>
+    <span>© 2026 Valisino</span>
   </footer>
 </div>
 
 <!-- ================= QUESTIONNAIRE ================= -->
 <div id="vWizard" hidden>
-  <header class="wz-top"><div class="wrap"><a class="logo" href="#top" aria-label="Itinéo, retour à l'accueil"><svg viewBox="-4 -8 246 112" aria-hidden="true" focusable="false"><path d="M12 27C60-14 150-16 204 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="232" lengthAdjust="spacingAndGlyphs">ıtinéo</text><circle cx="12" cy="27" r="10" fill="#4338CA"/><path d="M204 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="204" cy="15" r="5.5" fill="#11163A"/></svg></a><a class="wz-x" href="#top" aria-label="Fermer">×</a></div></header>
+  <header class="wz-top"><div class="wrap"><a class="logo" href="#top" aria-label="Valisino, retour à l'accueil"><svg viewBox="-4 -8 325 112" aria-hidden="true" focusable="false"><path d="M130 27C169.5-14 244-16 288 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="315" lengthAdjust="spacingAndGlyphs">valısıno</text><circle cx="130" cy="27" r="10" fill="#4338CA"/><circle cx="199" cy="27" r="8" fill="#FFC233"/><path d="M288 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="288" cy="15" r="5.5" fill="#11163A"/></svg></a><a class="wz-x" href="#top" aria-label="Fermer">×</a></div></header>
   <div class="wz-progress"><i id="wzBar"></i></div>
   <main class="wrap wz-main">
     <section id="wzStep"></section>
@@ -740,14 +740,14 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 
 <!-- ================= INSCRIPTION ================= -->
 <div id="vAuth" hidden>
-  <header class="wz-top"><div class="wrap"><a class="logo" href="#top" aria-label="Itinéo, retour à l'accueil"><svg viewBox="-4 -8 246 112" aria-hidden="true" focusable="false"><path d="M12 27C60-14 150-16 204 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="232" lengthAdjust="spacingAndGlyphs">ıtinéo</text><circle cx="12" cy="27" r="10" fill="#4338CA"/><path d="M204 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="204" cy="15" r="5.5" fill="#11163A"/></svg></a><a class="wz-x" href="#top" aria-label="Fermer">×</a></div></header>
+  <header class="wz-top"><div class="wrap"><a class="logo" href="#top" aria-label="Valisino, retour à l'accueil"><svg viewBox="-4 -8 325 112" aria-hidden="true" focusable="false"><path d="M130 27C169.5-14 244-16 288 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="315" lengthAdjust="spacingAndGlyphs">valısıno</text><circle cx="130" cy="27" r="10" fill="#4338CA"/><circle cx="199" cy="27" r="8" fill="#FFC233"/><path d="M288 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="288" cy="15" r="5.5" fill="#11163A"/></svg></a><a class="wz-x" href="#top" aria-label="Fermer">×</a></div></header>
   <main class="wrap"><div class="auth" id="authBox"></div></main>
 </div>
 
 <!-- ================= PLAN ================= -->
 <div id="vPlan" hidden>
   <header class="topbar static"><div class="wrap topbar-in">
-    <a class="logo" href="#top" aria-label="Itinéo, retour à l'accueil"><svg viewBox="-4 -8 246 112" aria-hidden="true" focusable="false"><path d="M12 27C60-14 150-16 204 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="232" lengthAdjust="spacingAndGlyphs">ıtinéo</text><circle cx="12" cy="27" r="10" fill="#4338CA"/><path d="M204 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="204" cy="15" r="5.5" fill="#11163A"/></svg></a>
+    <a class="logo" href="#top" aria-label="Valisino, retour à l'accueil"><svg viewBox="-4 -8 325 112" aria-hidden="true" focusable="false"><path d="M130 27C169.5-14 244-16 288 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="315" lengthAdjust="spacingAndGlyphs">valısıno</text><circle cx="130" cy="27" r="10" fill="#4338CA"/><circle cx="199" cy="27" r="8" fill="#FFC233"/><path d="M288 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="288" cy="15" r="5.5" fill="#11163A"/></svg></a>
     <nav class="topnav"><a class="link hide-sm" href="#creer" data-restart>Modifier mes réponses</a><span class="authSlot"></span></nav>
   </div></header>
   <div class="app">
@@ -885,7 +885,7 @@ const km=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r;co
 const now=new Date();
 const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 const enc=encodeURIComponent;
-const CV="itineo-v7:";
+const CV="valisino-v1:";
 function cget(k){try{const v=JSON.parse(localStorage.getItem(CV+k));if(v&&v.t>Date.now()-7*864e5)return v.d}catch(e){}return null}
 function cset(k,d){try{localStorage.setItem(CV+k,JSON.stringify({t:Date.now(),d}))}catch(e){}}
 async function getJSON(url){const r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
@@ -1128,7 +1128,7 @@ $("#tabs").addEventListener("click",e=>{
 });
 $("#month").value=(now.getMonth()+2)%12;
 
-const KEY="itineo-form-v2";
+const KEY="valisino-form-v1";
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
 if(saved){
   [["origin",saved.o],["month",saved.m],["depdate",validDate(saved.date)?saved.date:""],["days",saved.days],["pax",saved.pax],["budget",saved.budget]].forEach(([k,v])=>{if(v!=null)$("#"+k).value=v});
@@ -1400,7 +1400,7 @@ function render(){
       <div class="cats">${Object.keys(est.opt).map(k=>`<div class="cat"><span class="bub" style="background:${CATS[k][2]}">${ic(CATS[k][1])}</span><div><span class="lbl">${k==="vol"?trLabel:CATS[k][0]}</span><div class="track"><i style="width:${est.opt[k]/maxCat*100}%;background:${CATS[k][2]}"></i></div></div><b class="num">${eur(est.opt[k])}</b></div>`).join("")}</div>
     </div>
     <div class="vs"><div class="vs-row"><span>Sans plan</span><div class="vs-bar" style="width:100%"></div><span class="num">${eur(est.naiveTotal)}</span></div>
-      <div class="vs-row"><span>Avec Itinéo</span><div class="vs-bar opt" style="width:${est.total/est.naiveTotal*100}%"></div><span class="num">${eur(est.total)}</span></div></div>
+      <div class="vs-row"><span>Avec Valisino</span><div class="vs-bar opt" style="width:${est.total/est.naiveTotal*100}%"></div><span class="num">${eur(est.total)}</span></div></div>
     ${fits?`<div class="okmsg">${ic("check")}Marge restante : ${eur(p.budget-est.total)}</div>`:`<div class="fixes">${fixes.map(([attr,i,l,t])=>`<button type="button" class="fix" ${attr}>${ic(i)}${esc(l)} <b class="num">${eur(t)}</b></button>`).join("")}</div>`}
     <p class="note" style="margin-top:12px">Estimation selon la distance (${Math.round(est.dist).toLocaleString("fr-FR")} km) et le niveau des prix en ${esc(dest.country||"destination")}.</p></div>`;
 
@@ -1583,7 +1583,7 @@ function updateHeroData(f){
   $("#hpPrice").textContent=`5 jours dès ${eur(E.total/P.pax)} / pers.`;
   const w=$("#hpWeather");
   if(f._cl&&f._cl.tmax[best]!=null){w.hidden=false;w.innerHTML=`${ic("sun")}${MOIS[best]} · ${f._cl.tmax[best]}°`}else w.hidden=true;
-  $("#hpTicket").innerHTML=`<div class="tk-top"><span>${ic("plane")}Carte d'embarquement</span><b>Itinéo</b></div>
+  $("#hpTicket").innerHTML=`<div class="tk-top"><span>${ic("plane")}Carte d'embarquement</span><b>Valisino</b></div>
     <div class="tk-route"><div><b>PAR</b><small>Paris</small></div><span class="tk-line">${ic("plane")}</span><div style="text-align:right"><b>${f.code}</b><small>${esc(f.name)}</small></div></div>
     <div class="tk-meta"><span><small>Départ</small>${fdy(dep)}</span><span><small>Passagers</small>${P.pax}</span><span><small>Durée</small>${P.days} jours</span></div>
     <div class="tk-stub"><div><small>Total estimé</small><b class="num">${eur(E.total)}</b></div><span class="tk-save">− ${eur(save)} économisés</span></div>`;
@@ -1722,7 +1722,7 @@ function updateEstim(){
   const box=$("#wzEstim");if(!box)return;
   if(!W.dest){box.innerHTML="";return}
   const good=goodMonths(sameDest()?state.climate:null),E=estimate(W.dest,wp(),good,1),ok=E.total<=W.budget;
-  box.innerHTML=`<div class="estim${ok?"":" warn"}">${ic(ok?"check":"wallet")}Estimation pour ce voyage : ${eur(E.total)} · ${ok?"dans votre budget":`il manque ${eur(E.total-W.budget)}, Itinéo vous proposera des solutions`}</div>`;
+  box.innerHTML=`<div class="estim${ok?"":" warn"}">${ic(ok?"check":"wallet")}Estimation pour ce voyage : ${eur(E.total)} · ${ok?"dans votre budget":`il manque ${eur(E.total-W.budget)}, Valisino vous proposera des solutions`}</div>`;
 }
 function renderStep(){
   if(STEPS[W.step]==="budget"&&!W.budgetTouched&&W.dest)W.budget=suggestBudget();
@@ -1896,7 +1896,7 @@ async function loadReviews(){
   if(sb){try{const {data,error}=await sb.from("reviews").select("first_name,city,destination,rating,comment,created_at").eq("approved",true).order("created_at",{ascending:false}).limit(60);if(!error&&data)rows=data}catch(e){}}
   if(!rows.length){
     sum.textContent="Les premiers avis arrivent";
-    list.innerHTML=`<div class="rv-empty">${starsHTML(5)}<p>Itinéo vient d'ouvrir. Vous avez préparé un voyage avec nous ? Votre avis aidera les prochains voyageurs.</p><a class="btn coral" href="#plan" data-review-cta>Donner mon avis</a></div>`;
+    list.innerHTML=`<div class="rv-empty">${starsHTML(5)}<p>Valisino vient d'ouvrir. Vous avez préparé un voyage avec nous ? Votre avis aidera les prochains voyageurs.</p><a class="btn coral" href="#plan" data-review-cta>Donner mon avis</a></div>`;
     return;
   }
   const avg=rows.reduce((s,r)=>s+r.rating,0)/rows.length;
@@ -1910,7 +1910,7 @@ async function renderReviewBox(){
   if(reviewUser!==user.id){reviewUser=user.id;myReview=null}
   if(myReview===null){try{const {data,error}=await sb.from("reviews").select("first_name,city,rating,comment,approved").eq("user_id",user.id).maybeSingle();if(error)throw error;myReview=data||false}catch(e){box.hidden=true;return}}
   const r=myReview||{};reviewStars=r.rating||0;box.hidden=false;
-  box.innerHTML=`<div class="sec-h"><h2>Votre avis sur Itinéo</h2>${r.approved?`<span class="tag free">${ic("check")}Publié</span>`:myReview?`<span class="tag">En attente de vérification</span>`:""}</div>
+  box.innerHTML=`<div class="sec-h"><h2>Votre avis sur Valisino</h2>${r.approved?`<span class="tag free">${ic("check")}Publié</span>`:myReview?`<span class="tag">En attente de vérification</span>`:""}</div>
     <form class="panel rform" id="reviewForm" novalidate>
       <div><label>Votre note</label><div class="starpick" role="radiogroup" aria-label="Note sur 5">${[1,2,3,4,5].map(i=>`<button type="button" data-star="${i}" class="${i<=reviewStars?"on":""}" aria-label="${i} étoile${i>1?"s":""}">${ic("star")}</button>`).join("")}</div></div>
       <div class="row2"><div><label for="rvName">Prénom</label><input id="rvName" maxlength="40" value="${esc(r.first_name||firstName())}" autocomplete="given-name"></div><div><label for="rvCity">Ville (facultatif)</label><input id="rvCity" maxlength="60" value="${esc(r.city||"")}" placeholder="Lyon" autocomplete="address-level2"></div></div>
@@ -2006,7 +2006,7 @@ async function goPremium(btn,path,payload){
     const {data:{session}}=await sb.auth.getSession();
     const r=await fetch(path,{method:"POST",headers:{Authorization:"Bearer "+(session?session.access_token:""),"Content-Type":"application/json"},body:JSON.stringify(payload||{})});
     let body=null;try{body=await r.json()}catch(e){}
-    if(!r.ok||!body||!body.url)throw new Error(body&&body.error?body.error:"Le paiement est disponible uniquement sur le site Vercel (itineo-beryl.vercel.app).");
+    if(!r.ok||!body||!body.url)throw new Error(body&&body.error?body.error:"Le paiement est momentanément indisponible. Réessayez dans un instant.");
     location.href=body.url;
   }catch(e){btn.disabled=false;btn.innerHTML=label;openModal(`<h3 id="modalTitle">Paiement indisponible</h3><div class="msg err">${esc(e.message)}</div>`)}
 }
@@ -2036,7 +2036,7 @@ P.eye='<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="1
 P.eyeoff='<path d="M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 8 10 8a17 17 0 0 1-2.2 3.2M6.6 6.6A17 17 0 0 0 2 12s3.5 8 10 8a9.7 9.7 0 0 0 5.4-1.6M2 2l20 20M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
 const GOOGLE_SVG=`<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;
 let authMode="signup";
-const AFTER="itineo-after-auth";
+const AFTER="valisino-after-auth";
 function markAfterAuth(){try{localStorage.setItem(AFTER,JSON.stringify({go:"plan",t:Date.now()}))}catch(e){}}
 function takeAfterAuth(){try{const v=JSON.parse(localStorage.getItem(AFTER)||"null");localStorage.removeItem(AFTER);return v&&v.t>Date.now()-864e5?v.go:null}catch(e){return null}}
 function frErr(e){
