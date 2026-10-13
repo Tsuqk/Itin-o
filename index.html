@@ -614,10 +614,9 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 .pw-plan ul{list-style:none;margin:8px 0 0;padding:10px 0 0;border-top:1px solid var(--line);display:grid;gap:7px}
 .pw-plan li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:8px;font-size:13px;line-height:1.35}
 .pw-plan li .ic{width:15px;height:15px;color:var(--green);margin-top:1px}
-.pw-waiver{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;font-size:13px;color:var(--muted);cursor:pointer}
-.pw-waiver input{width:18px;height:18px;margin-top:1px;accent-color:var(--green)}
 .modal-card #pwGo{width:100%}
-.pw-legal{text-align:center;color:var(--muted);font-size:12px}
+.modal-card .pw-legal{text-align:center;color:var(--muted);font-size:12px;line-height:1.55;margin:0 auto;max-width:62ch}
+.pw-legal a{color:inherit}
 .modal-card{position:relative;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);color:var(--ink);border-radius:22px;padding:24px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);display:grid;gap:14px}
 .modal-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:var(--paper);cursor:pointer;font-size:20px;line-height:1}
 .modal-card h3{font-size:24px;letter-spacing:-.02em;padding-right:30px}
@@ -726,7 +725,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 
   <footer class="site-foot">
     <a class="logo logo-sm" href="#top" aria-label="Valisino, retour à l'accueil"><svg viewBox="-4 -8 325 112" aria-hidden="true" focusable="false"><path d="M130 27C169.5-14 244-16 288 8" fill="none" stroke="#4338CA" stroke-width="5" stroke-dasharray="10 9" stroke-linecap="round"/><text x="0" y="100" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="800" font-size="100" letter-spacing="-3" fill="#11163A" textLength="315" lengthAdjust="spacingAndGlyphs">valısıno</text><circle cx="130" cy="27" r="10" fill="#4338CA"/><circle cx="199" cy="27" r="8" fill="#FFC233"/><path d="M288 40c-8-8-14-15-14-25a14 14 0 1 1 28 0c0 10-6 17-14 25z" fill="#FFC233"/><circle cx="288" cy="15" r="5.5" fill="#11163A"/></svg></a>
-    <nav><a href="#how">Comment ça marche</a><a href="#premium">Tarifs</a><a href="#faq">Questions</a><a href="/confidentialite.html">Confidentialité</a></nav>
+    <nav><a href="#how">Comment ça marche</a><a href="#premium">Tarifs</a><a href="#faq">Questions</a><a href="/cgv.html">Conditions de vente</a><a href="/mentions-legales.html">Mentions légales</a><a href="/confidentialite.html">Confidentialité</a></nav>
     <span>Données : <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipédia</a>, <a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a>, <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>. Budgets estimés, à vérifier avant de réserver.</span>
     <span>© 2026 Valisino</span>
   </footer>
@@ -1993,25 +1992,23 @@ function planModal(){
         <ul>${PLAN_FEATURES.map(li).join("")}</ul>
       </label>`).join("")}
     </div>
-    <label class="pw-waiver"><input type="checkbox" id="pwWaiver"><span>Je demande l'accès immédiat à Premium et je reconnais perdre mon droit de rétractation de 14 jours une fois l'accès ouvert.</span></label>
     <div id="pwMsg" aria-live="polite"></div>
     <button type="button" class="btn coral big" id="pwGo"></button>
-    <small class="pw-legal" id="pwLegal"></small>`,"wide");
+    <p class="pw-legal"><span id="pwLegal"></span><br>En achetant, vous demandez l'accès immédiat à Premium et acceptez nos <a href="/cgv.html" target="_blank" rel="noopener">conditions de vente</a> : votre droit de rétractation de 14 jours prend fin dès que vous utilisez Premium. Paiement sécurisé par Stripe · <a href="/confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>`,"wide");
   updatePlanModal();
 }
 function updatePlanModal(){
   const p=PLANS.find(x=>x.id===pwPlan);
   document.querySelectorAll(".pw-plan").forEach(l=>l.classList.toggle("on",l.querySelector("input").value===pwPlan));
   $("#pwGo").innerHTML=`Continuer · ${p.total} ${ic("spark")}`;
-  $("#pwLegal").textContent=p.legal+" Paiement sécurisé par Stripe.";
+  $("#pwLegal").textContent=p.legal;
 }
 $("#modal").addEventListener("change",e=>{
   if(e.target.name==="pwplan"){pwPlan=e.target.value;updatePlanModal()}
-  if(e.target.id==="pwWaiver"&&e.target.checked)$("#pwMsg").innerHTML="";
 });
 $("#modal").addEventListener("click",e=>{
   if(!e.target.closest("#pwGo"))return;
-  if(!$("#pwWaiver").checked){$("#pwMsg").innerHTML=`<div class="msg err">Cochez la case de demande d'accès immédiat pour continuer.</div>`;return}
+  // Cliquer sur « Continuer » vaut demande d'accès immédiat (mention affichée juste sous le bouton)
   goPremium(e.target.closest("#pwGo"),"/api/checkout",{plan:pwPlan,waiver:true});
 });
 
@@ -2105,7 +2102,7 @@ function renderAuthPage(){
     <div class="or">ou</div>
     <button type="button" class="btn gbtn" data-google>${GOOGLE_SVG}Continuer avec Google</button>
     <p class="switch">${signup?`Vous avez déjà un compte ? <button type="button" class="linkbtn" data-mode="login">Se connecter</button>`:`Pas encore de compte ? <button type="button" class="linkbtn" data-mode="signup">Créer un compte</button>`}</p>
-    <p class="legal">En continuant, vous acceptez nos conditions d'utilisation et notre <a href="/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</p>`;
+    <p class="legal">En continuant, vous acceptez nos <a href="/cgv.html" target="_blank" rel="noopener">conditions d'utilisation</a> et notre <a href="/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</p>`;
 }
 function showConfirm(email){
   $("#authBox").innerHTML=`<span class="wz-illu">${ic("mail")}</span><h1>Plus qu'une étape</h1>
