@@ -46,9 +46,11 @@ async function saveProfile(userId, fields) {
   if (!r.ok) throw new Error(`Enregistrement du profil impossible (${r.status}) : ${await r.text()}`);
 }
 
+// Retour sur l'adresse même où le visiteur est connecté (la session est propre à chaque adresse)
 function siteUrl(req) {
-  if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, "");
-  return `https://${req.headers.host}`;
+  const host = req.headers["x-forwarded-host"] || req.headers.host;
+  if (host) return `https://${host}`;
+  return (process.env.SITE_URL || "").replace(/\/$/, "");
 }
 
 module.exports = { getUser, getProfile, getProfileByCustomer, saveProfile, siteUrl };

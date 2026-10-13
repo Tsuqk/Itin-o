@@ -77,8 +77,9 @@ module.exports = async (req, res) => {
         metadata: { user_id: user.id, plan: planKey, waiver_accepted_at: new Date().toISOString() },
         allow_promotion_codes: true,
         locale: "fr",
-        success_url: `${site}/?premium=ok`,
-        cancel_url: `${site}/?premium=annule`,
+        // Retour directement sur le plan ; session_id permet d'activer Premium sans attendre le webhook
+        success_url: `${site}/?premium=ok&session_id={CHECKOUT_SESSION_ID}#plan`,
+        cancel_url: `${site}/?premium=annule#plan`,
       };
       if (plan.mode === "subscription") p.subscription_data = { metadata: { user_id: user.id, plan: planKey } };
       else p.invoice_creation = { enabled: true }; // facture pour le paiement unique
