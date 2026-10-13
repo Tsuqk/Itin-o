@@ -231,6 +231,20 @@ a.tag:hover{color:var(--sea)}
 .rv-empty{grid-column:1/-1;background:var(--card);border:1px dashed var(--line);border-radius:26px;padding:30px 24px;text-align:center;display:grid;gap:12px;justify-items:center}
 .rv-empty p{margin:0;color:var(--muted);max-width:46ch}
 .avis-note{text-align:center;color:var(--muted);font-size:13px;margin:22px 0 0}
+/* Situations types affichées tant qu'aucun avis n'est publié */
+.ex-top{display:flex;align-items:center;gap:12px}
+.ex-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff}
+.ex-ic .ic{width:22px;height:22px}
+.ex-lbl{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--paper);border-radius:999px;padding:2px 8px}
+.ex-top h3{font-size:18px;line-height:1.25;margin-top:4px}
+.ex-body{display:grid;gap:10px;align-content:start}
+.ba{margin:0;font-size:15px;line-height:1.55;color:var(--muted)}
+.ba b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.ba.on{color:var(--ink);background:var(--mint);border-radius:14px;padding:10px 12px}
+.ba.on b{color:var(--green)}
+.rv.ex footer small{display:inline-flex;align-items:center;gap:6px;font-weight:700}
+.rv.ex footer .ic{width:15px;height:15px}
+.rv-cta{padding:22px 24px}
 .rform{display:grid;gap:12px}
 .rform label{font-weight:800;font-size:14px}
 .rform input,.rform textarea{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;font:inherit;outline:none}
@@ -721,7 +735,6 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
     <section class="sandsec" id="avis"><div class="wrap sect">
       <div class="sect-h"><h2>Ils voyagent mieux, ils dépensent moins</h2><p id="avisSummary">Les avis de nos voyageurs</p></div>
       <div class="cards3" id="avisList"></div>
-      <p class="avis-note">Avis laissés par des utilisateurs connectés à leur compte Valisino, vérifiés avant publication. Aucun avis n'est rémunéré.</p>
     </div></section>
 
     <section id="dests"><div class="wrap sect">
@@ -2024,16 +2037,28 @@ function renderPlans(){
       <small style="color:var(--muted);font-size:12px">Paiement sécurisé par Stripe. Résiliable à tout moment.</small></div>`;
 }
 /* ---------- Avis des voyageurs (vrais avis, publiés après validation dans Supabase) ---------- */
+const EXAMPLES=[
+  {icon:"clock",col:"var(--c-plage)",title:"Préparer sans y passer ses soirées",before:"Quinze onglets ouverts et des soirées entières pour organiser un simple week-end.",after:"Quatre jours à Lisbonne organisés par quartier en 2 minutes. Il ne reste plus qu'à réserver.",trip:"Week-end à Lisbonne"},
+  {icon:"users",col:"var(--c-log)",title:"Organiser pour tout le groupe",before:"Des jours de débats dans le groupe WhatsApp pour se mettre d'accord sur le programme.",after:"Le plan copié en un clic dans le groupe, validé par tout le monde en 10 minutes.",trip:"Voyage entre amis à Budapest"},
+  {icon:"sun",col:"var(--c-act)",title:"Partir au bon moment",before:"Marrakech réservé en août sans le savoir : près de 40 °C et des prix au plus haut.",after:"Le graphique « Quand partir » montre avril : plus doux, et moins cher.",trip:"Voyage à Marrakech"}
+];
 const starsHTML=n=>`<span class="stars" role="img" aria-label="${n} sur 5">${[1,2,3,4,5].map(i=>ic("star",i<=n?"ic":"ic off")).join("")}</span>`;
 async function loadReviews(){
   const list=$("#avisList"),sum=$("#avisSummary");
   let rows=[];
   if(sb){try{const {data,error}=await sb.from("reviews").select("first_name,city,destination,rating,comment,created_at").eq("approved",true).order("created_at",{ascending:false}).limit(60);if(!error&&data)rows=data}catch(e){}}
+  const head=$("#avis .sect-h h2");
   if(!rows.length){
-    sum.textContent="Les premiers avis arrivent";
-    list.innerHTML=`<div class="rv-empty">${starsHTML(5)}<p>Valisino vient d'ouvrir. Vous avez préparé un voyage avec nous ? Votre avis aidera les prochains voyageurs.</p><a class="btn coral" href="#plan" data-review-cta>Donner mon avis</a></div>`;
+    // Pas encore d'avis : situations types, présentées comme des exemples (jamais comme des avis clients)
+    head.textContent="Ce que Valisino change pour votre voyage";
+    sum.textContent="Trois situations types, en attendant les avis de nos premiers voyageurs";
+    list.innerHTML=EXAMPLES.map(x=>`<article class="rv ex"><div class="ex-top"><span class="ex-ic" style="background:${x.col}">${ic(x.icon)}</span><div><span class="ex-lbl">Exemple</span><h3>${x.title}</h3></div></div>
+      <div class="ex-body"><p class="ba"><b>Avant</b>${x.before}</p><p class="ba on"><b>Avec Valisino</b>${x.after}</p></div>
+      <footer><small>${ic("pin")}${x.trip}</small></footer></article>`).join("")
+      +`<div class="rv-empty rv-cta"><p>Vous avez préparé un voyage avec Valisino ? Votre avis aidera les prochains voyageurs.</p><a class="btn coral" href="#plan" data-review-cta>Donner mon avis</a></div>`;
     return;
   }
+  head.textContent="Ils voyagent mieux, ils dépensent moins";
   const avg=rows.reduce((s,r)=>s+r.rating,0)/rows.length;
   sum.textContent=`${avg.toLocaleString("fr-FR",{maximumFractionDigits:1})}/5 · ${rows.length} avis vérifié${rows.length>1?"s":""}`;
   list.innerHTML=rows.slice(0,6).map(r=>`<article class="rv">${starsHTML(r.rating)}<blockquote>« ${esc(r.comment)} »</blockquote><footer><b>${esc(r.first_name)}</b><small>${esc([r.city,r.destination?"voyage à "+r.destination:""].filter(Boolean).join(" · "))}</small></footer></article>`).join("");
