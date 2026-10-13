@@ -488,6 +488,33 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 .place h4{font-family:var(--f-body);font-size:15px;font-weight:700;line-height:1.25}
 .place .desc{font-size:13px;color:var(--muted);margin:2px 0 0}
 .pmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+/* Modification de l'itinéraire */
+.sec-acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.edbtn{border:0;cursor:pointer;font:inherit;font-size:12px;font-weight:700;padding:5px 11px;color:var(--ink)}
+.edbtn:hover{color:var(--green)}
+.edbtn.on{background:var(--green);color:#fff}
+.edbtn.on:hover{color:#fff}
+.edhint{display:flex;gap:8px;align-items:flex-start;margin:0 0 4px;background:var(--mint);color:var(--deep);border-radius:14px;padding:10px 12px;font-size:13px;font-weight:600;line-height:1.45}
+.edhint .ic{flex:none;width:16px;height:16px;margin-top:1px}
+.ed{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;padding-top:9px;border-top:1px solid var(--line)}
+.ed button,.ed select{font:inherit;font-size:12px;font-weight:700;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;height:30px;padding:0 10px;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.ed button:hover:not(:disabled),.ed select:hover{border-color:var(--green)}
+.ed button .ic{width:14px;height:14px}
+.ed button:disabled{opacity:.35;cursor:default}
+.ed .del{color:var(--warn);margin-left:auto}
+.addplace{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:11px;border:1.5px dashed var(--line);border-radius:14px;background:transparent;font:inherit;font-size:14px;font-weight:700;color:var(--green);cursor:pointer}
+.addplace:hover{border-color:var(--green);background:var(--mint)}
+.addplace .ic{width:16px;height:16px}
+.daywarn{color:var(--warn);font-weight:700}
+.aplist{display:grid;gap:8px;max-height:min(58vh,520px);overflow:auto;padding:2px}
+.ap{display:grid;grid-template-columns:56px minmax(0,1fr) 18px;gap:12px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;cursor:pointer;font:inherit;color:var(--ink)}
+.ap:hover{border-color:var(--green);background:var(--mint)}
+.ap[hidden]{display:none}
+.ap>.ic{width:18px;height:18px;color:var(--green)}
+.ap-th{width:56px;height:56px;border-radius:10px;overflow:hidden;display:grid;place-items:center;color:#fff}
+.ap-th img{width:100%;height:100%;object-fit:cover;display:block}
+.ap b{display:block;font-size:14px;line-height:1.3}
+.ap small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .thumb{width:76px;height:76px;border-radius:12px;display:grid;place-items:center;color:#fff;overflow:hidden;background:var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb .ic{width:28px;height:28px;stroke-width:1.8}
@@ -798,8 +825,8 @@ const PLANS = [
   {id:"quarterly",label:"3 mois",price:"19,99 €",per:" / 3 mois",sub:"Soit 6,66 € par mois",badge:"Économisez 33 %",total:"19,99 € / 3 mois",legal:"Abonnement renouvelé tous les 3 mois (19,99 €), résiliable à tout moment depuis votre compte."},
   {id:"lifetime",label:"À vie",price:"39,99 €",per:"",sub:"Payé une fois, à vous pour toujours",tag:"Paiement unique",compare:"119,88 € par an en mensuel",total:"39,99 €",featured:true,badge:"★ Le plus avantageux",legal:"Paiement unique de 39,99 €, sans abonnement ni renouvellement."}
 ];
-const PLAN_FEATURES = ["Programme complet, jour par jour","Carte avec tous les lieux","Budget détaillé et meilleure période","Liens de réservation préremplis","Astuces de chaque destination","Voyages illimités, toutes les villes"];
-const PREMIUM_PERKS = ["Le programme complet, jour par jour","La carte avec tous les lieux et les trajets","Le budget détaillé et le meilleur moment pour partir","Les astuces et bons plans de chaque destination","Toutes les villes du monde, autant de voyages que vous voulez"];
+const PLAN_FEATURES = ["Programme complet, jour par jour","Itinéraire modifiable à volonté","Carte avec tous les lieux","Budget détaillé et meilleure période","Liens de réservation préremplis","Astuces de chaque destination","Voyages illimités, toutes les villes"];
+const PREMIUM_PERKS = ["Le programme complet, jour par jour","Un itinéraire modifiable : ajoutez, retirez ou déplacez les lieux","La carte avec tous les lieux et les trajets","Le budget détaillé et le meilleur moment pour partir","Les astuces et bons plans de chaque destination","Toutes les villes du monde, autant de voyages que vous voulez"];
 
 /* ---------- Icônes ---------- */
 const P={
@@ -837,7 +864,13 @@ mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/
 logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
 trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>',
 star:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>',
-lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
+lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+x:'<path d="M18 6 6 18M6 6l12 12"/>',
+up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+down:'<path d="M12 5v14M19 12l-7 7-7-7"/>',
+undo:'<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>'
 };
 const ic=(n,cls="ic")=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
 
@@ -1114,7 +1147,8 @@ const mapsLinkLL=x=>`https://www.google.com/maps/search/?api=1&query=${x.lat},${
 const ticketLink=(x,dest)=>`https://www.getyourguide.fr/s/?q=${enc(x.title+" "+dest.name)}`;
 
 /* ---------- État ---------- */
-const state={dest:null,places:[],climate:null,info:null,loading:false,error:null,plan:null,est:null,dayF:null,reqId:0};
+// custom : itinéraire modifié par le voyageur (identifiants des lieux, jour par jour) ; editing : mode modification affiché
+const state={dest:null,places:[],climate:null,info:null,loading:false,error:null,plan:null,est:null,dayF:null,reqId:0,custom:null,editing:false};
 
 /* ---------- Formulaire ---------- */
 $("#fields").innerHTML=`
@@ -1146,12 +1180,28 @@ if(saved){
   [["origin",saved.o],["month",saved.m],["depdate",validDate(saved.date)?saved.date:""],["days",saved.days],["pax",saved.pax],["budget",saved.budget]].forEach(([k,v])=>{if(v!=null)$("#"+k).value=v});
   if(saved.style!=null&&$("#st"+saved.style))$("#st"+saved.style).checked=true;
   if(saved.ints)INTERESTS.forEach(([k])=>$("#in-"+k).checked=saved.ints.includes(k));
+  if(saved.custom&&Array.isArray(saved.custom.days))state.custom=saved.custom;
 }
 function readForm(){
   return{o:+$("#origin").value,m:+$("#month").value,days:Math.min(21,Math.max(2,+$("#days").value||5)),pax:Math.min(10,Math.max(1,+$("#pax").value||1)),
     budget:+$("#budget").value,style:+document.querySelector("input[name=style]:checked").value,ints:INTERESTS.map(i=>i[0]).filter(k=>$("#in-"+k).checked),date:validDate($("#depdate").value)?$("#depdate").value:""};
 }
-function persist(){const p=readForm();try{localStorage.setItem(KEY,JSON.stringify({...p,dest:state.dest}))}catch(e){}}
+function persist(){const p=readForm();try{localStorage.setItem(KEY,JSON.stringify({...p,dest:state.dest,custom:state.custom}))}catch(e){}}
+// Un itinéraire modifié n'est valable que pour sa destination
+const custKey=()=>state.dest?`${state.dest.name}|${(+state.dest.lat).toFixed(3)}`:"";
+// Jours du plan : l'itinéraire modifié par le voyageur s'il existe, sinon celui calculé automatiquement
+function planDays(p){
+  const cu=state.custom;
+  if(!cu||cu.key!==custKey())return itinerary(state.places,p);
+  const byId=new Map(state.places.map(x=>[x.id,x])),n=p.days;
+  if(cu.days.length!==n){
+    // Durée modifiée : on garde les lieux choisis, dans le même ordre, répartis sur la nouvelle durée
+    const out=[...Array(n)].map((_,i)=>({left:i===0?4:(i===n-1?3:8),ids:[]}));let d=0;
+    cu.days.flat().map(id=>byId.get(id)).filter(Boolean).forEach(x=>{while(d<n-1&&out[d].left<x.h)d++;out[d].ids.push(x.id);out[d].left-=x.h});
+    cu.days=out.map(o=>o.ids);
+  }
+  return cu.days.map((ids,i)=>({acts:ids.map(id=>byId.get(id)).filter(Boolean),kind:i===0?"Arrivée":(i===n-1?"Départ":"")}));
+}
 
 /* ---------- Suggestions de villes (autocomplétion) ---------- */
 function attachAC(input,onPick){
@@ -1188,7 +1238,8 @@ function attachAC(input,onPick){
 async function loadDestination(geo){
   const id=++state.reqId;
   state.dest={name:geo.name,country:geo.country,cc:(geo.cc||"").toUpperCase(),admin:geo.admin||"",lat:geo.lat,lon:geo.lon};
-  state.loading=true;state.error=null;state.places=[];state.climate=null;state.info=null;state.dayF=null;state.iata=null;
+  state.loading=true;state.error=null;state.places=[];state.climate=null;state.info=null;state.dayF=null;state.iata=null;state.editing=false;
+  if(state.custom&&state.custom.key!==custKey())state.custom=null;
   $("#destq").value=geo.name;persist();render();
   fetchIata(state.dest).then(v=>{if(id===state.reqId){state.iata=v||null;if(!state.loading)render()}}).catch(()=>{});
   try{
@@ -1316,7 +1367,7 @@ function render(){
   const dest=state.dest;
   if(!dest){$("#cover").innerHTML="";$("#body").innerHTML="";return}
   const good=goodMonths(state.climate),pal=palette(dest.name);
-  const days=state.loading||state.error?null:itinerary(state.places,p);
+  const days=state.loading||state.error?null:planDays(p);
   const museums=days?days.reduce((s,d)=>s+d.acts.filter(a=>a.museum).length,0):1;
   const est=estimate(dest,p,good,museums);
   state.plan=days?{days}:null;state.est=est;
@@ -1354,6 +1405,10 @@ function render(){
   $("#stats").innerHTML=`<div class="stats">${[["piggy","var(--good)",eur(saved),"économisés"],["clock","var(--c-plage)","~"+hours+" h","gagnées sur place"],["wallet","var(--c-log)",eur(est.total/p.pax),"par personne"],["plane","var(--c-vol)",tooLate?"Maintenant":fd(bookBy),"réserver avant"]].map(([i,col,v,l])=>`<div class="stat"><span class="bub" style="background:${col}">${ic(i)}</span><b class="num">${v}</b><small>${l}</small></div>`).join("")}</div>`;
 
   /* Itinéraire */
+  const editing=state.editing&&!locked&&!!days;
+  const editBtns=!days?"":locked
+    ?`<button type="button" class="tag tag-lock" data-act="upgrade">${ic("lock")}Modifier</button>`
+    :`${editing&&state.custom&&state.custom.key===custKey()?`<button type="button" class="tag edbtn" data-ed="reset">${ic("undo")}Rétablir</button>`:""}<button type="button" class="tag edbtn${editing?" on":""}" data-ed="toggle">${ic(editing?"check":"edit")}${editing?"Terminer":"Modifier"}</button>`;
   let itin;
   if(state.error)itin=`<div class="errbox"><b>${esc(state.error)}</b><button type="button" class="btn" data-act="retry">Réessayer</button></div>`;
   else if(state.loading)itin=[0,1,2].map(()=>`<div class="sk" style="height:118px"></div>`).join("");
@@ -1373,12 +1428,23 @@ function render(){
       if(ai>0){const prev=d.acts[ai-1],k=km([prev.lat,prev.lon],[a.lat,a.lon]),walk=k<1.6,min=walk?Math.round(k*13)+2:Math.round(k*2.5+10);
         items+=`<div class="hop">${ic(walk?"walk":"train")}${walk?"À pied":"En transport"} · ${min} min · ${k<1?Math.round(k*1000)+" m":k.toFixed(1)+" km"}</div>`}
       items+=`<div class="place" data-card="${di}-${ai}"><span class="n">${ai+1}</span><div style="min-width:0"><h4>${esc(a.title)}</h4>${a.desc?`<p class="desc">${esc(a.desc)}</p>`:""}
-        <div class="pmeta"><span class="tag">${ic(ICAT[a.cat])}${fmtH(a.h)}</span><a class="tag" href="${esc(a.url)}" target="_blank" rel="noopener">${ic("book")}Wikipédia</a><a class="tag" href="${mapsLinkLL(a)}" target="_blank" rel="noopener">${ic("map")}Itinéraire</a>${a.museum||a.cat==="culture"?(locked?`<button type="button" class="tag tag-lock" data-act="upgrade">${ic("lock")}Billets</button>`:`<a class="tag" href="${ticketLink(a,dest)}" target="_blank" rel="noopener">${ic("ticket")}Billets</a>`):""}</div></div>
-        <span class="thumb" style="background:var(--c-${a.cat})">${a.thumb?`<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:ic(ICAT[a.cat])}</span></div>`;
+        <div class="pmeta"><span class="tag">${ic(ICAT[a.cat])}${fmtH(a.h)}</span><a class="tag" href="${esc(a.url)}" target="_blank" rel="noopener">${ic("book")}Wikipédia</a><a class="tag" href="${mapsLinkLL(a)}" target="_blank" rel="noopener">${ic("map")}Itinéraire</a>${a.museum||a.cat==="culture"?(locked?`<button type="button" class="tag tag-lock" data-act="upgrade">${ic("lock")}Billets</button>`:`<a class="tag" href="${ticketLink(a,dest)}" target="_blank" rel="noopener">${ic("ticket")}Billets</a>`):""}</div>
+        </div>
+        <span class="thumb" style="background:var(--c-${a.cat})">${a.thumb?`<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:ic(ICAT[a.cat])}</span>
+        ${editing?`<div class="ed" role="group" aria-label="Modifier ${esc(a.title)}">
+          <button type="button" data-ed="up" data-d="${di}" data-i="${ai}" aria-label="Monter"${ai===0?" disabled":""}>${ic("up")}</button>
+          <button type="button" data-ed="down" data-d="${di}" data-i="${ai}" aria-label="Descendre"${ai===d.acts.length-1?" disabled":""}>${ic("down")}</button>
+          <select data-ed="move" data-d="${di}" data-i="${ai}" aria-label="Déplacer vers un autre jour">${days.map((_,j)=>`<option value="${j}"${j===di?" selected":""}>${j===di?"Jour "+(j+1):"→ Jour "+(j+1)}</option>`).join("")}</select>
+          <button type="button" class="del" data-ed="del" data-d="${di}" data-i="${ai}">${ic("x")}Retirer</button>
+        </div>`:""}</div>`;
     });
     if(!d.acts.length)items=`<div class="empty">${ic(di===0?"bed":di===p.days-1?"plane":"sun")}${di===0?"Installation et dîner dans votre quartier.":di===p.days-1?"Dernière balade, puis départ.":`Journée libre. <a href="${L.excursions}" target="_blank" rel="noopener">Idées d'excursions autour de ${esc(dest.name)}</a>`}</div>`;
     const zone=d.acts[0]?"Autour de "+d.acts[0].title:"Temps libre";
-    return `<div class="day" style="--dc:${col}"><button type="button" class="day-h" data-dayf="${di}"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${title}</h3><small>${esc(zone)}</small></div></button><div class="places">${items}</div></div>`;
+    // En mode modification : durée de visite de la journée, avec une alerte si elle est trop chargée
+    const hrs=d.acts.reduce((s,a)=>s+a.h,0),heavy=hrs>(di===0||di===p.days-1?5:9);
+    const load=editing&&d.acts.length?` · <span class="${heavy?"daywarn":""}">${fmtH(hrs)} de visite${heavy?", journée chargée":""}</span>`:"";
+    if(editing)items+=`<button type="button" class="addplace" data-ed="add" data-d="${di}">${ic("plus")}Ajouter un lieu</button>`;
+    return `<div class="day" style="--dc:${col}"><button type="button" class="day-h" data-dayf="${di}"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${title}</h3><small>${esc(zone)}${load}</small></div></button><div class="places">${items}</div></div>`;
   }).join("")+(days&&!state.places.length?`<div class="empty">${ic("search")}Peu de lieux référencés sur Wikipédia ici. <a href="${L.voyage}" target="_blank" rel="noopener">Voir le guide Wikivoyage</a></div>`:"");
 
   /* Réserver */
@@ -1455,7 +1521,7 @@ function render(){
   if(locked)astuces=`<div class="lockwrap"><div class="blurred" aria-hidden="true" inert>${astuces.replace(/<a [^>]*>(.*?)<\/a>/g,"$1")}</div><button type="button" class="lockover" data-act="upgrade">${ic("lock")}Débloquer les ${money.length+time.length} astuces</button></div>`;
 
   $("#body").innerHTML=`
-  <section class="sec" id="itin"><div class="sec-h"><h2>Itinéraire</h2><span class="tag">${ic("route")}${p.days} jours · ${days?days.reduce((s,d)=>s+d.acts.length,0):"…"} lieux</span></div>${itin}</section>
+  <section class="sec" id="itin"><div class="sec-h"><h2>Itinéraire</h2><div class="sec-acts"><span class="tag">${ic("route")}${p.days} jours · ${days?days.reduce((s,d)=>s+d.acts.length,0):"…"} lieux</span>${editBtns}</div></div>${editing?`<p class="edhint">${ic("edit")}<span>Retirez un lieu, changez l'ordre, déplacez-le vers un autre jour ou ajoutez-en un parmi les lieux trouvés. La carte suit vos changements.</span></p>`:""}${itin}</section>
   <section class="sec" id="reserver"><div class="sec-h"><h2>Réserver</h2><span class="tag">${ic("ext")}Vrais prix du jour</span></div>${reserver}</section>
   <section class="sec" id="budget"><div class="sec-h"><h2>Budget</h2><span class="tag">${ic("wallet")}${eur(p.budget)}</span></div>${budgetOut}</section>
   <section class="sec" id="quand"><div class="sec-h"><h2>Quand partir</h2><span class="tag">${ic("sun")}Météo réelle</span></div>${quandOut}</section>
@@ -1478,7 +1544,7 @@ document.addEventListener("click",e=>{
   const df=e.target.closest("[data-dayf]");
   if(df){const v=df.dataset.dayf;state.dayF=v==="all"||(df.classList.contains("day-h")&&state.dayF===+v)?null:+v;drawMap();return}
   const card=e.target.closest(".place");
-  if(card&&!e.target.closest("a")){hl(card.dataset.card);const m=markers[card.dataset.card];if(m&&map){map.panTo(m.getLatLng());m.openPopup()}return}
+  if(card&&!e.target.closest("a,.ed")){hl(card.dataset.card);const m=markers[card.dataset.card];if(m&&map){map.panTo(m.getLatLng());m.openPopup()}return}
   const el=e.target.closest("[data-month],[data-style],[data-days]");
   if(el&&!el.closest(".modal")){
     if(el.dataset.month!=null){$("#month").value=el.dataset.month;$("#depdate").value=""}
@@ -1488,6 +1554,56 @@ document.addEventListener("click",e=>{
   }
 });
 document.addEventListener("mouseover",e=>{const c=e.target.closest(".place");if(c)hl(c.dataset.card)});
+
+/* ---------- Modification de l'itinéraire (Premium) ---------- */
+function editDays(fn,msg){
+  if(!state.plan||isLocked())return;
+  const days=state.plan.days.map(d=>d.acts.map(a=>a.id));
+  fn(days);
+  state.custom={key:custKey(),days};
+  render();
+  if(msg)showToast(msg);
+}
+const norm=s=>String(s||"").normalize("NFD").replace(/\p{Mn}/gu,"").toLowerCase();
+function addPlaceModal(di){
+  if(!state.plan)return;
+  const day=state.plan.days[di],used=new Set(state.plan.days.flatMap(d=>d.acts.map(a=>a.id)));
+  // Les lieux les plus proches de la journée en premier (ou du centre-ville si la journée est vide)
+  const c=day.acts.length?[day.acts.reduce((s,a)=>s+a.lat,0)/day.acts.length,day.acts.reduce((s,a)=>s+a.lon,0)/day.acts.length]:[state.dest.lat,state.dest.lon];
+  const list=state.places.filter(x=>!used.has(x.id)).map(x=>({x,k:km(c,[x.lat,x.lon])})).sort((a,b)=>a.k-b.k);
+  const dist=k=>k<1?Math.round(k*1000)+" m":k.toFixed(1).replace(".",",")+" km";
+  openModal(`<h3 id="modalTitle">Ajouter un lieu au jour ${di+1}</h3>
+    <input class="inp" id="apq" type="search" placeholder="Rechercher parmi ${list.length} lieux" aria-label="Rechercher un lieu">
+    <div class="aplist" id="apList">${list.length?list.map(({x,k})=>`<button type="button" class="ap" data-addp="${esc(x.id)}" data-d="${di}" data-t="${esc(norm(x.title+" "+x.desc))}">
+      <span class="ap-th" style="background:var(--c-${x.cat})">${x.thumb?`<img src="${esc(x.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:ic(ICAT[x.cat])}</span>
+      <span style="min-width:0"><b>${esc(x.title)}</b>${x.desc?`<small>${esc(x.desc)}</small>`:""}<small>${fmtH(x.h)} · à ${dist(k)} ${day.acts.length?"de cette journée":"du centre"}</small></span>${ic("plus")}</button>`).join(""):`<p>Tous les lieux trouvés sont déjà dans votre itinéraire.</p>`}
+    <p class="ap-none" id="apNone" hidden>Aucun lieu ne correspond à cette recherche.</p></div>`,"wide");
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button[data-ed]");if(!b)return;
+  const ed=b.dataset.ed,di=+b.dataset.d,ai=+b.dataset.i;
+  if(ed==="toggle"){state.editing=!state.editing;render();return}
+  if(ed==="reset"){state.custom=null;render();showToast("Itinéraire proposé rétabli");return}
+  if(ed==="add"){addPlaceModal(di);return}
+  if(ed==="up"||ed==="down")editDays(days=>{const j=ed==="up"?ai-1:ai+1;if(j>=0&&j<days[di].length)[days[di][ai],days[di][j]]=[days[di][j],days[di][ai]]});
+  if(ed==="del")editDays(days=>days[di].splice(ai,1),"Lieu retiré");
+});
+document.addEventListener("change",e=>{
+  const s=e.target.closest("select[data-ed=move]");if(!s)return;
+  const di=+s.dataset.d,ai=+s.dataset.i,to=+s.value;if(to===di)return;
+  editDays(days=>{const [id]=days[di].splice(ai,1);days[to].push(id)},`Lieu déplacé au jour ${to+1}`);
+});
+$("#modal").addEventListener("click",e=>{
+  const b=e.target.closest("[data-addp]");if(!b)return;
+  const di=+b.dataset.d,id=b.dataset.addp;closeModal();
+  editDays(days=>days[di].push(id),`Lieu ajouté au jour ${di+1}`);
+});
+$("#modal").addEventListener("input",e=>{
+  if(e.target.id!=="apq")return;
+  const q=norm(e.target.value.trim());let n=0;
+  document.querySelectorAll("#apList [data-addp]").forEach(b=>{b.hidden=!!q&&!b.dataset.t.includes(q);if(!b.hidden)n++});
+  const none=$("#apNone");if(none)none.hidden=n>0;
+});
 function showToast(msg,ok=true){const t=$("#toast");t.textContent=msg;t.style.color=ok?"var(--good)":"var(--warn)";t.hidden=false;clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.hidden=true,3000)}
 $("#copy").onclick=()=>{
   if(!state.dest||!state.plan)return;
@@ -1790,6 +1906,7 @@ function renderCard(){
 async function runBuild(){
   const id=Symbol();runBuild.cur=id;
   applyW();
+  state.custom=null;state.editing=false; // un nouveau questionnaire repart d'un itinéraire proposé
   if(!sameDest())loadDestination(W.dest);else render();
   const items=[...document.querySelectorAll("#wzBuild li")],t0=Date.now();
   for(let i=0;i<items.length;i++){
@@ -1858,7 +1975,8 @@ async function saveTrip(){
   if(!state.dest||!state.plan){showToast("Attendez la fin du chargement",false);return}
   if(!user){pendingSave=true;loginModal("Connectez-vous pour enregistrer ce voyage.");return}
   const p=readForm(),d=state.dest;
-  const {error}=await sb.from("trips").insert({title:`${d.name} · ${MOIS[p.m]} · ${p.days} jours`,params:{...p,dest:d},total:Math.round(state.est.total)});
+  const custom=state.custom&&state.custom.key===custKey()?state.custom:null; // itinéraire modifié, s'il y en a un
+  const {error}=await sb.from("trips").insert({title:`${d.name} · ${MOIS[p.m]} · ${p.days} jours`,params:{...p,dest:d,custom},total:Math.round(state.est.total)});
   error?showToast("Enregistrement impossible : "+error.message,false):showToast("Voyage enregistré");
 }
 $("#save").addEventListener("click",saveTrip);
@@ -1882,6 +2000,7 @@ function applyParams(p,dest){
   if(p.o!=null)$("#origin").value=p.o;if(p.m!=null)$("#month").value=p.m;$("#depdate").value=validDate(p.date)?p.date:"";if(p.days)$("#days").value=p.days;if(p.pax)$("#pax").value=p.pax;if(p.budget)$("#budget").value=p.budget;
   if(p.style!=null&&$("#st"+p.style))$("#st"+p.style).checked=true;
   if(Array.isArray(p.ints))INTERESTS.forEach(([k])=>$("#in-"+k).checked=p.ints.includes(k));
+  state.custom=p.custom&&Array.isArray(p.custom.days)?p.custom:null;
   if(dest)loadDestination(dest);else render();
 }
 $("#modal").addEventListener("click",async e=>{
