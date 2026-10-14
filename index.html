@@ -1091,7 +1091,7 @@ async function fetchInfo(dest){
   cset(k,out);return out;
 }
 async function featuredPhotos(apply){
-  let m=cget("feat");if(m){apply(m);return m}
+  let m=cget("feat2");if(m){apply(m);return m}
   const d=await getJSON(`https://fr.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&redirects=1&prop=pageimages|pageprops&ppprop=wikibase_item&piprop=thumbnail&pithumbsize=640&titles=${enc(FEATURED.map(f=>f.w).join("|"))}`);
   const back={};(d.query.normalized||[]).forEach(x=>back[x.to]=x.from);(d.query.redirects||[]).forEach(x=>back[x.to]=back[x.from]||x.from);
   const pages=d.query.pages||[];
@@ -1108,8 +1108,8 @@ async function featuredPhotos(apply){
   });
   apply(m);
   // les villes sans photo Wikidata sont complétées ensuite (la recherche Commons est plus lente)
-  await Promise.all(FEATURED.filter(f=>!m[f.w]).map(async f=>{const r=await commonsPhoto(`${f.name} ${f.country}`).catch(()=>null);if(r){m[f.w]=r.src.replace(/\/\d+px-/,"/640px-");apply(m)}}));
-  cset("feat",m);return m;
+  await Promise.all(FEATURED.filter(f=>!m[f.w]).map(async f=>{const r=await commonsPhoto(`${f.name} ${f.country}`).catch(()=>null);if(r){m[f.w]=r.src.replace(/\/\d+px-/,"/960px-");apply(m)}})); // Wikimedia n'accepte que des tailles standard (500, 960, 1280…)
+  cset("feat2",m);return m;
 }
 
 /* ---------- Calculs ---------- */
