@@ -343,6 +343,7 @@ a.tag:hover{color:var(--sea)}
 .idea:hover{border-color:var(--green)}
 .idea span{width:30px;height:30px;border-radius:50%;overflow:hidden;background:var(--sand);display:grid;place-items:center}
 .idea img{width:100%;height:100%;object-fit:cover}
+.idea-k{font-size:11px;font-weight:800;color:var(--green);background:var(--mint);border-radius:999px;padding:2px 7px;margin-left:-2px}
 .stepper{display:inline-flex;align-items:center;gap:18px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:8px}
 .stepper button{width:46px;height:46px;border-radius:50%;border:0;background:var(--bg);font-size:24px;font-weight:700;cursor:pointer;color:var(--ink)}
 .stepper button:hover{background:var(--mint)}
@@ -785,7 +786,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
     </div></section>
 
     <section id="dests"><div class="wrap sect">
-      <div class="sect-h"><h2>Toutes les villes du monde</h2><p>Quelques idées pour commencer. Prix estimé pour 5 jours depuis Paris, par personne, transport compris.</p></div>
+      <div class="sect-h"><h2>Une ville ou tout un pays</h2><p>Quelques idées pour commencer. Prix estimé depuis Paris, par personne, transport compris : 5 jours pour une ville, 10 jours pour un pays.</p></div>
       <div class="drow" id="drow"></div>
     </div></section>
 
@@ -945,25 +946,27 @@ const DAYC=["#E8505B","#2E86DE","#2FA36B","#F29E38","#8E5CD9","#D9488F","#14A3A3
 const PALETTES=[["#F7B267","#F4845F","#2B4162"],["#9AD1D4","#F2C57C","#7A4E3B"],["#FFD166","#EF476F","#26547C"],["#A2D2FF","#E9F1F7","#33658A"],["#FFB997","#F67E7D","#843B62"],["#B8C0FF","#FFD6A5","#3A3361"],["#8ECAE6","#FFB703","#5A3E2B"],["#B9FBC0","#FBF8CC","#2D6A4F"]];
 // Niveau des prix sur place par pays (France = 1), utilisé pour estimer hébergement, repas et transports.
 const PI={FR:1,BE:1,LU:1.1,CH:1.55,DE:.95,NL:1.05,AT:1,GB:1.1,IE:1.15,ES:.8,PT:.7,IT:.9,GR:.75,MT:.8,CY:.8,DK:1.25,SE:1,NO:1.3,FI:1.05,IS:1.45,PL:.55,CZ:.65,SK:.6,HU:.55,SI:.7,HR:.7,RO:.5,BG:.45,RS:.45,BA:.45,ME:.5,AL:.45,MK:.4,EE:.75,LV:.65,LT:.6,UA:.35,MD:.4,TR:.45,GE:.45,AM:.45,AZ:.45,MA:.45,TN:.4,DZ:.4,EG:.35,ZA:.5,KE:.5,TZ:.5,SN:.55,MU:.7,MG:.4,CV:.6,RE:.95,GP:.95,MQ:.95,GF:.95,NC:1.2,PF:1.3,US:1.25,CA:1.1,MX:.55,CU:.6,DO:.6,CR:.7,PA:.7,GT:.5,CO:.45,PE:.45,BR:.55,AR:.5,CL:.65,BO:.35,EC:.5,UY:.7,JP:.9,KR:.85,CN:.6,HK:1.1,MO:1,TW:.7,SG:1.2,TH:.45,VN:.35,KH:.4,LA:.35,MY:.5,ID:.4,PH:.45,IN:.3,LK:.35,NP:.3,MV:1.2,AE:1,QA:1.05,OM:.8,JO:.7,IL:1.15,SA:.85,AU:1.1,NZ:1.05,FJ:.7,RU:.5,UZ:.35,KZ:.45,MN:.45};
+// Idées de destinations : villes et pays entiers en alternance.
+// Pour un pays, w est un paysage emblématique dont la photo Wikipédia illustre la carte (Mont Fuji pour le Japon…).
 const FEATURED=[
  {id:"lisbonne",w:"Lisbonne",name:"Lisbonne",country:"Portugal",cc:"PT",lat:38.7223,lon:-9.1393},
- {id:"kyoto",w:"Kyoto",name:"Kyoto",country:"Japon",cc:"JP",lat:35.0116,lon:135.7681},
+ {id:"japon",w:"Mont Fuji",name:"Japon",country:"Japon",cc:"JP",lat:35.68536,lon:139.7531,kind:"country"},
  {id:"marrakech",w:"Marrakech",name:"Marrakech",country:"Maroc",cc:"MA",lat:31.6295,lon:-7.9811},
+ {id:"italie",w:"Cinque Terre",name:"Italie",country:"Italie",cc:"IT",lat:42.83333,lon:12.83333,kind:"country"},
  {id:"newyork",w:"New York",name:"New York",country:"États-Unis",cc:"US",lat:40.7128,lon:-74.006},
- {id:"rome",w:"Rome",name:"Rome",country:"Italie",cc:"IT",lat:41.9028,lon:12.4964},
+ {id:"thailande",w:"Ko Phi Phi Don",name:"Thaïlande",country:"Thaïlande",cc:"TH",lat:15.5,lon:101,kind:"country"},
  {id:"seville",w:"Séville",name:"Séville",country:"Espagne",cc:"ES",lat:37.3891,lon:-5.9845},
+ {id:"grece",w:"Santorin",name:"Grèce",country:"Grèce",cc:"GR",lat:39,lon:22,kind:"country"},
  {id:"istanbul",w:"Istanbul",name:"Istanbul",country:"Turquie",cc:"TR",lat:41.0082,lon:28.9784},
+ {id:"vietnam",w:"Baie d'Along",name:"Viêt Nam",country:"Viêt Nam",cc:"VN",lat:16.16667,lon:107.83333,kind:"country"},
+ {id:"kyoto",w:"Kyoto",name:"Kyoto",country:"Japon",cc:"JP",lat:35.0116,lon:135.7681},
+ {id:"perou",w:"Machu Picchu",name:"Pérou",country:"Pérou",cc:"PE",lat:-10,lon:-75.25,kind:"country"},
  {id:"reykjavik",w:"Reykjavik",name:"Reykjavik",country:"Islande",cc:"IS",lat:64.1466,lon:-21.9426},
- {id:"bangkok",w:"Bangkok",name:"Bangkok",country:"Thaïlande",cc:"TH",lat:13.7563,lon:100.5018},
+ {id:"mexique",w:"Chichén Itzá",name:"Mexique",country:"Mexique",cc:"MX",lat:23,lon:-102,kind:"country"},
  {id:"prague",w:"Prague",name:"Prague",country:"Tchéquie",cc:"CZ",lat:50.0755,lon:14.4378},
+ {id:"croatie",w:"Parc national des lacs de Plitvice",name:"Croatie",country:"Croatie",cc:"HR",lat:45.16667,lon:15.5,kind:"country"},
  {id:"lecap",w:"Le Cap",name:"Le Cap",country:"Afrique du Sud",cc:"ZA",lat:-33.9249,lon:18.4241},
- {id:"mexico",w:"Mexico",name:"Mexico",country:"Mexique",cc:"MX",lat:19.4326,lon:-99.1332},
- {id:"dubrovnik",w:"Dubrovnik",name:"Dubrovnik",country:"Croatie",cc:"HR",lat:42.6507,lon:18.0944},
- {id:"hanoi",w:"Hanoï",name:"Hanoï",country:"Viêt Nam",cc:"VN",lat:21.0278,lon:105.8342},
- {id:"montreal",w:"Montréal",name:"Montréal",country:"Canada",cc:"CA",lat:45.5019,lon:-73.5674},
- {id:"budapest",w:"Budapest",name:"Budapest",country:"Hongrie",cc:"HU",lat:47.4979,lon:19.0402},
- {id:"porto",w:"Porto",name:"Porto",country:"Portugal",cc:"PT",lat:41.1579,lon:-8.6291},
- {id:"barcelone",w:"Barcelone",name:"Barcelone",country:"Espagne",cc:"ES",lat:41.3874,lon:2.1686}
+ {id:"norvege",w:"Geirangerfjord",name:"Norvège",country:"Norvège",cc:"NO",lat:62,lon:10,kind:"country"}
 ];
 // Exemple fixe pour les visuels de la page d'accueil (Lisbonne, lieux réels)
 const DEMO={name:"Lisbonne",country:"Portugal",cc:"PT",lat:38.7223,lon:-9.1393,p:PALETTES[0],sea:1,
@@ -1176,7 +1179,7 @@ async function fetchInfo(dest){
   cset(k,out);return out;
 }
 async function featuredPhotos(apply){
-  let m=cget("feat2");if(m){apply(m);return m}
+  let m=cget("feat3");if(m){apply(m);return m}
   const d=await getJSON(`https://fr.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&redirects=1&prop=pageimages|pageprops&ppprop=wikibase_item&piprop=thumbnail&pithumbsize=640&titles=${enc(FEATURED.map(f=>f.w).join("|"))}`);
   const back={};(d.query.normalized||[]).forEach(x=>back[x.to]=x.from);(d.query.redirects||[]).forEach(x=>back[x.to]=back[x.from]||x.from);
   const pages=d.query.pages||[];
@@ -1194,7 +1197,7 @@ async function featuredPhotos(apply){
   apply(m);
   // les villes sans photo Wikidata sont complétées ensuite (la recherche Commons est plus lente)
   await Promise.all(FEATURED.filter(f=>!m[f.w]).map(async f=>{const r=await commonsPhoto(`${f.name} ${f.country}`).catch(()=>null);if(r){m[f.w]=r.src.replace(/\/\d+px-/,"/960px-");apply(m)}})); // Wikimedia n'accepte que des tailles standard (500, 960, 1280…)
-  cset("feat2",m);return m;
+  cset("feat3",m);return m;
 }
 
 /* ---------- Calculs ---------- */
@@ -2100,7 +2103,7 @@ function renderLanding(){
   ].map(([i,t,p])=>`<div class="fcard"><span class="ico">${ic(i)}</span><h3>${t}</h3><p>${p}</p></div>`).join("");
 
   $("#drow").innerHTML=FEATURED.map(f=>`<button type="button" class="post" data-go="${f.id}" aria-label="Planifier ${esc(f.name)}">${cover(f.id,palette(f.name),"d")}<div class="shade"></div>
-    <span class="pi"><h4>${esc(f.name)}</h4><span class="pp"><span>${esc(f.country)}</span><span class="num">dès ${eur(estimate(f,P0,[],1).total/2)}</span></span></span></button>`).join("");
+    <span class="pi"><h4>${esc(f.name)}</h4><span class="pp"><span>${isCountry(f)?"Tout le pays · 10 j":esc(f.country)}</span><span class="num">dès ${eur(estimate(f,isCountry(f)?{...P0,days:10}:P0,[],1).total/2)}</span></span></span></button>`).join("");
   featuredPhotos(applyFeat).catch(()=>{});
 }
 $("#drow").addEventListener("click",e=>{
@@ -2155,7 +2158,7 @@ function stepHTML(){
   if(s==="dest")return `<div class="wz-step">${qn(1)}<h2>Où rêvez-vous de partir ?</h2>
     <div class="bigin">${ic("search")}<input id="wzDest" type="text" placeholder="Une ville ou un pays : Kyoto, Portugal, Japon…" value="${W.dest?esc(W.dest.name):""}" autocomplete="off" aria-label="Destination"></div>
     <p class="lead" style="font-size:15px">ou choisissez une idée</p>
-    <div class="ideas">${FEATURED.slice(0,12).map(f=>`<button type="button" class="idea" data-idea="${f.id}"><span>${FEAT_IMG[f.w]?`<img src="${esc(FEAT_IMG[f.w])}" alt="" referrerpolicy="no-referrer">`:ic("pin")}</span>${esc(f.name)}</button>`).join("")}</div>
+    <div class="ideas">${FEATURED.slice(0,12).map(f=>`<button type="button" class="idea" data-idea="${f.id}"><span>${FEAT_IMG[f.w]?`<img src="${esc(FEAT_IMG[f.w])}" alt="" referrerpolicy="no-referrer">`:ic(isCountry(f)?"globe":"pin")}</span>${esc(f.name)}${isCountry(f)?`<small class="idea-k">Pays</small>`:""}</button>`).join("")}</div>
     ${navHTML(false)}</div>`;
   if(s==="origin")return `<div class="wz-step">${qn(2)}<h2>D'où partez-vous ?</h2><p class="lead">Pour calculer le transport aller-retour.</p>
     <div class="opts">${ORIGINS.map((o,i)=>`<button type="button" class="opt${W.o===i?" on":""}" data-worig="${i}">${ic(i===ORIGINS.length-1?"plane":"plane")}<span class="t">${o[1]}</span></button>`).join("")}</div>${navHTML(false)}</div>`;
