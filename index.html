@@ -315,7 +315,7 @@ a.tag:hover{color:var(--sea)}
 @media (max-width:420px){.wz-nav .btn.coral{flex:1;white-space:normal;padding:14px 18px}.wz-nav .btn.ghost{padding-inline:4px}}
 .wz-nav .btn.coral{padding:15px 28px;font-size:16px;font-weight:800}
 .bigin{position:relative;width:100%}
-.bigin .ic{position:absolute;left:18px;top:50%;translate:0 -50%;color:var(--green);width:22px;height:22px}
+.bigin>.ic{position:absolute;left:18px;top:50%;translate:0 -50%;color:var(--green);width:22px;height:22px}
 .bigin input{width:100%;padding:18px 18px 18px 52px;font-size:18px;font-weight:700;border:2px solid var(--line);border-radius:18px;background:#fff;outline:none}
 .bigin input:focus{border-color:var(--green)}
 .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;width:100%}
@@ -543,6 +543,37 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
 .ap-th img{width:100%;height:100%;object-fit:cover;display:block}
 .ap b{display:block;font-size:14px;line-height:1.3}
 .ap small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Voyage dans tout un pays : étapes, trajets entre les villes, noms des villes sur la carte */
+.stops{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 4px}
+.stop{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 5px;font-size:14px;font-weight:700}
+.stop b{width:22px;height:22px;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;font-size:12px}
+.stop small{color:var(--muted);font-weight:600}
+.stop-arr{color:var(--muted);font-weight:800}
+.sed{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 10px;display:grid;gap:2px}
+.sed-h{padding-bottom:8px}
+.sed-h b{display:block;font-size:16px}
+.sed-h small{color:var(--muted);font-size:13px;font-weight:600}
+.sed-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.sed-n{width:26px;height:26px;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800}
+.sed-name{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sed-days,.sed-acts{display:inline-flex;align-items:center;gap:4px}
+.sed-days output{min-width:34px;text-align:center;font-weight:800;font-size:14px}
+.sed button{font:inherit;font-size:14px;font-weight:800;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;min-width:30px;height:30px;padding:0 8px;display:inline-grid;place-items:center;cursor:pointer}
+.sed button:hover:not(:disabled){border-color:var(--green)}
+.sed button:disabled{opacity:.35;cursor:default}
+.sed button .ic{width:14px;height:14px}
+.sed .del{color:var(--warn)}
+.sed .addplace{display:flex;height:auto;border-radius:14px;margin-top:8px}
+@media (max-width:420px){.sed-row{grid-template-columns:26px minmax(0,1fr) auto}.sed-acts{grid-column:2/-1;justify-self:end}}
+.rs-lbl{margin:2px 0;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.leg{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--mint);border:1px dashed color-mix(in srgb,var(--green) 40%,transparent);border-radius:16px;padding:10px 12px;margin:2px 0 -6px}
+.leg-ic{width:40px;height:40px;border-radius:12px;background:var(--green);color:#fff;display:grid;place-items:center}
+.leg-ic .ic{width:20px;height:20px}
+.leg b{display:block;font-size:15px}
+.leg small{display:block;color:var(--muted);font-size:13px;font-weight:600}
+@media (max-width:420px){.leg{grid-template-columns:36px minmax(0,1fr)}.leg>.tag{grid-column:2;justify-self:start}}
+.stoplbl span{display:inline-flex;align-items:center;gap:5px;transform:translate(-50%,-50%);white-space:nowrap;background:#11163A;color:#fff;font:700 12px var(--f-body);padding:3px 9px 3px 3px;border-radius:999px;box-shadow:0 6px 14px -6px rgba(17,22,58,.6)}
+.stoplbl b{width:18px;height:18px;border-radius:50%;background:var(--yellow);color:#11163A;display:grid;place-items:center;font-size:11px}
 .thumb{width:76px;height:76px;border-radius:12px;display:grid;place-items:center;color:#fff;overflow:hidden;background:var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb .ic{width:28px;height:28px;stroke-width:1.8}
@@ -766,7 +797,7 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
     <section class="wrap sect" id="faq" style="padding-top:20px">
       <div class="sect-h"><h2>Questions fréquentes</h2></div>
       <div class="faq">
-        <details open><summary>Ça marche vraiment pour n'importe quelle ville ?</summary><p>Oui. Tapez n'importe quelle ville du monde : Valisino trouve les lieux à visiter référencés sur Wikipédia, la météo réelle des deux dernières années et calcule un budget adapté au niveau des prix du pays.</p></details>
+        <details open><summary>Ça marche vraiment pour n'importe quelle ville ?</summary><p>Oui. Tapez n'importe quelle ville du monde : Valisino trouve les lieux à visiter référencés sur Wikipédia, la météo réelle des deux dernières années et calcule un budget adapté au niveau des prix du pays. Vous pouvez aussi taper un pays entier, comme le Portugal ou le Japon : Valisino choisit les villes étapes, répartit vos jours, ajoute les trajets entre les villes et un hébergement par étape.</p></details>
         <details><summary>Les prix sont-ils exacts ?</summary><p>Ce sont des estimations pour comparer et planifier. Les boutons « Voir les prix » ouvrent les vrais tarifs du jour sur Kayak, Booking, Airbnb ou GetYourGuide, aux dates de votre voyage.</p></details>
         <details><summary>Ça marche avec un petit budget ?</summary><p>Oui. Si votre budget est trop juste, Valisino vous propose des solutions en un clic : un style plus économique, un mois moins cher ou un jour de moins.</p></details>
         <details><summary>Valisino réserve-t-il à ma place ?</summary><p>Non. Valisino vous dit quoi réserver et quand, puis vous envoie directement sur la bonne recherche. Vous réservez où vous voulez.</p></details>
@@ -977,8 +1008,10 @@ const photoOr=(img,k,pal,tag,alt)=>img?`<img class="photo" src="${esc(img)}" alt
 /* ---------- Sources de données réelles ---------- */
 async function geocode(q){
   const d=await getJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${enc(q)}&count=6&language=fr&format=json`);
-  return (d.results||[]).map(r=>({name:r.name,country:r.country||"",cc:r.country_code||"",admin:r.admin1||"",lat:r.latitude,lon:r.longitude,pop:r.population||0}));
+  return (d.results||[]).map(r=>({name:r.name,country:r.country||"",cc:r.country_code||"",admin:r.admin1||"",lat:r.latitude,lon:r.longitude,pop:r.population||0,fc:r.feature_code||""}));
 }
+// Un pays entier (code GeoNames PCL…) : voyage en plusieurs étapes
+const isCountry=g=>!!g&&(g.kind==="country"||/^PCL/.test(g.fc||""));
 
 async function fetchClimate(lat,lon){
   // Le climat passé ne change pas : on le garde 90 jours dans le navigateur
@@ -1018,10 +1051,10 @@ function durOf(cat,s){
   if(cat==="nature"&&/mont |montagne|mountain|volcan|forêt|forest/i.test(s))return 3;
   return 1.5;
 }
-async function placesFrom(lang,lat,lon){
+async function placesFrom(lang,lat,lon,limit=500){
   const W=`https://${lang}.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&`;
-  const gs=await getJSON(W+`action=query&list=geosearch&gscoord=${lat}|${lon}&gsradius=10000&gslimit=500`);
-  const items=((gs.query&&gs.query.geosearch)||[]).slice(0,500),pos={};
+  const gs=await getJSON(W+`action=query&list=geosearch&gscoord=${lat}|${lon}&gsradius=10000&gslimit=${limit}`);
+  const items=((gs.query&&gs.query.geosearch)||[]).slice(0,limit),pos={};
   items.forEach(i=>pos[i.pageid]=i);
   const batches=[];for(let i=0;i<items.length;i+=50)batches.push(items.slice(i,i+50));
   const res=await Promise.all(batches.map(b=>getJSON(W+`action=query&pageids=${b.map(x=>x.pageid).join("|")}&prop=pageimages|description|info&piprop=thumbnail&pithumbsize=480&pilimit=50&inprop=url`).catch(()=>null)));
@@ -1029,18 +1062,70 @@ async function placesFrom(lang,lat,lon){
     .filter(p=>{const s=` ${p.title} ${p.description||""} `;return KEEP[lang].test(s)&&!DROP[lang].test(s)})
     .map(p=>{const s=` ${p.title} ${p.description||""} `,cat=catOf(s),g=pos[p.pageid];
       return{id:lang+p.pageid,title:p.title,desc:p.description||"",lat:g.lat,lon:g.lon,len:p.length||0,thumb:p.thumbnail&&goodPhoto(p.thumbnail.source)?p.thumbnail.source:"",url:p.fullurl,cat,h:durOf(cat,s),museum:/musée|museum|palais|palace|château|castle/i.test(s)}})
-    .sort((a,b)=>b.len-a.len).slice(0,80);
+    .sort((a,b)=>b.len-a.len)
+    // Deux articles au même point (ex. un monument et son ancien nom) : on garde le plus complet
+    .filter((x,i,arr)=>!arr.slice(0,i).some(y=>km([x.lat,x.lon],[y.lat,y.lon])<.03)).slice(0,80);
 }
-async function fetchPlaces(lat,lon){
-  const k=`pl:${lat.toFixed(3)},${lon.toFixed(3)}`;const c=cget(k);if(c)return c;
-  let out=await placesFrom("fr",lat,lon);
+// limit plus bas pour les étapes d'un voyage dans tout un pays : moins de requêtes vers Wikipédia
+async function fetchPlaces(lat,lon,limit=500){
+  const k=`pl2:${lat.toFixed(3)},${lon.toFixed(3)}${limit<500?":"+limit:""}`;const c=cget(k);if(c)return c;
+  let out=await placesFrom("fr",lat,lon,limit);
   if(out.length<10){
-    const en=await placesFrom("en",lat,lon).catch(()=>[]);
+    const en=await placesFrom("en",lat,lon,limit).catch(()=>[]);
     // un même lieu peut exister dans les deux langues : on écarte les doublons à moins de 200 m
     out=out.concat(en.filter(p=>!out.some(f=>km([f.lat,f.lon],[p.lat,p.lon])<.2)));
   }
   cset(k,out);return out;
 }
+/* ---------- Voyage dans tout un pays : les étapes viennent de la liste « Cities » de Wikivoyage ---------- */
+// (villes choisies par des voyageurs), puis Wikidata donne coordonnées, nom français et notoriété
+async function fetchCountryCities(dest){
+  const k=`cc2:${dest.cc}`;const c=cget(k,30);if(c&&c.length)return c;
+  // Nom anglais du pays (Wikivoyage en anglais a la liste la plus complète), grâce au code du pays
+  let en="";try{en=new Intl.DisplayNames(["en"],{type:"region"}).of(dest.cc).replace(/\s*\(.*\)$/,"")}catch(e){}
+  let A="",sec=null;
+  for(const t of [...new Set([en,dest.name].filter(Boolean))]){
+    A=`https://en.wikivoyage.org/w/api.php?format=json&formatversion=2&origin=*&redirects=1&action=parse&page=${enc(t)}`;
+    const s=await getJSON(A+"&prop=sections").catch(()=>null);
+    sec=((s&&s.parse&&s.parse.sections)||[]).find(x=>/^cities$/i.test(x.line));
+    if(sec)break;
+  }
+  if(!sec)throw new Error("Pas de liste de villes");
+  const w=await getJSON(A+"&prop=wikitext&section="+sec.index);
+  // Chaque ville est un {{marker|name=[[Ville]]|wikidata=Q…}} ; sans identifiant, on la retrouve par son titre Wikivoyage
+  const marks=(((w.parse&&w.parse.wikitext)||"").match(/\{\{marker[^}]*\}\}/gi)||[]).slice(0,20);
+  const ids=[],titles=[];
+  marks.forEach(m=>{const q=m.match(/wikidata=(Q\d+)/),t=m.match(/name=\[\[([^\]|]+)/);if(q)ids.push(q[1]);else if(t)titles.push(t[1].trim())});
+  if(!ids.length&&!titles.length)throw new Error("Pas de ville identifiée");
+  const WD="https://www.wikidata.org/w/api.php?action=wbgetentities&props=claims|labels|sitelinks&languages=fr|en&format=json&origin=*";
+  const [d1,d2]=await Promise.all([
+    ids.length?getJSON(`${WD}&ids=${[...new Set(ids)].join("|")}`):{entities:{}},
+    titles.length?getJSON(`${WD}&sites=enwikivoyage&titles=${enc(titles.join("|"))}`).catch(()=>({entities:{}})):{entities:{}}
+  ]);
+  const ents={...(d1.entities||{}),...(d2.entities||{})};
+  const out=Object.values(ents).filter(e=>e&&e.claims&&e.claims.P625).map(e=>{
+    const co=e.claims.P625[0].mainsnak.datavalue;if(!co)return null;
+    const wv=e.sitelinks&&e.sitelinks.enwikivoyage;
+    return{qid:e.id,name:((e.labels||{}).fr||(e.labels||{}).en||{}).value||e.id,lat:+co.value.latitude,lon:+co.value.longitude,fame:Object.keys(e.sitelinks||{}).length,wv:wv&&wv.title};
+  }).filter(Boolean);
+  if(!out.length)throw new Error("Pas de coordonnées");
+  // Intérêt touristique : nombre de lectures du guide Wikivoyage de la ville sur l'année écoulée
+  // (Marrakech passe ainsi devant Rabat). À défaut, la notoriété Wikipédia sert de repli.
+  const y=now.getFullYear()-1;
+  await Promise.all(out.map(async c=>{
+    if(!c.wv)return;
+    const pv=await getJSON(`https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikivoyage/all-access/user/${enc(c.wv.replace(/ /g,"_"))}/monthly/${y}010100/${y}123100`,8000).catch(()=>null);
+    if(pv&&pv.items)c.views=pv.items.reduce((s,i)=>s+i.views,0);
+  }));
+  if(out.some(c=>c.views))out.forEach(c=>c.fame=c.views||c.fame*20);
+  cset(k,out);return out;
+}
+// Lieux à visiter de chaque étape (étiquetés avec l'étape, pour l'itinéraire et la carte)
+async function ensureStopPlaces(stops){
+  const miss=stops.filter(s=>!state.stopData[s.qid]);
+  await Promise.all(miss.map(async s=>{const pl=await fetchPlaces(s.lat,s.lon,200).catch(()=>[]);state.stopData[s.qid]=pl.map(x=>({...x,sq:s.qid}))}));
+}
+
 /* ---------- Photos : vraies vues de la destination, sans drapeaux, blasons, logos ni cartes ---------- */
 const BADNAME=/(flag|drapeau|bandera|bandeira|flagge|coat[_ ]of|arms|blason|escudo|wappen|logo|locator|location|map|carte|mapa|karte|plan[_ ]|seal|emblem|sceau|diagram|montage|collage|signature|icon|pictogram)/i;
 const fileOf=u=>{try{return decodeURIComponent(u.split("?")[0].split("/").pop())}catch(e){return u}};
@@ -1127,8 +1212,79 @@ function estimate(dest,p,good,museums){
   const sum=x=>Object.values(x).reduce((a,b)=>a+b,0);
   return{opt,naive,total:sum(opt),naiveTotal:sum(naive),dist,mode:tr.mode};
 }
-function itinerary(places,p){
-  const n=p.days,caps=[];for(let i=0;i<n;i++)caps.push(i===0?4:(i===n-1?3:8));
+/* ---------- Voyage dans tout un pays : étapes, trajets et budget ---------- */
+// Nombre d'étapes selon la durée, villes les plus connues d'abord, dans un rayon raisonnable autour de la ville principale
+function chooseStops(cands,days){
+  if(!cands||!cands.length)return [];
+  const n=days<=4?1:Math.min(6,Math.max(2,Math.round(days/3.3))),maxD=Math.min(1500,Math.max(400,250+days*70));
+  const byFame=[...cands].sort((a,b)=>b.fame-a.fame),first=byFame[0],pick=[first];
+  for(const c of byFame.slice(1)){
+    if(pick.length>=n)break;
+    if(km([first.lat,first.lon],[c.lat,c.lon])>maxD)continue;          // îles lointaines, autre bout d'un très grand pays
+    if(pick.some(s=>km([s.lat,s.lon],[c.lat,c.lon])<60))continue;      // deux villes trop proches : une seule étape
+    pick.push(c);
+  }
+  // Ordre de visite : le trajet le plus court passant par toutes les étapes (6 villes au plus : on essaie tous les ordres),
+  // en commençant par l'extrémité la plus connue (souvent le plus grand aéroport)
+  const perm=a=>a.length<=1?[a]:a.flatMap((x,i)=>perm([...a.slice(0,i),...a.slice(i+1)]).map(r=>[x,...r]));
+  const len=r=>r.reduce((s,c,i)=>i?s+km([r[i-1].lat,r[i-1].lon],[c.lat,c.lon]):0,0);
+  const all=perm(pick);let route=all.reduce((b,r)=>len(r)<len(b)-1e-6?r:b);
+  if(route[route.length-1].fame>route[0].fame)route=route.slice().reverse();
+  // On préfère partir de la ville principale si le détour reste raisonnable (+25 % de trajet au plus)
+  const fromTop=all.filter(r=>r[0]===first).reduce((b,r)=>!b||len(r)<len(b)?r:b,null);
+  if(fromTop&&len(fromTop)<=len(route)*1.25)route=fromTop;
+  const base=Math.floor(days/route.length);let rem=days-base*route.length;
+  const stops=route.map(c=>({...c,days:base}));
+  [...stops].sort((a,b)=>b.fame-a.fame).forEach(s=>{if(rem>0){s.days++;rem--}});
+  return stops;
+}
+const stopSig=()=>(state.stops||[]).map(s=>s.qid+":"+s.days).join(",");
+// Étapes du voyage : celles choisies par le voyageur (Premium) si elles existent, ajustées à la durée ; sinon le choix automatique
+function stopsFor(days){
+  const r=state.route;
+  if(!r||r.key!==custKey()||!r.stops.length)return chooseStops(state.cands,days);
+  const list=r.stops.map(s=>({...s}));
+  let diff=days-list.reduce((a,s)=>a+s.days,0);
+  if(diff>0)list[list.length-1].days+=diff;
+  for(let i=list.length-1;diff<0&&i>=0;i--){const take=Math.min(list[i].days-1,-diff);list[i].days-=take;diff+=take}
+  return diff<0?chooseStops(state.cands,days):list;
+}
+// Trajet entre deux étapes : mode, durée et prix estimés par personne
+function legInfo(a,b,cc){
+  const d=km([a.lat,a.lon],[b.lat,b.lon]),road=d*1.25,pi=Math.max(.6,PI[cc]||.6);
+  if(d>700)return{icon:"plane",label:"Vol intérieur",h:2.8+d/750,pp:Math.round(45+d*.07),d};
+  if(d>350)return{icon:"train",label:"Train ou vol",h:.7+road/130,pp:Math.round((15+road*.11)*pi),d};
+  return{icon:"train",label:"Train, bus ou ferry",h:.4+road/110,pp:Math.round((6+road*.12)*pi),d};
+}
+const fmtDur=h=>{const m=Math.max(10,Math.round(h*6)*10);return Math.floor(m/60)+" h"+(m%60?" "+String(m%60).padStart(2,"0"):"")};
+// Budget d'un voyage en plusieurs étapes : vol vers la première ville + trajets entre les villes
+function estimateTrip(dest,p,good,museums,stops){
+  const s0=stops[0],est=estimate({...dest,lat:s0.lat,lon:s0.lon},p,good,museums);
+  const legs=stops.slice(1).map((s,i)=>({from:stops[i],to:s,...legInfo(stops[i],s,dest.cc)}));
+  const inter=legs.reduce((a,l)=>a+l.pp,0)*p.pax,sum=x=>Object.values(x).reduce((a,b)=>a+b,0);
+  est.opt.tra+=inter;est.naive.tra+=inter*1.3;
+  est.total=sum(est.opt);est.naiveTotal=sum(est.naive);est.legs=legs;
+  return est;
+}
+// Estimation adaptée au type de voyage (une ville, ou tout un pays quand ses étapes sont connues)
+function estFor(dest,p,good,museums){
+  if(isCountry(dest)&&state.cands&&state.dest&&state.dest.cc===dest.cc){const st=stopsFor(p.days);if(st.length)return estimateTrip(dest,p,good,museums,st)}
+  return estimate(dest,p,good,museums);
+}
+// Itinéraire d'un pays : chaque étape a ses journées ; le premier jour d'une nouvelle étape est un jour de trajet
+function countryDays(p,stops){
+  const n=p.days;let out=[],start=0;
+  stops.forEach((s,si)=>{
+    const caps=[];for(let i=0;i<s.days;i++){const g=start+i;caps.push(g===0?4:g===n-1?3:i===0?4:8)}
+    itinerary(state.stopData[s.qid]||[],{...p,days:s.days},caps).forEach((d,i)=>{
+      const g=start+i;d.stop=si;d.kind=g===0?`Arrivée à ${s.name}`:g===n-1?`Départ depuis ${s.name}`:i===0?`En route vers ${s.name}`:"";out.push(d);
+    });
+    start+=s.days;
+  });
+  return out;
+}
+function itinerary(places,p,capsIn){
+  const n=p.days,caps=capsIn||[];if(!capsIn)for(let i=0;i<n;i++)caps.push(i===0?4:(i===n-1?3:8));
   const capTotal=caps.reduce((a,b)=>a+b,0);
   const sc=x=>Math.log(1+x.len)+(p.ints.includes(x.cat)?2.5:0)+(x.thumb?.4:0);
   const cand=[...places].sort((a,b)=>sc(b)-sc(a));
@@ -1156,9 +1312,13 @@ const depFor=p=>validDate(p.date)||nextDep(p.m);
 /* ---------- Liens de réservation ---------- */
 function links(dest,p,dep,ret,est){
   const o=ORIGINS[p.o],place=`${dest.name}, ${dest.country}`;
+  const A=state.iata&&state.iata.code,B=isCountry(dest)&&state.iataEnd&&state.iataEnd.code;
   const L={
     // Kayak accepte un lien prérempli avec les codes d'aéroport (ex. PAR-LIS) ; sans code connu, recherche Google
-    flights:state.iata&&state.iata.code
+    // Tout un pays : aller vers la première étape, retour depuis la dernière (vol « multi-destinations »)
+    flights:A&&B&&B!==A
+      ?`https://www.kayak.fr/flights/${o[0]}-${A}/${iso(dep)}/${B}-${o[0]}/${iso(ret)}${p.pax>1?`/${p.pax}adults`:""}?sort=price_a`
+      :state.iata&&state.iata.code
       ?`https://www.kayak.fr/flights/${o[0]}-${state.iata.code}/${iso(dep)}/${iso(ret)}${p.pax>1?`/${p.pax}adults`:""}?sort=price_a`
       :`https://www.google.com/search?q=${enc(`vols ${o[1]} ${dest.name} ${fdy(dep)} ${fdy(ret)}`)}`,
     booking:`https://www.booking.com/searchresults.fr.html?ss=${enc(place)}&checkin=${iso(dep)}&checkout=${iso(ret)}&group_adults=${p.pax}&no_rooms=1&lang=fr`,
@@ -1177,11 +1337,13 @@ const ticketLink=(x,dest)=>`https://www.getyourguide.fr/s/?q=${enc(x.title+" "+d
 
 /* ---------- État ---------- */
 // custom : itinéraire modifié par le voyageur (identifiants des lieux, jour par jour) ; editing : mode modification affiché
-const state={dest:null,places:[],climate:null,info:null,loading:false,error:null,plan:null,est:null,dayF:null,reqId:0,custom:null,editing:false};
+// Voyage dans tout un pays : cands = villes candidates, stops = étapes retenues, stopData = lieux de chaque étape
+const state={dest:null,places:[],climate:null,info:null,loading:false,error:null,plan:null,est:null,dayF:null,reqId:0,custom:null,editing:false,
+  cands:null,stops:[],stopData:{},stopsLoading:false,iataEnd:null,iataFor:"",iataEndFor:"",route:null};
 
 /* ---------- Formulaire ---------- */
 $("#fields").innerHTML=`
-<div class="fld wide">${ic("pin")}<small>Destination</small><input id="destq" type="text" placeholder="Tapez une ville du monde" autocomplete="off" aria-label="Destination"></div>
+<div class="fld wide">${ic("pin")}<small>Destination</small><input id="destq" type="text" placeholder="Une ville ou un pays" autocomplete="off" aria-label="Destination"></div>
 <label class="fld">${ic("plane")}<small>Départ</small><select id="origin">${ORIGINS.map((o,i)=>`<option value="${i}">${o[1]}</option>`).join("")}</select></label>
 <label class="fld">${ic("cal")}<small>Mois</small><select id="month">${MOIS.map((m,i)=>`<option value="${i}">${m}</option>`).join("")}</select></label>
 <label class="fld">${ic("cal")}<small>Date précise</small><input id="depdate" type="date" min="${iso(minDate())}" max="${iso(maxDate())}" aria-label="Date de départ précise (facultatif)"></label>
@@ -1210,19 +1372,26 @@ if(saved){
   if(saved.style!=null&&$("#st"+saved.style))$("#st"+saved.style).checked=true;
   if(saved.ints)INTERESTS.forEach(([k])=>$("#in-"+k).checked=saved.ints.includes(k));
   if(saved.custom&&Array.isArray(saved.custom.days))state.custom=saved.custom;
+  if(saved.route&&Array.isArray(saved.route.stops))state.route=saved.route;
 }
 function readForm(){
   return{o:+$("#origin").value,m:+$("#month").value,days:Math.min(21,Math.max(2,+$("#days").value||5)),pax:Math.min(10,Math.max(1,+$("#pax").value||1)),
     budget:+$("#budget").value,style:+document.querySelector("input[name=style]:checked").value,ints:INTERESTS.map(i=>i[0]).filter(k=>$("#in-"+k).checked),date:validDate($("#depdate").value)?$("#depdate").value:""};
 }
-function persist(){const p=readForm();try{localStorage.setItem(KEY,JSON.stringify({...p,dest:state.dest,custom:state.custom}))}catch(e){}}
+function persist(){const p=readForm();try{localStorage.setItem(KEY,JSON.stringify({...p,dest:state.dest,custom:state.custom,route:state.route}))}catch(e){}}
 // Un itinéraire modifié n'est valable que pour sa destination
 const custKey=()=>state.dest?`${state.dest.name}|${(+state.dest.lat).toFixed(3)}`:"";
 // Jours du plan : l'itinéraire modifié par le voyageur s'il existe, sinon celui calculé automatiquement
 function planDays(p){
-  const cu=state.custom;
-  if(!cu||cu.key!==custKey())return itinerary(state.places,p);
+  const cu=state.custom,country=isCountry(state.dest);
+  const auto=()=>country?countryDays(p,state.stops):itinerary(state.places,p);
+  if(!cu||cu.key!==custKey())return auto();
   const byId=new Map(state.places.map(x=>[x.id,x])),n=p.days;
+  if(country){
+    // Pays : les modifications restent valables tant que les étapes et leurs durées ne changent pas
+    if(cu.sig!==stopSig()){state.custom=null;return auto()}
+    return auto().map((d,i)=>({...d,acts:(cu.days[i]||[]).map(id=>byId.get(id)).filter(Boolean)}));
+  }
   if(cu.days.length!==n){
     // Durée modifiée : on garde les lieux choisis, dans le même ordre, répartis sur la nouvelle durée
     const out=[...Array(n)].map((_,i)=>({left:i===0?4:(i===n-1?3:8),ids:[]}));let d=0;
@@ -1238,7 +1407,7 @@ function attachAC(input,onPick){
   const close=()=>{if(box){box.remove();box=null}idx=-1};
   const show=()=>{
     close();box=document.createElement("div");box.className="ac";box.setAttribute("role","listbox");
-    box.innerHTML=items.length?items.map((g,i)=>`<button type="button" role="option" data-i="${i}">${ic("pin")}<span><b>${esc(g.name)}</b><small>${esc([g.admin,g.country].filter(Boolean).join(", "))}</small></span></button>`).join(""):`<div class="none">Aucune ville trouvée</div>`;
+    box.innerHTML=items.length?items.map((g,i)=>`<button type="button" role="option" data-i="${i}">${ic(isCountry(g)?"globe":"pin")}<span><b>${esc(g.name)}</b><small>${isCountry(g)?"Tout le pays · itinéraire en plusieurs villes":esc([g.admin,g.country].filter(Boolean).join(", "))}</small></span></button>`).join(""):`<div class="none">Aucune ville ni aucun pays trouvé</div>`;
     box.addEventListener("mousedown",e=>{const b=e.target.closest("button[data-i]");if(!b)return;e.preventDefault();pick(items[+b.dataset.i])});
     host.appendChild(box);
   };
@@ -1266,10 +1435,14 @@ function attachAC(input,onPick){
 /* ---------- Chargement d'une destination ---------- */
 async function loadDestination(geo){
   const id=++state.reqId;
-  state.dest={name:geo.name,country:geo.country,cc:(geo.cc||"").toUpperCase(),admin:geo.admin||"",lat:geo.lat,lon:geo.lon};
+  const country=isCountry(geo);
+  state.dest={name:geo.name,country:geo.country||geo.name,cc:(geo.cc||"").toUpperCase(),admin:geo.admin||"",lat:geo.lat,lon:geo.lon,kind:country?"country":"city"};
   state.loading=true;state.error=null;state.places=[];state.climate=null;state.info=null;state.dayF=null;state.iata=null;state.editing=false;
+  state.cands=null;state.stops=[];state.iataEnd=null;state.iataFor="";state.iataEndFor="";
   if(state.custom&&state.custom.key!==custKey())state.custom=null;
+  if(state.route&&state.route.key!==custKey())state.route=null;
   $("#destq").value=geo.name;persist();render();
+  if(country)return loadCountry(id);
   fetchIata(state.dest).then(v=>{if(id===state.reqId){state.iata=v||null;if(!state.loading)render()}}).catch(()=>{});
   try{
     const [places,climate,info]=await Promise.all([
@@ -1284,6 +1457,34 @@ async function loadDestination(geo){
     state.error="Impossible de charger les données de "+geo.name+". Vérifiez votre connexion puis réessayez.";
   }
   state.loading=false;render();
+}
+// Tout un pays : villes étapes, puis lieux de chaque étape, météo de la première ville et présentation du pays
+async function loadCountry(id){
+  const dest=state.dest;
+  try{
+    const cands=await fetchCountryCities(dest);
+    if(id!==state.reqId)return;
+    state.cands=cands;
+    const stops=stopsFor(readForm().days);state.stops=stops;
+    const [,climate,info]=await Promise.all([
+      ensureStopPlaces(stops),
+      fetchClimate(stops[0].lat,stops[0].lon).catch(()=>null),
+      fetchInfo(dest).catch(()=>null)
+    ]);
+    if(id!==state.reqId)return;
+    state.climate=climate;state.info=info;
+  }catch(e){
+    if(id!==state.reqId)return;
+    state.error=`Impossible de préparer un itinéraire dans tout le pays (${dest.name}). Essayez avec une ville précise.`;
+  }
+  state.loading=false;render();
+}
+// Aéroports de la première et de la dernière étape (vol aller vers l'une, retour depuis l'autre)
+function ensureIatas(stops){
+  const dest=state.dest,f=stops[0],l=stops[stops.length-1],id=state.reqId;
+  const get=s=>fetchIata({name:s.name,admin:"",country:dest.country,lat:s.lat,lon:s.lon}).catch(()=>null);
+  if(f&&state.iataFor!==f.qid){state.iataFor=f.qid;get(f).then(v=>{if(id===state.reqId){state.iata=v||null;render()}})}
+  if(l&&state.iataEndFor!==l.qid){state.iataEndFor=l.qid;get(l).then(v=>{if(id===state.reqId){state.iataEnd=v||null;render()}})}
 }
 
 /* ---------- Carte (Leaflet + OpenStreetMap) ---------- */
@@ -1357,8 +1558,15 @@ function drawMap(){
     :`<button type="button" data-dayf="${i}" class="${state.dayF===i?"on":""}"><i style="background:${DAYC[i%8]}"></i>J${i+1}</button>`).join(""):"";
   if(state.loading){msg.hidden=false;msg.textContent="Chargement de la carte…"}else msg.hidden=true;
   if(!state.dest)return;
-  if(!plan){map.setView([state.dest.lat,state.dest.lon],12);return}
+  const country=isCountry(state.dest),stops=country?state.stops||[]:[];
+  if(!plan){map.setView([state.dest.lat,state.dest.lon],country?6:12);return}
   const bounds=[];
+  // Tout un pays : le trajet entre les étapes, et le nom de chaque ville (visibles aussi dans l'aperçu gratuit)
+  if(stops.length>1)L.polyline(stops.map(s=>[s.lat,s.lon]),{color:"#11163A",weight:2.5,dashArray:"2 9",lineCap:"round",opacity:.6}).addTo(layer);
+  stops.forEach((s,i)=>{
+    L.marker([s.lat,s.lon],{icon:L.divIcon({className:"stoplbl",html:`<span><b>${i+1}</b>${esc(s.name)}</span>`,iconSize:null}),interactive:false,zIndexOffset:-500}).addTo(layer);
+    if(state.dayF==null)bounds.push([s.lat,s.lon]);
+  });
   plan.days.forEach((d,di)=>{
     if(state.dayF!=null&&state.dayF!==di)return;
     if(lockedMap&&di>0)return;
@@ -1396,9 +1604,19 @@ function render(){
   const dest=state.dest;
   if(!dest){$("#cover").innerHTML="";$("#body").innerHTML="";return}
   const good=goodMonths(state.climate),pal=palette(dest.name);
-  const days=state.loading||state.error?null:planDays(p);
+  // Tout un pays : étapes recalculées selon la durée ; les lieux d'une nouvelle étape sont chargés à la volée
+  const country=isCountry(dest);let stops=[];
+  if(country&&state.cands){
+    stops=stopsFor(p.days);state.stops=stops;
+    if(stops.some(s=>!state.stopData[s.qid])&&!state.loading&&!state.stopsLoading){state.stopsLoading=true;ensureStopPlaces(stops).finally(()=>{state.stopsLoading=false;render()})}
+    state.places=stops.flatMap(s=>state.stopData[s.qid]||[]);
+    ensureIatas(stops);
+  }
+  const busy=state.loading||state.stopsLoading||(country&&!stops.length&&!state.error);
+  const days=busy||state.error?null:planDays(p);
   const museums=days?days.reduce((s,d)=>s+d.acts.filter(a=>a.museum).length,0):1;
-  const est=estimate(dest,p,good,museums);
+  const estF=pp=>country&&stops.length?estimateTrip(dest,pp,good,museums,stopsFor(pp.days)):estimate(dest,pp,good,museums);
+  const est=estF(p);
   state.plan=days?{days}:null;state.est=est;
   const locked=isLocked();
   const fname=firstName();
@@ -1423,7 +1641,7 @@ function render(){
     ${coverImg&&coverUrl?`<a class="credit" href="${esc(coverUrl)}" target="_blank" rel="noopener">Photo : Wikimedia</a>`:""}
     <div class="price"><span>TOTAL ${p.pax} PERS.</span><b class="num">${eur(est.total)}</b><span style="color:${fits?"#1C8556":"#B9470F"}">${fits?"Dans le budget":"+"+eur(est.total-p.budget)}</span></div>
     <div class="cover-in">
-      <span class="ctry">${ic("pin")}${esc([dest.admin,dest.country].filter(Boolean).join(", "))} · ${Math.round(est.dist).toLocaleString("fr-FR")} km de ${esc(o[1])}</span>
+      <span class="ctry">${country?`${ic("route")}${stops.length?`Tout le pays · ${stops.length} étape${stops.length>1?"s":""}`:"Tout le pays"}`:`${ic("pin")}${esc([dest.admin,dest.country].filter(Boolean).join(", "))}`} · ${Math.round(est.dist).toLocaleString("fr-FR")} km de ${esc(o[1])}</span>
       <h1>${esc(dest.name)}</h1>
       <div class="ctags"><span class="ctag">${ic("cal")}${fd(dep)} → ${fdy(ret)}</span><span class="ctag">${ic("users")}${p.pax}</span>
       ${state.climate?`<span class="ctag">${ic(isGood?"sun":"cloud")}${state.climate.tmax[p.m]}° · ${state.climate.rain[p.m]} j de pluie</span>`:""}</div>
@@ -1437,16 +1655,26 @@ function render(){
   const editing=state.editing&&!locked&&!!days;
   const editBtns=!days?"":locked
     ?`<button type="button" class="tag tag-lock" data-act="upgrade">${ic("lock")}Modifier</button>`
-    :`${editing&&state.custom&&state.custom.key===custKey()?`<button type="button" class="tag edbtn" data-ed="reset">${ic("undo")}Rétablir</button>`:""}<button type="button" class="tag edbtn${editing?" on":""}" data-ed="toggle">${ic(editing?"check":"edit")}${editing?"Terminer":"Modifier"}</button>`;
+    :`${editing&&((state.custom&&state.custom.key===custKey())||(state.route&&state.route.key===custKey()))?`<button type="button" class="tag edbtn" data-ed="reset">${ic("undo")}Rétablir</button>`:""}<button type="button" class="tag edbtn${editing?" on":""}" data-ed="toggle">${ic(editing?"check":"edit")}${editing?"Terminer":"Modifier"}</button>`;
+  // Tout un pays, en mode modification : jours par ville, ordre, ajout ou retrait d'une étape
+  const tot=stops.reduce((a,s)=>a+s.days,0);
+  const stopsEd=country&&editing?`<div class="sed"><div class="sed-h"><b>Étapes du voyage</b><small>${tot} jours au total · trajets, carte et budget suivent vos choix</small></div>
+    ${stops.map((s,i)=>`<div class="sed-row"><span class="sed-n">${i+1}</span><b class="sed-name">${esc(s.name)}</b>
+      <span class="sed-days"><button type="button" data-st="dm" data-i="${i}" aria-label="Un jour de moins à ${esc(s.name)}"${s.days<=1?" disabled":""}>−</button><output>${s.days} j</output><button type="button" data-st="dp" data-i="${i}" aria-label="Un jour de plus à ${esc(s.name)}"${tot>=21?" disabled":""}>+</button></span>
+      <span class="sed-acts"><button type="button" data-st="up" data-i="${i}" aria-label="Avancer ${esc(s.name)}"${i===0?" disabled":""}>${ic("up")}</button><button type="button" data-st="down" data-i="${i}" aria-label="Reculer ${esc(s.name)}"${i===stops.length-1?" disabled":""}>${ic("down")}</button><button type="button" class="del" data-st="del" data-i="${i}" aria-label="Retirer ${esc(s.name)}"${stops.length<=1?" disabled":""}>${ic("x")}</button></span></div>`).join("")}
+    <button type="button" class="addplace" data-st="add">${ic("plus")}Ajouter une ville</button></div>`:"";
   let itin;
   if(state.error)itin=`<div class="errbox"><b>${esc(state.error)}</b><button type="button" class="btn" data-act="retry">Réessayer</button></div>`;
-  else if(state.loading)itin=[0,1,2].map(()=>`<div class="sk" style="height:118px"></div>`).join("");
+  else if(busy)itin=[0,1,2].map(()=>`<div class="sk" style="height:118px"></div>`).join("");
   else itin=days.map((d,di)=>{
     const col=DAYC[di%8],title=d.kind||"Jour "+(di+1);
+    // Tout un pays : carte de trajet avant le premier jour de chaque nouvelle étape
+    const leg=country&&di>0&&d.stop!==days[di-1].stop&&est.legs?est.legs[d.stop-1]:null;
+    const legHTML=leg?`<div class="leg"><span class="leg-ic">${ic(leg.icon)}</span><div style="min-width:0"><b>${esc(leg.from.name)} → ${esc(leg.to.name)}</b><small>${leg.label} · ~${fmtDur(leg.h)} · ${Math.round(leg.d).toLocaleString("fr-FR")} km · env. ${eur(leg.pp)}/pers.</small></div>${locked?`<button type="button" class="tag tag-lock" data-act="upgrade">${ic("lock")}Horaires</button>`:`<a class="tag" href="https://www.rome2rio.com/fr/map/${enc(leg.from.name+", "+dest.country)}/${enc(leg.to.name+", "+dest.country)}" target="_blank" rel="noopener">${ic("ext")}Horaires et prix</a>`}</div>`:"";
     // Aperçu gratuit : seul le premier jour est visible, les suivants sont floutés jusqu'au passage en Premium
     if(locked&&di>0){
       const th=d.acts.filter(a=>a.thumb).slice(0,3);
-      return `<div class="day" style="--dc:${col}"><div class="day-h"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${title}</h3><small>${d.acts.length?`${d.acts.length} lieu${d.acts.length>1?"x":""} à découvrir`:"Journée à découvrir"}</small></div></div>
+      return `${legHTML}<div class="day" style="--dc:${col}"><div class="day-h"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${esc(title)}</h3><small>${country?esc(stops[d.stop].name)+" · ":""}${d.acts.length?`${d.acts.length} lieu${d.acts.length>1?"x":""} à découvrir`:"Journée à découvrir"}</small></div></div>
         <button type="button" class="lockbox" data-act="upgrade" aria-label="Débloquer le jour ${di+1} avec Premium">
           <span class="lockpics">${th.length?th.map(a=>`<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">`).join(""):`<i style="background:${col}"></i><i style="background:var(--c-${(d.acts[0]||{}).cat||"culture"})"></i>`}</span>
           <span class="lockic">${ic("lock")}</span>
@@ -1467,13 +1695,13 @@ function render(){
           <button type="button" class="del" data-ed="del" data-d="${di}" data-i="${ai}">${ic("x")}Retirer</button>
         </div>`:""}</div>`;
     });
-    if(!d.acts.length)items=`<div class="empty">${ic(di===0?"bed":di===p.days-1?"plane":"sun")}${di===0?"Installation et dîner dans votre quartier.":di===p.days-1?"Dernière balade, puis départ.":`Journée libre. <a href="${L.excursions}" target="_blank" rel="noopener">Idées d'excursions autour de ${esc(dest.name)}</a>`}</div>`;
-    const zone=d.acts[0]?"Autour de "+d.acts[0].title:"Temps libre";
+    if(!d.acts.length)items=`<div class="empty">${ic(di===0?"bed":di===p.days-1?"plane":"sun")}${di===0?"Installation et dîner dans votre quartier.":di===p.days-1?"Dernière balade, puis départ.":`Journée libre. <a href="${country?`https://www.getyourguide.fr/s/?q=${enc("excursion "+stops[d.stop].name)}`:L.excursions}" target="_blank" rel="noopener">Idées d'excursions autour de ${esc(country?stops[d.stop].name:dest.name)}</a>`}</div>`;
+    const zone=(country?stops[d.stop].name+" · ":"")+(d.acts[0]?"Autour de "+d.acts[0].title:"Temps libre");
     // En mode modification : durée de visite de la journée, avec une alerte si elle est trop chargée
     const hrs=d.acts.reduce((s,a)=>s+a.h,0),heavy=hrs>(di===0||di===p.days-1?5:9);
     const load=editing&&d.acts.length?` · <span class="${heavy?"daywarn":""}">${fmtH(hrs)} de visite${heavy?", journée chargée":""}</span>`:"";
     if(editing)items+=`<button type="button" class="addplace" data-ed="add" data-d="${di}">${ic("plus")}Ajouter un lieu</button>`;
-    return `<div class="day" style="--dc:${col}"><button type="button" class="day-h" data-dayf="${di}"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${title}</h3><small>${esc(zone)}${load}</small></div></button><div class="places">${items}</div></div>`;
+    return `${legHTML}<div class="day" style="--dc:${col}"><button type="button" class="day-h" data-dayf="${di}"><span class="day-dot" style="background:${col}">${di+1}</span><div><h3>${esc(title)}</h3><small>${esc(zone)}${load}</small></div></button><div class="places">${items}</div></div>`;
   }).join("")+(days&&!state.places.length?`<div class="empty">${ic("search")}Peu de lieux référencés sur Wikipédia ici. <a href="${L.voyage}" target="_blank" rel="noopener">Voir le guide Wikivoyage</a></div>`:"");
 
   /* Réserver */
@@ -1482,11 +1710,19 @@ function render(){
   const lk=(href,icn,col,t,sub)=>locked
     ?`<button type="button" class="lk lk-locked" data-act="upgrade"><span class="bub" style="background:${col}">${ic(icn)}</span><span style="min-width:0"><b>${t}</b><small>${sub}</small></span><span class="go">${ic("lock")}Premium</span></button>`
     :`<a class="lk" href="${href}" target="_blank" rel="noopener"><span class="bub" style="background:${col}">${ic(icn)}</span><span style="min-width:0"><b>${t}</b><small>${sub}</small></span><span class="go">Voir les prix ${ic("ext")}</span></a>`;
+  const fA=state.iata&&state.iata.code,fB=country&&state.iataEnd&&state.iataEnd.code&&state.iataEnd.code!==fA?state.iataEnd.code:"";
+  const flightSub=fA?`${o[0]} → ${esc(fA)}${fB?` · retour ${esc(fB)} → ${o[0]}`:state.iata.km>25?` (${esc(state.iata.name)}, ${state.iata.km} km)`:""} · ${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.vol/p.pax)}/pers.`:`${esc(o[1])} → ${esc(dest.name)} · env. ${eur(est.opt.vol/p.pax)}/pers.`;
+  // Tout un pays : un hébergement par étape aux bonnes dates, puis les trajets entre les étapes
+  const nightly=est.opt.log/Math.max(1,p.days-1);let acc=0;
+  const stays=country&&stops.length?stops.map((s,si)=>{
+      const ci=new Date(dep);ci.setDate(ci.getDate()+acc);const n=si===stops.length-1?Math.max(1,p.days-1-acc):s.days;acc+=s.days;const co=new Date(ci);co.setDate(co.getDate()+n);
+      return lk(`https://www.booking.com/searchresults.fr.html?ss=${enc(s.name+", "+dest.country)}&checkin=${iso(ci)}&checkout=${iso(co)}&group_adults=${p.pax}&no_rooms=1&lang=fr`,"bed","var(--c-log)",`Hébergement à ${esc(s.name)}`,`${fd(ci)} → ${fdy(co)} · ${n} nuit${n>1?"s":""} · env. ${eur(nightly)}/nuit pour ${p.pax}`);
+    }).join("")+(est.legs||[]).map(l=>lk(`https://www.rome2rio.com/fr/map/${enc(l.from.name+", "+dest.country)}/${enc(l.to.name+", "+dest.country)}`,l.icon,"var(--c-tra)",`${esc(l.from.name)} → ${esc(l.to.name)}`,`${l.label} · ~${fmtDur(l.h)} · env. ${eur(l.pp)}/pers.`)).join("")
+    :lk(L.booking,"bed","var(--c-log)","Booking.com",`${fd(dep)} → ${fdy(ret)} · env. ${eur(nightly)}/nuit pour ${p.pax}`)+lk(L.airbnb,"home","#E8505B","Airbnb",`Logements entiers · ${p.pax} voyageur${p.pax>1?"s":""}`);
   const reserver=`<div class="links">
-    ${est.mode==="avion"?lk(L.flights,"plane","var(--c-vol)",state.iata&&state.iata.code?"Kayak":"Vols",state.iata&&state.iata.code?`${o[0]} → ${esc(state.iata.code)}${state.iata.km>25?` (${esc(state.iata.name)}, ${state.iata.km} km)`:""} · ${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.vol/p.pax)}/pers.`:`${esc(o[1])} → ${esc(dest.name)} · env. ${eur(est.opt.vol/p.pax)}/pers.`):lk(L.r2r,"train","var(--c-vol)","Rome2rio",`Train, bus, voiture · env. ${eur(est.opt.vol/p.pax)}/pers.`)}
-    ${lk(L.booking,"bed","var(--c-log)","Booking.com",`${fd(dep)} → ${fdy(ret)} · env. ${eur(est.opt.log/Math.max(1,p.days-1))}/nuit pour ${p.pax}`)}
-    ${lk(L.airbnb,"home","#E8505B","Airbnb",`Logements entiers · ${p.pax} voyageur${p.pax>1?"s":""}`)}
-    ${lk(L.gyg,"ticket","var(--c-act)","GetYourGuide",`Visites et billets coupe-file à ${esc(dest.name)}`)}
+    ${est.mode==="avion"?lk(L.flights,"plane","var(--c-vol)",fA?"Kayak":"Vols",flightSub):lk(L.r2r,"train","var(--c-vol)","Rome2rio",`Train, bus, voiture · env. ${eur(est.opt.vol/p.pax)}/pers.`)}
+    ${stays}
+    ${lk(L.gyg,"ticket","var(--c-act)","GetYourGuide",country?`Visites et billets coupe-file · ${esc(dest.name)}`:`Visites et billets coupe-file à ${esc(dest.name)}`)}
     ${est.mode==="avion"?lk(L.r2r,"route","var(--c-tra)","Rome2rio","Comparer avion, train et bus"):""}
     ${lk(L.voyage,"book","var(--c-nature)","Wikivoyage","Guide pratique gratuit")}
   </div><p class="note">${locked?"Les liens vers les vrais prix du jour, déjà remplis à vos dates, sont inclus dans Premium. Les montants affichés sont des estimations.":"Dates pré-remplies : départ un mardi, souvent moins cher. Les montants sont des estimations ; les liens affichent les vrais prix du jour."}</p>`;
@@ -1498,18 +1734,18 @@ function render(){
   const fixes=[];
   if(!fits){
     const cheapM=[...Array(12).keys()].sort((a,b)=>season(a,good)-season(b,good))[0];
-    if(p.style>0)fixes.push([`data-style="${p.style-1}"`,"bed",["Éco","Confort"][p.style-1],estimate(dest,{...p,style:p.style-1},good,museums).total]);
-    if(cheapM!==p.m)fixes.push([`data-month="${cheapM}"`,"cal",MOIS[cheapM],estimate(dest,{...p,m:cheapM},good,museums).total]);
-    if(p.days>3)fixes.push([`data-days="${p.days-1}"`,"clock",(p.days-1)+" jours",estimate(dest,{...p,days:p.days-1},good,museums).total]);
+    if(p.style>0)fixes.push([`data-style="${p.style-1}"`,"bed",["Éco","Confort"][p.style-1],estF({...p,style:p.style-1}).total]);
+    if(cheapM!==p.m)fixes.push([`data-month="${cheapM}"`,"cal",MOIS[cheapM],estF({...p,m:cheapM}).total]);
+    if(p.days>3)fixes.push([`data-days="${p.days-1}"`,"clock",(p.days-1)+" jours",estF({...p,days:p.days-1}).total]);
   }
   const budget=`<div class="panel"><div class="budget">
       <div class="donut"><svg viewBox="0 0 170 170"><circle r="62" cx="85" cy="85" fill="none" stroke="var(--paper)" stroke-width="22"/>${arcs}</svg><div class="mid"><b class="num">${eur(est.total)}</b><small>${fits?"DANS LE BUDGET":"HORS BUDGET"}</small></div></div>
-      <div class="cats">${Object.keys(est.opt).map(k=>`<div class="cat"><span class="bub" style="background:${CATS[k][2]}">${ic(CATS[k][1])}</span><div><span class="lbl">${k==="vol"?trLabel:CATS[k][0]}</span><div class="track"><i style="width:${est.opt[k]/maxCat*100}%;background:${CATS[k][2]}"></i></div></div><b class="num">${eur(est.opt[k])}</b></div>`).join("")}</div>
+      <div class="cats">${Object.keys(est.opt).map(k=>`<div class="cat"><span class="bub" style="background:${CATS[k][2]}">${ic(CATS[k][1])}</span><div><span class="lbl">${k==="vol"?trLabel:k==="tra"&&country?"Transports et trajets entre villes":CATS[k][0]}</span><div class="track"><i style="width:${est.opt[k]/maxCat*100}%;background:${CATS[k][2]}"></i></div></div><b class="num">${eur(est.opt[k])}</b></div>`).join("")}</div>
     </div>
     <div class="vs"><div class="vs-row"><span>Sans plan</span><div class="vs-bar" style="width:100%"></div><span class="num">${eur(est.naiveTotal)}</span></div>
       <div class="vs-row"><span>Avec Valisino</span><div class="vs-bar opt" style="width:${est.total/est.naiveTotal*100}%"></div><span class="num">${eur(est.total)}</span></div></div>
     ${fits?`<div class="okmsg">${ic("check")}Marge restante : ${eur(p.budget-est.total)}</div>`:`<div class="fixes">${fixes.map(([attr,i,l,t])=>`<button type="button" class="fix" ${attr}>${ic(i)}${esc(l)} <b class="num">${eur(t)}</b></button>`).join("")}</div>`}
-    <p class="note" style="margin-top:12px">Estimation selon la distance (${Math.round(est.dist).toLocaleString("fr-FR")} km) et le niveau des prix en ${esc(dest.country||"destination")}.</p></div>`;
+    <p class="note" style="margin-top:12px">Estimation selon la distance (${Math.round(est.dist).toLocaleString("fr-FR")} km) et le niveau des prix du pays (${esc(dest.country||dest.name)})${country&&est.legs&&est.legs.length?`, trajets entre les ${stops.length} étapes compris`:""}.</p></div>`;
 
   /* Quand partir */
   const idx=[...Array(12).keys()].map(m=>season(m,good)),mn=Math.min(...idx),mx=Math.max(...idx),cheapest=idx.indexOf(mn);
@@ -1525,7 +1761,7 @@ function render(){
       <div class="tl-pt" style="left:${(pos(bookFrom)+pos(bookBy))/2}%;top:44px"><b>${tooLate?"Réservez vite":fd(bookFrom)+" → "+fd(bookBy)}</b></div>
       <div class="tl-pt" style="left:100%;top:-4px">${ic("plane")}</div></div>
     <div class="chipsrow"><span class="ichip">${ic("cal")}Départ un mardi : -15 %</span><span class="ichip">${ic("bed")}Annulation gratuite</span><span class="ichip">${ic("ticket")}Visites : J-15</span></div>
-    <p class="note" style="margin-top:12px">${cl?"Températures maximales et jours de pluie : moyennes réelles 2024-2025 (Open-Meteo). ":""}Barres : indice de prix estimé selon la saison.</p></div>`;
+    <p class="note" style="margin-top:12px">${cl?`Températures maximales et jours de pluie${country&&stops[0]?` à ${esc(stops[0].name)}`:""} : moyennes réelles 2024-2025 (Open-Meteo). `:""}Barres : indice de prix estimé selon la saison.</p></div>`;
 
   /* Astuces */
   const top=days?days.flatMap(d=>d.acts).filter(a=>a.museum).slice(0,2).map(a=>a.title):[];
@@ -1533,12 +1769,14 @@ function render(){
     `Réservez ${est.mode==="avion"?"le vol":"le train"} ${longHaul?"3 à 5 mois":"6 à 8 semaines"} avant le départ`,
     est.mode==="avion"?"Bagage cabine seul : pas de frais de soute":"Billets de train : les tarifs les plus bas partent en premier",
     "Le menu du midi est souvent 30 % moins cher que le soir",
-    `Comparez les city pass de ${dest.name} avant d'acheter les entrées <a href="${L.pass}" target="_blank" rel="noopener">voir</a>`
+    country&&stops.length>1
+      ?"Trajets entre les villes : les billets de train et de bus sont souvent moins chers réservés 2 à 4 semaines avant"
+      :`Comparez les city pass de ${dest.name} avant d'acheter les entrées <a href="${L.pass}" target="_blank" rel="noopener">voir</a>`
   ];
   const time=[
     top.length?`Réservez un créneau horaire pour ${top.join(" et ")}`:"Réservez un créneau horaire pour les visites les plus demandées",
     "Visitez les sites les plus connus à l'ouverture, avant les groupes",
-    `Téléchargez la carte de ${dest.name} hors ligne dans Google Maps`,
+    country?"Téléchargez les cartes de chaque étape hors ligne dans Google Maps":`Téléchargez la carte de ${dest.name} hors ligne dans Google Maps`,
     `Guide pratique de ${dest.name} <a href="${L.voyage}" target="_blank" rel="noopener">sur Wikivoyage</a>`
   ];
   const k=dest.name.replace(/\W/g,"");
@@ -1550,7 +1788,7 @@ function render(){
   if(locked)astuces=`<div class="lockwrap"><div class="blurred" aria-hidden="true" inert>${astuces.replace(/<a [^>]*>(.*?)<\/a>/g,"$1")}</div><button type="button" class="lockover" data-act="upgrade">${ic("lock")}Débloquer les ${money.length+time.length} astuces</button></div>`;
 
   $("#body").innerHTML=`
-  <section class="sec" id="itin"><div class="sec-h"><h2>Itinéraire</h2><div class="sec-acts"><span class="tag">${ic("route")}${p.days} jours · ${days?days.reduce((s,d)=>s+d.acts.length,0):"…"} lieux</span>${editBtns}</div></div>${editing?`<p class="edhint">${ic("edit")}<span>Retirez un lieu, changez l'ordre, déplacez-le vers un autre jour ou ajoutez-en un parmi les lieux trouvés. La carte suit vos changements.</span></p>`:""}${itin}</section>
+  <section class="sec" id="itin"><div class="sec-h"><h2>Itinéraire</h2><div class="sec-acts"><span class="tag">${ic("route")}${p.days} jours · ${days?days.reduce((s,d)=>s+d.acts.length,0):"…"} lieux</span>${editBtns}</div></div>${stopsEd||(country&&stops.length?`<div class="stops" aria-label="Étapes du voyage">${stops.map((s,i)=>`${i?`<span class="stop-arr" aria-hidden="true">→</span>`:""}<span class="stop"><b>${i+1}</b>${esc(s.name)}<small>${s.days} j</small></span>`).join("")}</div>`:"")}${editing?`<p class="edhint">${ic("edit")}<span>${country?"Changez les étapes ci-dessus (jours par ville, ordre, ajout ou retrait d'une ville), puis ajustez les lieux de chaque journée. ":""}Retirez un lieu, changez l'ordre, déplacez-le vers un autre jour ou ajoutez-en un parmi les lieux trouvés. La carte suit vos changements.</span></p>`:""}${itin}</section>
   <section class="sec" id="reserver"><div class="sec-h"><h2>Réserver</h2><span class="tag">${ic("ext")}Vrais prix du jour</span></div>${reserver}</section>
   <section class="sec" id="budget"><div class="sec-h"><h2>Budget</h2><span class="tag">${ic("wallet")}${eur(p.budget)}</span></div>${budgetOut}</section>
   <section class="sec" id="quand"><div class="sec-h"><h2>Quand partir</h2><span class="tag">${ic("sun")}Météo réelle</span></div>${quandOut}</section>
@@ -1584,12 +1822,78 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("mouseover",e=>{const c=e.target.closest(".place");if(c)hl(c.dataset.card)});
 
+/* ---------- Modification des étapes d'un voyage dans tout un pays (Premium) ---------- */
+// fn modifie la liste des étapes ; elle renvoie false pour annuler. La durée du voyage suit la somme des jours.
+function editRoute(fn,msg){
+  if(isLocked()||!isCountry(state.dest)||!state.stops.length)return;
+  const list=state.stops.map(s=>({...s}));
+  if(fn(list)===false)return;
+  const total=list.reduce((a,s)=>a+s.days,0);
+  if(total>21){showToast("21 jours maximum pour un voyage",false);return}
+  state.route={key:custKey(),stops:list};
+  state.custom=null; // les lieux jour par jour sont recalculés pour les nouvelles étapes
+  $("#days").value=Math.max(2,total);
+  render();
+  if(msg)showToast(msg);
+}
+const routeLen=l=>l.reduce((s,c,i)=>i?s+km([l[i-1].lat,l[i-1].lon],[c.lat,c.lon]):0,0);
+function addStop(c){
+  editRoute(list=>{
+    if(list.some(s=>s.qid===c.qid))return false;
+    // 2 jours pour la nouvelle ville, pris aux étapes les plus longues tant qu'elles gardent au moins 2 jours (sinon le voyage s'allonge)
+    let need=2;
+    while(need>0){const big=list.reduce((b,s)=>s.days>b.days?s:b,list[0]);if(big.days<=2)break;big.days--;need--}
+    const ns={qid:c.qid,name:c.name,lat:c.lat,lon:c.lon,fame:c.fame||0,days:2};
+    // insérée là où elle rallonge le moins le trajet ; la ville d'arrivée reste la première
+    let at=list.length,best=Infinity;
+    for(let i=1;i<=list.length;i++){const l=routeLen([...list.slice(0,i),ns,...list.slice(i)]);if(l<best){best=l;at=i}}
+    list.splice(at,0,ns);
+  },`${c.name} ajoutée au voyage`);
+}
+let routeCands=[],rsTimer=null;
+function rsItems(list,label){
+  const last=state.stops[state.stops.length-1];
+  return `${label?`<p class="rs-lbl">${label}</p>`:""}${list.length?list.map((c,i)=>`<button type="button" class="ap" data-addstop="${i}"><span class="ap-th" style="background:var(--deep)">${ic("pin")}</span><span style="min-width:0"><b>${esc(c.name)}</b><small>${last?`à ${Math.round(km([last.lat,last.lon],[c.lat,c.lon])).toLocaleString("fr-FR")} km de ${esc(last.name)}`:""}</small></span>${ic("plus")}</button>`).join(""):`<p class="ap-none">Aucune ville trouvée dans ce pays.</p>`}`;
+}
+function addStopModal(){
+  const inRoute=new Set(state.stops.map(s=>s.qid));
+  routeCands=(state.cands||[]).filter(c=>!inRoute.has(c.qid)).sort((a,b)=>b.fame-a.fame);
+  openModal(`<h3 id="modalTitle">Ajouter une ville</h3>
+    <input class="inp" id="rsq" type="search" placeholder="Rechercher une ville (${esc(state.dest.name)})" aria-label="Rechercher une ville" autocomplete="off">
+    <div class="aplist" id="rsList">${rsItems(routeCands,"Conseillées par les voyageurs")}</div>`,"wide");
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button[data-st]");if(!b)return;
+  const st=b.dataset.st,i=+b.dataset.i;
+  if(st==="add"){addStopModal();return}
+  if(st==="dp")editRoute(l=>{l[i].days++});
+  if(st==="dm")editRoute(l=>{if(l[i].days<=1)return false;l[i].days--});
+  if(st==="up"||st==="down")editRoute(l=>{const j=st==="up"?i-1:i+1;if(j<0||j>=l.length)return false;[l[i],l[j]]=[l[j],l[i]]});
+  if(st==="del"){const name=state.stops[i]&&state.stops[i].name;editRoute(l=>{if(l.length<=1)return false;const [x]=l.splice(i,1);(l[i-1]||l[0]).days+=x.days},`${name} retirée du voyage`)}
+});
+$("#modal").addEventListener("click",e=>{
+  const b=e.target.closest("[data-addstop]");if(!b)return;
+  const c=routeCands[+b.dataset.addstop];closeModal();if(c)addStop(c);
+});
+// Recherche de n'importe quelle ville du pays (Open-Meteo, filtrée sur le code du pays)
+$("#modal").addEventListener("input",e=>{
+  if(e.target.id!=="rsq")return;
+  clearTimeout(rsTimer);const q=e.target.value.trim(),box=$("#rsList");
+  if(q.length<2){const inRoute=new Set(state.stops.map(s=>s.qid));routeCands=(state.cands||[]).filter(c=>!inRoute.has(c.qid)).sort((a,b)=>b.fame-a.fame);box.innerHTML=rsItems(routeCands,"Conseillées par les voyageurs");return}
+  rsTimer=setTimeout(async()=>{
+    let r=[];try{r=await geocode(q)}catch(err){}
+    const inRoute=new Set(state.stops.map(s=>s.qid));
+    routeCands=r.filter(g=>!isCountry(g)&&(g.cc||"").toUpperCase()===state.dest.cc).map(g=>({qid:`g${g.lat.toFixed(3)},${g.lon.toFixed(3)}`,name:g.name,lat:g.lat,lon:g.lon,fame:0})).filter(c=>!inRoute.has(c.qid));
+    if($("#rsList"))$("#rsList").innerHTML=rsItems(routeCands,"Résultats");
+  },300);
+});
+
 /* ---------- Modification de l'itinéraire (Premium) ---------- */
 function editDays(fn,msg){
   if(!state.plan||isLocked())return;
   const days=state.plan.days.map(d=>d.acts.map(a=>a.id));
   fn(days);
-  state.custom={key:custKey(),days};
+  state.custom={key:custKey(),days,sig:isCountry(state.dest)?stopSig():undefined};
   render();
   if(msg)showToast(msg);
 }
@@ -1612,7 +1916,7 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("button[data-ed]");if(!b)return;
   const ed=b.dataset.ed,di=+b.dataset.d,ai=+b.dataset.i;
   if(ed==="toggle"){state.editing=!state.editing;render();return}
-  if(ed==="reset"){state.custom=null;render();showToast("Itinéraire proposé rétabli");return}
+  if(ed==="reset"){state.custom=null;state.route=null;render();showToast("Itinéraire proposé rétabli");return}
   if(ed==="add"){addPlaceModal(di);return}
   if(ed==="up"||ed==="down")editDays(days=>{const j=ed==="up"?ai-1:ai+1;if(j>=0&&j<days[di].length)[days[di][ai],days[di][j]]=[days[di][j],days[di][ai]]});
   if(ed==="del")editDays(days=>days[di].splice(ai,1),"Lieu retiré");
@@ -1822,7 +2126,7 @@ const wp=()=>({o:W.o,m:W.m,date:W.date,days:W.days,pax:W.pax,budget:W.budget,sty
 // Budget proposé par défaut : l'estimation du voyage (destination, départ, dates, voyageurs, style) + 5 % de marge, arrondie à 50 €
 function suggestBudget(){
   if(!W.dest)return W.budget;
-  const good=goodMonths(sameDest()?state.climate:null),E=estimate(W.dest,wp(),good,1);
+  const good=goodMonths(sameDest()?state.climate:null),E=estFor(W.dest,wp(),good,1);
   return Math.max(300,Math.ceil(E.total*1.05/50)*50);
 }
 const budgetMax=()=>Math.max(15000,Math.ceil(W.budget*1.5/1000)*1000);
@@ -1832,7 +2136,10 @@ function applyW(){
   $("#st"+W.style).checked=true;INTERESTS.forEach(([k])=>$("#in-"+k).checked=W.ints.includes(k));
 }
 function pickDest(g,advance=true){
-  W.dest={name:g.name,country:g.country,cc:(g.cc||"").toUpperCase(),admin:g.admin||"",lat:g.lat,lon:g.lon};W.img="";W.ans.dest=true;
+  const country=isCountry(g);
+  W.dest={name:g.name,country:g.country||g.name,cc:(g.cc||"").toUpperCase(),admin:g.admin||"",lat:g.lat,lon:g.lon,kind:country?"country":"city"};W.img="";W.ans.dest=true;
+  // Tout un pays : une durée par défaut qui permet plusieurs étapes
+  if(country&&!W.ans.dates&&W.days<8)W.days=10;
   applyW();
   loadDestination(W.dest).then(()=>{if(currentView==="wizard"){renderCard();if(["dates","budget"].includes(STEPS[W.step]))renderStep()}});
   fetchInfo(W.dest).then(i=>{if(i&&W.dest&&i.img){W.img=i.img;renderCard()}}).catch(()=>{});
@@ -1846,7 +2153,7 @@ function stepHTML(){
     <p class="lead">Votre destination, vos dates, vos envies : 2 minutes de questions et votre voyage se construit sous vos yeux, liens de réservation compris.</p>
     <button type="button" class="btn coral big" data-wz="next">Composer mon voyage →</button><small style="color:var(--muted);display:inline-flex;gap:6px;align-items:center">${ic("clock")}2 minutes, pas plus</small></div>`;
   if(s==="dest")return `<div class="wz-step">${qn(1)}<h2>Où rêvez-vous de partir ?</h2>
-    <div class="bigin">${ic("search")}<input id="wzDest" type="text" placeholder="Une ville : Kyoto, Lisbonne, Montréal…" value="${W.dest?esc(W.dest.name):""}" autocomplete="off" aria-label="Destination"></div>
+    <div class="bigin">${ic("search")}<input id="wzDest" type="text" placeholder="Une ville ou un pays : Kyoto, Portugal, Japon…" value="${W.dest?esc(W.dest.name):""}" autocomplete="off" aria-label="Destination"></div>
     <p class="lead" style="font-size:15px">ou choisissez une idée</p>
     <div class="ideas">${FEATURED.slice(0,12).map(f=>`<button type="button" class="idea" data-idea="${f.id}"><span>${FEAT_IMG[f.w]?`<img src="${esc(FEAT_IMG[f.w])}" alt="" referrerpolicy="no-referrer">`:ic("pin")}</span>${esc(f.name)}</button>`).join("")}</div>
     ${navHTML(false)}</div>`;
@@ -1882,7 +2189,7 @@ function stepHTML(){
 function updateEstim(){
   const box=$("#wzEstim");if(!box)return;
   if(!W.dest){box.innerHTML="";return}
-  const good=goodMonths(sameDest()?state.climate:null),E=estimate(W.dest,wp(),good,1),ok=E.total<=W.budget;
+  const good=goodMonths(sameDest()?state.climate:null),E=estFor(W.dest,wp(),good,1),ok=E.total<=W.budget;
   box.innerHTML=`<div class="estim${ok?"":" warn"}">${ic(ok?"check":"wallet")}Estimation pour ce voyage : ${eur(E.total)} · ${ok?"dans votre budget":`il manque ${eur(E.total-W.budget)}, Valisino vous proposera des solutions`}</div>`;
 }
 function renderStep(){
@@ -1920,7 +2227,7 @@ function renderCard(){
   const A=W.ans,soon=`<em>À venir</em>`;
   const styleL=["Éco","Confort","Luxe"][W.style];
   const rows=[
-    ["Destination",A.dest&&d?`${esc(d.name)}, ${esc(d.country)}`:soon],
+    ["Destination",A.dest&&d?(isCountry(d)?`${esc(d.name)} · tout le pays`:`${esc(d.name)}, ${esc(d.country)}`):soon],
     ["Départ",A.origin?esc(ORIGINS[W.o][1]):soon],
     ["Dates",A.dates?`${W.date?"Le "+fdy(parseISO(W.date)):MOIS[W.m]+" "+nextDep(W.m).getFullYear()} · ${W.days} jours`:soon],
     ["Voyageurs",A.pax?`${W.pax}`:soon],
@@ -1929,13 +2236,13 @@ function renderCard(){
   ];
   $("#wzCard").innerHTML=`<div class="wz-card-h"><h3>Votre voyage se construit</h3><span class="live"><i></i>En direct</span></div>
     <div class="collage">${photos}</div>
-    <p class="hint">${same&&state.places.length?`${state.places.length} lieux trouvés à ${esc(d.name)}`:"Répondez, et regardez votre voyage prendre forme."}</p>
+    <p class="hint">${same&&isCountry(d)&&state.stops.length?`${state.stops.length} étapes : ${esc(state.stops.map(s=>s.name).join(" → "))}`:same&&state.places.length?`${state.places.length} lieux trouvés à ${esc(d.name)}`:"Répondez, et regardez votre voyage prendre forme."}</p>
     <div class="rows">${rows.map(([k,v])=>`<div><span>${k}</span>${v.startsWith("<em")?v:`<b>${v}</b>`}</div>`).join("")}</div>`;
 }
 async function runBuild(){
   const id=Symbol();runBuild.cur=id;
   applyW();
-  state.custom=null;state.editing=false; // un nouveau questionnaire repart d'un itinéraire proposé
+  state.custom=null;state.route=null;state.editing=false; // un nouveau questionnaire repart d'un itinéraire proposé
   if(!sameDest())loadDestination(W.dest);else render();
   const items=[...document.querySelectorAll("#wzBuild li")],t0=Date.now();
   for(let i=0;i<items.length;i++){
@@ -2005,7 +2312,8 @@ async function saveTrip(){
   if(!user){pendingSave=true;loginModal("Connectez-vous pour enregistrer ce voyage.");return}
   const p=readForm(),d=state.dest;
   const custom=state.custom&&state.custom.key===custKey()?state.custom:null; // itinéraire modifié, s'il y en a un
-  const {error}=await sb.from("trips").insert({title:`${d.name} · ${MOIS[p.m]} · ${p.days} jours`,params:{...p,dest:d,custom},total:Math.round(state.est.total)});
+  const route=state.route&&state.route.key===custKey()?state.route:null;     // étapes modifiées (voyage dans un pays)
+  const {error}=await sb.from("trips").insert({title:`${d.name} · ${MOIS[p.m]} · ${p.days} jours`,params:{...p,dest:d,custom,route},total:Math.round(state.est.total)});
   error?showToast("Enregistrement impossible : "+error.message,false):showToast("Voyage enregistré");
 }
 $("#save").addEventListener("click",saveTrip);
@@ -2030,6 +2338,7 @@ function applyParams(p,dest){
   if(p.style!=null&&$("#st"+p.style))$("#st"+p.style).checked=true;
   if(Array.isArray(p.ints))INTERESTS.forEach(([k])=>$("#in-"+k).checked=p.ints.includes(k));
   state.custom=p.custom&&Array.isArray(p.custom.days)?p.custom:null;
+  state.route=p.route&&Array.isArray(p.route.stops)?p.route:null;
   if(dest)loadDestination(dest);else render();
 }
 $("#modal").addEventListener("click",async e=>{
