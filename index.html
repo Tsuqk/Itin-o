@@ -154,6 +154,20 @@ a.tag:hover{color:var(--sea)}
 .marquee-track img{display:block;width:auto;max-width:none}
 .marquee-track em{font-style:normal;font-family:var(--f-display);font-weight:700;font-size:20px;color:#3d3d3d}
 .marquee-track .ic{width:22px;height:22px;color:var(--green)}
+/* Téléphone : haut de page resserré et logos défilants visibles dès l'ouverture */
+.mq-sm{display:none}
+@media (max-width:600px){
+  .mq-desk{display:none}
+  .mq-sm{display:block;margin-top:24px}
+  .mq-sm .marquee-h{margin:0 0 4px;font-size:11px}
+  .mq-sm .marquee{zoom:.8}
+  .mq-sm .marquee-track{gap:44px}
+  .hero{padding-block:18px 8px;gap:28px}
+  .hero h1{font-size:32px;margin:14px 0 12px}
+  .hero .lead{font-size:16px;line-height:1.5;margin:0 0 18px}
+  .cta-wrap{grid-auto-flow:column;align-items:center;gap:14px}
+  .hero .btn.big{padding:15px 26px}
+}
 
 .sect{padding-block:80px}
 .sect-h{display:grid;gap:12px;justify-items:center;text-align:center;margin:0 auto 44px;max-width:720px}
@@ -697,11 +711,13 @@ section.sec{display:grid;gap:12px;scroll-margin-top:60px}
         <h1>Des voyages planifiés au meilleur prix, sans perdre de temps sur place.</h1>
         <p class="lead">Vous choisissez la ville, les dates et le budget. Valisino trouve les vrais lieux à visiter, regarde la météo réelle, organise vos journées par quartier et prépare les liens pour réserver, pile dans votre budget.</p>
         <div class="cta-wrap"><a class="btn coral big" href="#creer">Créer mon voyage</a><small>2 min chrono</small></div>
+        <!-- Sur téléphone : les logos défilent dès l'ouverture, sans avoir à descendre -->
+        <div class="mq-sm"><p class="marquee-h">Liens directs vers les bonnes recherches</p><div class="marquee"><div class="marquee-track" id="marqueeSm"></div></div></div>
       </div>
       <div class="week" id="heroWeek"></div>
     </section>
 
-    <div class="wrap">
+    <div class="wrap mq-desk">
       <p class="marquee-h">Valisino vous envoie directement sur les bonnes recherches</p>
       <div class="marquee"><div class="marquee-track" id="marquee"></div></div>
     </div>
@@ -1756,7 +1772,7 @@ function renderLanding(){
     [C+"b/b0/Openstreetmap_logo.svg","OpenStreetMap",38,"OpenStreetMap"]
   ];
   const one=partners.map(([src,n,h,label])=>`<span title="${n}"><img src="${src}" alt="${n}" height="${h}" style="height:${h}px" loading="lazy">${label?`<em>${label}</em>`:""}</span>`).join("");
-  $("#marquee").innerHTML=one+one.replace(/<span /g,'<span aria-hidden="true" ');
+  ["#marquee","#marqueeSm"].forEach(sel=>{const el=$(sel);if(el)el.innerHTML=one+one.replace(/<span /g,'<span aria-hidden="true" ')});
 
   $("#howCards").innerHTML=[
     ["pin","Choisissez votre destination","N'importe quelle ville du monde, vos dates, votre budget et vos envies. 2 minutes, on ne vous demandera rien deux fois."],
