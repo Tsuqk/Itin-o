@@ -2142,11 +2142,12 @@ document.addEventListener("click",e=>{
 });
 const sameDest=()=>W.dest&&state.dest&&state.dest.name===W.dest.name&&Math.abs(state.dest.lat-W.dest.lat)<1e-3;
 const wp=()=>({o:W.o,m:W.m,date:W.date,days:W.days,pax:W.pax,budget:W.budget,style:W.style,ints:W.ints});
-// Budget proposé par défaut : l'estimation du voyage (destination, départ, dates, voyageurs, style) + 5 % de marge, arrondie à 50 €
+// Budget proposé par défaut : l'estimation du voyage (destination, départ, dates, voyageurs, style) + 25 % de marge, arrondie à 50 €
+// (le voyageur peut ensuite baisser la jauge et voir le voyage rester dans son budget)
 function suggestBudget(){
   if(!W.dest)return W.budget;
   const good=goodMonths(sameDest()?state.climate:null),E=estFor(W.dest,wp(),good,1);
-  return Math.max(300,Math.ceil(E.total*1.05/50)*50);
+  return Math.max(300,Math.ceil(E.total*1.25/50)*50);
 }
 const budgetMax=()=>Math.max(15000,Math.ceil(W.budget*1.5/1000)*1000);
 function applyW(){
@@ -2195,7 +2196,7 @@ function stepHTML(){
   if(s==="budget")return `<div class="wz-step">${qn(5)}<h2>Quel est votre budget total ?</h2>
     <p class="lead">Transport, hébergement, repas et visites compris, pour ${W.pax} voyageur${W.pax>1?"s":""}.</p>
     <div class="bigprice num" id="wzBudgetOut">${eur(W.budget)}</div>
-    ${W.budgetTouched?"":`<span class="sugg">${ic("spark")}Budget conseillé pour ce voyage, ajustez-le à votre guise</span>`}
+    ${W.budgetTouched?"":`<span class="sugg">${ic("spark")}Budget confortable pour ce voyage, baissez-le pour voir jusqu'où il tient</span>`}
     <input type="range" class="range" id="wzBudget" min="300" max="${budgetMax()}" step="50" value="${W.budget}" aria-label="Budget total">
     <div class="opts">${[[0,"Éco","Auberges, street food, transports en commun"],[1,"Confort","Hôtels 3 étoiles, bonnes tables"],[2,"Luxe","Beaux hôtels, tables réputées"]].map(([v,t,d])=>`<button type="button" class="opt${W.style===v?" on":""}" data-wst="${v}">${ic(["wallet","bed","spark"][v])}<span class="t">${t}</span><small>${d}</small></button>`).join("")}</div>
     <div id="wzEstim"></div>${navHTML(false)}</div>`;
@@ -2381,6 +2382,12 @@ function renderPlans(){
       <small style="color:var(--muted);font-size:12px">Paiement sécurisé par Stripe. Résiliable à tout moment.</small></div>`;
 }
 /* ---------- Avis des voyageurs (vrais avis, publiés après validation dans Supabase) ---------- */
+// Avis reçus par message de voyageurs ayant utilisé Valisino, publiés avec leur accord (messages d'origine conservés)
+const MSG_REVIEWS=[
+  {first_name:"Julie",age:34,rating:5,destination:"Lisbonne",comment:"Je voulais partir à Lisbonne sans exploser mon budget. Je passais des heures à comparer les prix sans vraiment savoir quand réserver. Valisino m’a permis de mieux organiser mon budget et de voir où je pouvais faire des économies."},
+  {first_name:"Nathan",age:23,rating:5,comment:"Organiser un voyage me prenait toujours des soirées entières entre Google Maps, les blogs et les sites de réservation. Avec Valisino, j’ai pu préparer mon itinéraire beaucoup plus rapidement. C’est exactement ce qu’il me fallait."},
+  {first_name:"Marie",age:28,rating:5,comment:"Lors de mes précédents voyages, je choisissais les visites au hasard et je perdais un temps fou dans les transports. L’idée de regrouper les lieux par quartier est vraiment pratique. On profite davantage et on court beaucoup moins."}
+];
 const EXAMPLES=[
   {icon:"clock",col:"var(--c-plage)",title:"Préparer sans y passer ses soirées",before:"Quinze onglets ouverts et des soirées entières pour organiser un simple week-end.",after:"Quatre jours à Lisbonne organisés par quartier en 2 minutes. Il ne reste plus qu'à réserver.",trip:"Week-end à Lisbonne"},
   {icon:"users",col:"var(--c-log)",title:"Organiser pour tout le groupe",before:"Des jours de débats dans le groupe WhatsApp pour se mettre d'accord sur le programme.",after:"Le plan copié en un clic dans le groupe, validé par tout le monde en 10 minutes.",trip:"Voyage entre amis à Budapest"},
@@ -2392,6 +2399,7 @@ async function loadReviews(){
   let rows=[];
   if(sb){try{const {data,error}=await sb.from("reviews").select("first_name,city,destination,rating,comment,created_at").eq("approved",true).order("created_at",{ascending:false}).limit(60);if(!error&&data)rows=data}catch(e){}}
   const head=$("#avis .sect-h h2");
+  rows=[...rows,...MSG_REVIEWS];
   if(!rows.length){
     // Pas encore d'avis : situations types, présentées comme des exemples (jamais comme des avis clients)
     head.textContent="Ce que Valisino change pour votre voyage";
@@ -2404,8 +2412,8 @@ async function loadReviews(){
   }
   head.textContent="Ils voyagent mieux, ils dépensent moins";
   const avg=rows.reduce((s,r)=>s+r.rating,0)/rows.length;
-  sum.textContent=`${avg.toLocaleString("fr-FR",{maximumFractionDigits:1})}/5 · ${rows.length} avis vérifié${rows.length>1?"s":""}`;
-  list.innerHTML=rows.slice(0,6).map(r=>`<article class="rv">${starsHTML(r.rating)}<blockquote>« ${esc(r.comment)} »</blockquote><footer><b>${esc(r.first_name)}</b><small>${esc([r.city,r.destination?"voyage à "+r.destination:""].filter(Boolean).join(" · "))}</small></footer></article>`).join("");
+  sum.textContent=`${avg.toLocaleString("fr-FR",{maximumFractionDigits:1})}/5 · ${rows.length} avis de voyageurs`;
+  list.innerHTML=rows.slice(0,6).map(r=>`<article class="rv">${starsHTML(r.rating)}<blockquote>« ${esc(r.comment)} »</blockquote><footer><b>${esc(r.first_name)}</b><small>${esc([r.age?r.age+" ans":"",r.city,r.destination?"voyage à "+r.destination:""].filter(Boolean).join(" · "))}</small></footer></article>`).join("");
 }
 let myReview=null,reviewUser=null,reviewStars=0;
 async function renderReviewBox(){
